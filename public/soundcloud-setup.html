@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>SoundCloud connection · Rabbit Hole</title><link rel="stylesheet" href="/soundcloud-setup.css"></head>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>SoundCloud connection · Rabbit Hole</title><link rel="icon" type="image/png" href="/favicon.png"><link rel="stylesheet" href="/soundcloud-setup.css"></head>
 <body><main><a href="/">← Rabbit Hole</a><h1>Connect SoundCloud</h1><p>Use Lyrion to find and play music. Connect your SoundCloud account here to save exact tracks to playlists.</p>
 <section><h2>1. Register your app</h2><p>Open <a href="https://soundcloud.com/you/apps" target="_blank" rel="noopener noreferrer">SoundCloud applications</a> and register an application for Rabbit Hole. SoundCloud may require an Artist Pro subscription for API access.</p><p>Register this exact redirect address:</p><code id="redirect">http://127.0.0.1:3777/api/soundcloud/callback</code>
 <p>On the Rabbit Hole computer, add your app credentials to its local <code>.env</code> file, then restart Rabbit Hole:</p><pre>SOUNDCLOUD_CLIENT_ID=your_client_id
