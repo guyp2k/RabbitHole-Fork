@@ -6085,7 +6085,13 @@ function identityCorrectnessReasonFor(track = {}, options = {}, profile = buildD
     // (Peter Gabriel Remix)"), but one that is only the target's name is
     // another artist's song about them, not the target.
     const nameOnly = (value) => normalize(cleanText(value).replace(/\s*[([].*$/, "")) === target;
-    const matchedTarget = artistMatchesKnownName(track.artist, targetArtist) || (
+    // Last.fm's similar artists for this run's seeds (similarArtistEvidence)
+    // name the target's closest relatives, such as Genesis for Peter Gabriel.
+    // A result by one of them, on a search for the artist it was found for,
+    // is that relative, not a stranger with a similar name.
+    const lastFmRelative = (Array.isArray(options.similarArtistEvidence) ? options.similarArtistEvidence : [])
+      .some((item) => item && artistNamesMatch(item.seedArtist, targetArtist) && artistMatchesKnownName(track.artist, item.name));
+    const matchedTarget = artistMatchesKnownName(track.artist, targetArtist) || lastFmRelative || (
       !nameOnly(track.title) && !nameOnly(track.album) &&
       normalize(`${track.title} ${track.album}`).includes(target)
     );
