@@ -5509,7 +5509,7 @@ function seoSpamReason(track = {}, options = {}, profile = buildDiscoveryProfile
   const shortGenreYearTitle = hasTargetGenreInTitle && embeddedMarketingYear && normalize(rawTitle).split(/\s+/).length <= 5;
   const distributorLabel = /^\d+\s+records\s+dk$/i.test(rawLabel);
   const labelAsArtist = normalize(rawArtist) && normalize(rawArtist) === normalize(rawLabel) && /\brecords?\b/i.test(rawArtist);
-  const obviousCoverOrKaraoke = /\b(?:karaoke|tribute to|cover version|covers?|(?:as )?made famous by|originally performed by)\b/i.test(raw);
+  const obviousCoverOrKaraoke = /\b(?:karaoke|tribute to|cover version|covers?|(?:as )?made (?:famous|popular) by|originally performed by|backing (?:version|track))\b/i.test(raw);
   const longGenericAlbum = hasTargetGenreInTitle && embeddedMarketingYear && normalize(rawAlbum).split(/\s+/).length >= 6;
   const audiobookChapter = /\bchapter\s+\d+\b/i.test(rawTitle) &&
     /\b(?:unabridged|audiobook|audio\s*book|book|novel|story|escapist|romance|tale)\b/i.test(`${rawAlbum} ${rawLabel}`);
@@ -6081,8 +6081,14 @@ function identityCorrectnessReasonFor(track = {}, options = {}, profile = buildD
   const targetArtist = queryTargetArtist(track.query, profile);
   if (targetArtist) {
     const target = normalize(targetArtist);
-    const matchedTarget = artistMatchesKnownName(track.artist, targetArtist) ||
-      normalize(`${track.title} ${track.album}`).includes(target);
+    // A title or album that mentions the target counts as a credit ("Biko
+    // (Peter Gabriel Remix)"), but one that is only the target's name is
+    // another artist's song about them, not the target.
+    const nameOnly = (value) => normalize(cleanText(value).replace(/\s*[([].*$/, "")) === target;
+    const matchedTarget = artistMatchesKnownName(track.artist, targetArtist) || (
+      !nameOnly(track.title) && !nameOnly(track.album) &&
+      normalize(`${track.title} ${track.album}`).includes(target)
+    );
     if (!matchedTarget && !sceneCorroboratesArtistDrift(track, options, profile)) {
       return `Search was for ${targetArtist}, but TIDAL returned ${track.artist}.`;
     }
