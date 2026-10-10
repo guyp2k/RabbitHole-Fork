@@ -45,14 +45,20 @@ test("copper turns the lavender accent copper and the pink accent gold", () => {
   assert.ok(Math.abs(hsl(mapColor("#ff73d8", rules("copper"))).h - 46) < 2);
 });
 
-test("roon turns tinted darks into lifted neutral greys and accents periwinkle", () => {
+test("roon turns tinted darks into lifted neutral greys", () => {
   const bg = hsl(mapColor("#05020b", rules("roon")));
   assert.ok(bg.s <= 0.04 && bg.l > hsl("#05020b").l + 0.04, JSON.stringify(bg));
-  assert.ok(Math.abs(hsl(mapColor("#a77cff", rules("roon"))).h - 237) < 3);
-  assert.ok(Math.abs(hsl(mapColor("#d9b3ff", rules("roon"))).h - 237) < 3, "the main accent stays periwinkle");
-  const text = mapColor("#faf6ff", rules("roon")).match(/[0-9a-f]{2}/g).map((v) => parseInt(v, 16));
-  assert.ok(Math.max(...text) - Math.min(...text) <= 3, "near-white text goes neutral");
-  assert.ok(hsl(mapColor("#8ff0ff", rules("roon"))).s <= 0.07);
+});
+
+test("roon has no violet: light accents go neutral and mid accents go blue", () => {
+  const spread = (hex) => { const c = hex.match(/[0-9a-f]{2}/g).map((v) => parseInt(v, 16)); return Math.max(...c) - Math.min(...c); };
+  for (const light of ["#d9b3ff", "#faf6ff", "#ddc9ff", "#ff73d8", "#a77cff", "#8ff0ff"]) {
+    assert.ok(spread(mapColor(light, rules("roon"))) <= 16, `${light} -> ${mapColor(light, rules("roon"))} is not neutral`);
+  }
+  for (const mid of ["#7a4dff", "#9b3dd6", "#5b2a9e", "#c02bb0"]) {
+    const { h } = hsl(mapColor(mid, rules("roon")));
+    assert.ok(h >= 210 && h <= 225, `${mid} -> ${mapColor(mid, rules("roon"))} has hue ${h}`);
+  }
 });
 
 test("colour formats and alpha survive a remap and greys are untouched", () => {
