@@ -67,15 +67,37 @@ test("the Settings header carries the theme picker and loads its script", () => 
   assert.match(html, /<script src="\/themePicker\.js(\?v=[\w-]+)?"><\/script>/);
 });
 
-test("the theme picker sizes to its options instead of stretching across the Settings row", () => {
+test("every Settings control shares one width and one label column", () => {
   const css = fs.readFileSync(require.resolve("../public/styles.css"), "utf8");
-  const zone = css.lastIndexOf(".settingsPanel > .topControls .zonePicker select {");
-  const rule = css.indexOf(".settingsPanel > .topControls .themePicker {");
-  assert.ok(rule > zone, "the theme picker rule comes after the stretching zonePicker rules");
-  const body = css.slice(rule, css.indexOf("}", rule));
-  assert.match(body, /justify-self: start;/);
-  assert.match(body, /width: auto;/);
-  assert.match(body, /min-width: 0;/);
-  const select = css.slice(css.indexOf(".settingsPanel > .topControls .themePicker select {"));
-  assert.match(select.slice(0, select.indexOf("}")), /width: auto;/);
+  const rule = (selector) => {
+    const at = css.lastIndexOf(`${selector} {`);
+    assert.notEqual(at, -1, `${selector} has a rule`);
+    return css.slice(at, css.indexOf("}", at));
+  };
+  assert.ok(css.lastIndexOf(".settingsPanel > .topControls {") > css.indexOf(".settingsPanel > .topControls .zonePicker select {"));
+  assert.match(rule(".settingsPanel > .topControls"), /display: flex;[\s\S]*flex-wrap: wrap;/);
+  assert.match(rule(".settingsPanel > .topControls .aiModeControls"), /display: contents;/);
+  const control = rule(".settingsPanel > .topControls :is(.aiModeControls label, .zonePicker)");
+  assert.match(control, /flex: 0 1 var\(--settings-control-width\);/);
+  assert.match(control, /width: var\(--settings-control-width\);/);
+  assert.match(control, /flex-direction: row;/, "phones keep the label beside the select, as AI Mode does");
+  assert.match(rule(".settingsPanel > .topControls :is(.aiModeControls label, .zonePicker) span"), /padding-left: 9px;/, "the label text keeps its inset from the pill edge");
+  assert.match(rule(".settingsPanel > .topControls :is(.aiModeControls label, .zonePicker) span"), /flex: 0 0 var\(--settings-label-width\);/);
+  const fieldSelector = `body:not(.playerFullWindow):not(.playerMaximized) .settingsPanel > .topControls :is(.aiModeControls label, .zonePicker) :is(
+  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="hidden"]),
+  select
+)`;
+  const field = rule(fieldSelector);
+  const globalField = `body:not(.playerFullWindow):not(.playerMaximized) :is(
+    input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="hidden"]),
+    select,
+    textarea
+  )`;
+  assert.notEqual(css.indexOf(globalField), -1, "the app-wide 8px field rule this has to outrank still exists");
+  assert.ok(fieldSelector.startsWith(globalField.slice(0, globalField.indexOf(":is("))) && fieldSelector.includes('input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="hidden"])'),
+    "the Settings field rule carries the global rule's whole selector plus the Settings scope, so it is strictly more specific");
+  assert.match(field, /flex: 1 1 auto;[\s\S]*width: auto;/);
+  assert.match(field, /border-radius: 999px;/, "the select is a pill nested in the pill, not a rectangle poking into its curve");
+  assert.match(control, /padding: 5px;/, "the select sits an even 5px inside the pill on every side");
+  assert.doesNotMatch(css, /\.themePicker \{/, "no theme-only sizing left over");
 });
