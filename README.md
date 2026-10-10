@@ -140,6 +140,18 @@ Use a reachable LAN address when the model runs on another computer. Optional
 provider keys, TIDAL OAuth, Synapse model tiers and limits are documented in
 `.env.example` and available in Settings. Controls do not require a running LLM.
 
+## Colour themes
+
+Settings has a **Theme** picker: Original, Obsidian & Copper, and Roon Dark. The choice is saved per browser
+in a cookie and applies to every page. `UI_THEME` in `.env` sets the theme a browser gets before it picks one
+(default `original`).
+
+A theme is a JSON file in `src/themes/`. Its `rules` match colours by hue and lightness and set a new hue,
+a saturation cap or a lightness lift; the first matching rule wins and greys are never changed. The server
+applies the rules to stylesheets and HTML as it serves them, so the CSS in `public/` stays the one source.
+Recoloured artwork lives in `public/themes/<id>/`; after adding a theme or changing its rules, run
+`node scripts/render-theme-art.js` (needs ImageMagick) to regenerate it.
+
 ## Guides
 
 - [Lyrion players, plugin playback and HQPlayerBridge](docs/lyrion.md)
