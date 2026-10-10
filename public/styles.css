@@ -10008,6 +10008,18 @@ body.playerFullWindow .player.player--fullscreen.isFullWindow ::placeholder,
   width: 100%;
 }
 
+.settingsPanel > .topControls .themePicker {
+  justify-self: start;
+  width: auto;
+  min-width: 0;
+}
+
+.settingsPanel > .topControls .themePicker select {
+  flex: 0 0 auto;
+  width: auto;
+  min-width: 190px;
+}
+
 .settingsSection {
   display: grid;
   gap: 16px;

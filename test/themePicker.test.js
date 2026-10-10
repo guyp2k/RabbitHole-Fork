@@ -66,3 +66,16 @@ test("the Settings header carries the theme picker and loads its script", () => 
   assert.match(html, /<select id="themeSelect" aria-label="Colour theme"><\/select>/);
   assert.match(html, /<script src="\/themePicker\.js(\?v=[\w-]+)?"><\/script>/);
 });
+
+test("the theme picker sizes to its options instead of stretching across the Settings row", () => {
+  const css = fs.readFileSync(require.resolve("../public/styles.css"), "utf8");
+  const zone = css.lastIndexOf(".settingsPanel > .topControls .zonePicker select {");
+  const rule = css.indexOf(".settingsPanel > .topControls .themePicker {");
+  assert.ok(rule > zone, "the theme picker rule comes after the stretching zonePicker rules");
+  const body = css.slice(rule, css.indexOf("}", rule));
+  assert.match(body, /justify-self: start;/);
+  assert.match(body, /width: auto;/);
+  assert.match(body, /min-width: 0;/);
+  const select = css.slice(css.indexOf(".settingsPanel > .topControls .themePicker select {"));
+  assert.match(select.slice(0, select.indexOf("}")), /width: auto;/);
+});
