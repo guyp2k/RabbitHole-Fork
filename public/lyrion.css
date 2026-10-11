@@ -190,3 +190,12 @@ body.lyrionFullscreenOpen {overflow:hidden;}
 .lyrionSetup ul {position:absolute;top:calc(100% + 6px);left:0;z-index:20;min-width:250px;margin:0;padding:6px;list-style:none;border:1px solid var(--lyrion-line);border-radius:12px;background:#0b0713;box-shadow:0 16px 40px rgba(0,0,0,.45);}
 .lyrionSetup a {display:flex;align-items:center;min-height:44px;padding:0 12px;border-radius:6px;color:var(--text);text-decoration:none;white-space:nowrap;}
 .lyrionSetup a:is(:hover,:focus-visible) {background:rgba(217,179,255,.1);color:var(--accent);outline:none;}
+/* Now playing details from LMS and the PC monitor's temperatures, laid out like the Roon player rail. */
+.lyrionDetails {display:grid;grid-template-columns:minmax(96px,auto) minmax(0,1fr);gap:12px 24px;margin:24px 0 0;font-size:13px;line-height:1.4;}
+.lyrionDetails[hidden],#lyrionView .lyrionSystem[hidden] {display:none;}
+.lyrionDetails dt {font-weight:600;color:var(--muted);}
+.lyrionDetails dd {margin:0;overflow-wrap:anywhere;}
+.lyrionTemps {display:flex;flex-wrap:wrap;gap:8px 24px;}
+#lyrionView .lyrionTemps .pcTempChip {min-height:36px;gap:8px;padding:0 14px;}
+#lyrionView .lyrionTemps .pcTempChip span {font-size:11px;}
+#lyrionView .lyrionTemps .pcTempChip strong {font-size:20px;line-height:1;}
