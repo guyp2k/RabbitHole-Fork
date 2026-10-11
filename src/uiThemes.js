@@ -23,23 +23,25 @@ function toRgb(h, s, l) {
   return [f(0), f(8), f(4)].map((v) => Math.round(v * 255));
 }
 
-function remap([h, s, l], rules) {
-  if (s < 0.08) return null;
+function remap([h, s, l], rules, { greys = false } = {}) {
+  if (s < 0.08 && !greys) return null;
   for (const rule of rules) {
     const [hueFrom, hueTo] = rule.hue || [0, 360];
     const [lightFrom, lightTo] = rule.light || [0, 1];
-    if (h < hueFrom || h >= hueTo || l < lightFrom || l > lightTo) continue;
+    const [satFrom, satTo] = rule.sat || [0, 1];
+    if (h < hueFrom || h >= hueTo || l < lightFrom || l > lightTo || s < satFrom || s > satTo) continue;
     const set = rule.set || {};
+    const lightness = (set.invertLight ? 1 - l : l) + (set.addLight || 0);
     return [
       set.hue ?? h,
       Math.min(s, set.maxSat ?? 1),
-      Math.min(1, l + (set.addLight || 0))
+      Math.min(set.maxLight ?? 1, Math.max(set.minLight ?? 0, lightness))
     ];
   }
   return null;
 }
 
-function mapColor(color, rules) {
+function mapColor(color, rules, options) {
   let rgb, format;
   if (color[0] === "#") {
     const hex = color.length === 4 ? [...color.slice(1)].map((c) => c + c).join("") : color.slice(1);
@@ -51,13 +53,13 @@ function mapColor(color, rules) {
     rgb = parts.slice(0, 3).map(Number);
     format = (c) => `${fn}(${c.join(", ")}${parts[3] === undefined ? "" : `, ${parts[3]}`})`;
   }
-  const next = remap(toHsl(...rgb), rules);
+  const next = remap(toHsl(...rgb), rules, options);
   return next ? format(toRgb(...next)) : color;
 }
 
-function remapPixels(buffer, channels, rules) {
+function remapPixels(buffer, channels, rules, options) {
   for (let i = 0; i < buffer.length; i += channels) {
-    const next = remap(toHsl(buffer[i], buffer[i + 1], buffer[i + 2]), rules);
+    const next = remap(toHsl(buffer[i], buffer[i + 1], buffer[i + 2]), rules, options);
     if (next) buffer.set(toRgb(...next), i);
   }
   return buffer;
@@ -72,7 +74,14 @@ function loadThemes(themesDir) {
   const themes = new Map();
   for (const name of fs.readdirSync(themesDir).filter((n) => n.endsWith(".json")).sort()) {
     const theme = JSON.parse(fs.readFileSync(path.join(themesDir, name), "utf8"));
-    themes.set(theme.id, { id: theme.id, label: theme.label, rules: theme.rules || [] });
+    themes.set(theme.id, {
+      id: theme.id,
+      label: theme.label,
+      rules: theme.rules || [],
+      greys: theme.greys === true,
+      liftDarkening: theme.liftDarkening || null,
+      scheme: theme.scheme === "light" ? "light" : "dark"
+    });
   }
   return themes;
 }
@@ -98,7 +107,13 @@ function createThemes({ themesDir, defaultTheme }) {
     const source = data.toString("utf8");
     const hit = cache.get(key);
     if (hit && hit.source === source) return hit.output;
-    const output = Buffer.from(source.replace(COLOR, (m) => mapColor(m, theme.rules)));
+    let output = source.replace(COLOR, (m) => mapColor(m, theme.rules, { greys: theme.greys }));
+    if (theme.scheme === "light") output = output.replace(/color-scheme:\s*dark/g, "color-scheme: light");
+    if (theme.liftDarkening) {
+      const { below, brightness } = theme.liftDarkening;
+      output = output.replace(/brightness\(\s*([\d.]+)\s*\)/g, (m, value) => (Number(value) < below ? `brightness(${brightness})` : m));
+    }
+    output = Buffer.from(output);
     cache.set(key, { source, output });
     return output;
   }

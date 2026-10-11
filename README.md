@@ -142,12 +142,15 @@ provider keys, TIDAL OAuth, Synapse model tiers and limits are documented in
 
 ## Colour themes
 
-Settings has a **Theme** picker: Original, Obsidian & Copper, and Roon Dark. The choice is saved per browser
+Settings has a **Theme** picker: Original, Obsidian & Copper, Roon Dark and Roon Light. The choice is saved per browser
 in a cookie and applies to every page. `UI_THEME` in `.env` sets the theme a browser gets before it picks one
 (default `original`).
 
 A theme is a JSON file in `src/themes/`. Its `rules` match colours by hue and lightness and set a new hue,
-a saturation cap or a lightness lift; the first matching rule wins and greys are never changed. The server
+a saturation cap, a lightness lift or a lightness flip (`invertLight`, clamped by `minLight`/`maxLight`); the
+first matching rule wins. Greys are left alone unless the theme sets `greys: true`. A light theme also sets
+`scheme: "light"`, `liftDarkening` (raises the `brightness()` filters that darken the artwork backdrop) and
+`artRules` (artwork is recoloured, never inverted). The server
 applies the rules to stylesheets and HTML as it serves them, so the CSS in `public/` stays the one source.
 Recoloured artwork lives in `public/themes/<id>/`; after adding a theme or changing its rules, run
 `node scripts/render-theme-art.js` (needs ImageMagick) to regenerate it.

@@ -20,10 +20,11 @@ function recolor(source, target, rules) {
 
 for (const name of fs.readdirSync(path.join(ROOT, "src", "themes")).filter((n) => n.endsWith(".json"))) {
   const theme = JSON.parse(fs.readFileSync(path.join(ROOT, "src", "themes", name), "utf8"));
-  if (!theme.rules.length) continue;
+  const rules = theme.artRules || theme.rules;
+  if (!rules.length) continue;
   for (const art of ART) {
     const target = path.join(ROOT, "public", "themes", theme.id, art);
-    recolor(path.join(ROOT, "public", art), target, theme.rules);
+    recolor(path.join(ROOT, "public", art), target, rules);
     console.log(`rendered ${path.relative(ROOT, target)}`);
   }
 }

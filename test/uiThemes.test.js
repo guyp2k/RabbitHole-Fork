@@ -9,7 +9,14 @@ const { createThemes, mapColor, themeFromCookie } = require("../src/uiThemes");
 
 const THEMES_DIR = path.join(__dirname, "..", "src", "themes");
 const themes = createThemes({ themesDir: THEMES_DIR, defaultTheme: "original" });
-const rules = (id) => JSON.parse(fs.readFileSync(path.join(THEMES_DIR, `${id}.json`), "utf8")).rules;
+const theme = (id) => JSON.parse(fs.readFileSync(path.join(THEMES_DIR, `${id}.json`), "utf8"));
+const rules = (id) => theme(id).rules;
+const light = (c) => mapColor(c, rules("roon-light"), { greys: true });
+const lum = (hex) => {
+  const [r, g, b] = hex.match(/[0-9a-f]{2}/g).map((v) => parseInt(v, 16) / 255).map((v) => (v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4));
+  return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+};
+const contrast = (a, b) => { const [x, y] = [lum(a), lum(b)].sort((m, n) => n - m); return (x + 0.05) / (y + 0.05); };
 
 function hsl(hex) {
   const [r, g, b] = [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16) / 255);
@@ -31,7 +38,7 @@ function publicDir() {
 
 test("every bundled theme is listed with its label and the default is reported", () => {
   const listed = themes.list();
-  assert.deepEqual(listed.themes.map((t) => t.id).sort(), ["copper", "original", "roon"]);
+  assert.deepEqual(listed.themes.map((t) => t.id).sort(), ["copper", "original", "roon", "roon-light"]);
   assert.equal(listed.themes.find((t) => t.id === "copper").label, "Obsidian & Copper");
   assert.equal(listed.default, "original");
 });
@@ -59,6 +66,65 @@ test("roon has no violet: light accents go neutral and mid accents go blue", () 
     const { h } = hsl(mapColor(mid, rules("roon")));
     assert.ok(h >= 210 && h <= 225, `${mid} -> ${mapColor(mid, rules("roon"))} has hue ${h}`);
   }
+});
+
+test("roon light turns the dark page white and its light text near-black", () => {
+  assert.ok(hsl(light("#05020b")).l > 0.95, light("#05020b"));
+  assert.match(light("rgba(13, 6, 25, 0.88)"), /^rgba\((2[3-5]\d), \1, \1, 0\.88\)$|^rgba\(2[3-5]\d, 2[3-5]\d, 2[3-5]\d, 0\.88\)$/);
+  assert.ok(hsl(light("#faf6ff")).l < 0.06, light("#faf6ff"));
+  assert.ok(hsl(light("#fff")).l < 0.02, light("#fff"));
+  assert.match(light("rgba(255, 255, 255, 0.06)"), /^rgba\(0, 0, 0, 0\.06\)$/);
+});
+
+test("roon light makes light accents dark text, as Roon Dark makes them neutral, and mid accents a blue that reads on the page", () => {
+  const spread = (hex) => { const c = hex.match(/[0-9a-f]{2}/g).map((v) => parseInt(v, 16)); return Math.max(...c) - Math.min(...c); };
+  for (const textAccent of ["#d9b3ff", "#a77cff", "#ff73d8", "#ddc9ff"]) {
+    const out = light(textAccent);
+    assert.ok(spread(out) <= 8 && contrast(out, light("#05020b")) >= 7, `${textAccent} -> ${out}`);
+  }
+  for (const accent of ["#7a4dff", "#9b3dd6", "#5b2a9e", "#c02bb0"]) {
+    const out = light(accent);
+    assert.ok(Math.abs(hsl(out).h - 220) < 3, `${accent} -> ${out}`);
+    assert.ok(contrast(out, light("#05020b")) >= 4.5, `${out} on the page has contrast ${contrast(out, light("#05020b")).toFixed(2)}`);
+  }
+});
+
+test("roon light lifts the filters that darken the artwork backdrop and leaves light dimming alone", () => {
+  const dir = publicDir();
+  const css = "a{filter: blur(34px) saturate(1.18) brightness(0.48)} b{filter:brightness(.56)} c{filter: brightness(0.9)} d{filter: brightness(1.2)}";
+  fs.writeFileSync(path.join(dir, "f.css"), css);
+  const lightThemes = createThemes({ themesDir: THEMES_DIR, defaultTheme: "roon-light" });
+  const out = lightThemes.render(dir, path.join(dir, "f.css"), Buffer.from(css), undefined).toString();
+  assert.equal(out, "a{filter: blur(34px) saturate(1.18) brightness(1.1)} b{filter:brightness(1.1)} c{filter: brightness(0.9)} d{filter: brightness(1.2)}");
+  assert.equal(themes.render(dir, path.join(dir, "f.css"), Buffer.from(css), "rh_theme=roon").toString(), css);
+  fs.rmSync(dir, { recursive: true });
+});
+
+test("roon light keeps status colours recognisable and readable on white", () => {
+  for (const [status, hueFrom, hueTo] of [["#ef767a", 345, 360], ["#3fbf6f", 130, 150], ["#ffcf7f", 30, 45]]) {
+    const out = light(status), { h } = hsl(out);
+    assert.ok(h >= hueFrom && h <= hueTo, `${status} -> ${out} hue ${h}`);
+    assert.ok(contrast(out, light("#05020b")) >= 3, `${out} contrast ${contrast(out, light("#05020b")).toFixed(2)}`);
+  }
+});
+
+test("greys are only remapped by themes that ask for it", () => {
+  assert.equal(mapColor("#fff", rules("roon-light")), "#fff");
+  assert.notEqual(mapColor("#fff", rules("roon-light"), { greys: true }), "#fff");
+});
+
+test("roon light switches the browser to its light colour scheme and ships its own art rules", () => {
+  const dir = publicDir();
+  fs.writeFileSync(path.join(dir, "scheme.css"), ":root{color-scheme: dark;--bg:#05020b}\nbody{color-scheme:dark}");
+  const lightThemes = createThemes({ themesDir: THEMES_DIR, defaultTheme: "roon-light" });
+  const out = lightThemes.render(dir, path.join(dir, "scheme.css"), fs.readFileSync(path.join(dir, "scheme.css")), undefined).toString();
+  assert.doesNotMatch(out, /color-scheme: ?dark/);
+  assert.equal(out.match(/color-scheme: light/g).length, 2);
+  assert.match(themes.render(dir, path.join(dir, "scheme.css"), fs.readFileSync(path.join(dir, "scheme.css")), "rh_theme=roon").toString(), /color-scheme: dark/);
+  const art = theme("roon-light").artRules;
+  assert.ok(Array.isArray(art) && art.length, "art rules exist");
+  assert.ok(art.every((rule) => !rule.set.invertLight), "artwork is never turned into a negative");
+  fs.rmSync(dir, { recursive: true });
 });
 
 test("colour formats and alpha survive a remap and greys are untouched", () => {
