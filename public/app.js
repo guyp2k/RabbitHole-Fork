@@ -151,6 +151,7 @@ const state = {
   openTrackDetails: new Set(),
   queueReportOpen: false,
   resultsCollapsed: false,
+  composerCollapsed: false,
   sonicProduction: {
     enabled: false,
     productionMode: "off",
@@ -3129,15 +3130,24 @@ function queueReportHtml(result = {}) {
   `;
 }
 
+function setPanelFolded(toggleSelector, bodySelector, folded, what) {
+  const body = $(bodySelector);
+  const toggle = $(toggleSelector);
+  if (body) body.hidden = folded;
+  if (!toggle) return;
+  toggle.setAttribute("aria-expanded", String(!folded));
+  toggle.textContent = folded ? "\u25B8" : "\u25BE";
+  toggle.title = `${folded ? "Show" : "Hide"} ${what}`;
+}
+
 function setResultsCollapsed(collapsed) {
   state.resultsCollapsed = Boolean(collapsed);
-  const body = $("#resultsBody");
-  const toggle = $("#resultsToggle");
-  if (body) body.hidden = state.resultsCollapsed;
-  if (!toggle) return;
-  toggle.setAttribute("aria-expanded", String(!state.resultsCollapsed));
-  toggle.textContent = state.resultsCollapsed ? "\u25B8" : "\u25BE";
-  toggle.title = state.resultsCollapsed ? "Show the track list" : "Hide the track list";
+  setPanelFolded("#resultsToggle", "#resultsBody", state.resultsCollapsed, "the track list");
+}
+
+function setComposerCollapsed(collapsed) {
+  state.composerCollapsed = Boolean(collapsed);
+  setPanelFolded("#composerToggle", "#composerBody", state.composerCollapsed, "the playlist builder");
 }
 
 function rememberQueueReportToggle(event) {
@@ -8748,6 +8758,8 @@ $("#tracks").addEventListener("toggle", rememberTrackDetailsToggle, true);
 $("#queueReport").addEventListener("toggle", rememberQueueReportToggle, true);
 $("#resultsToggle").addEventListener("click", () => setResultsCollapsed(!state.resultsCollapsed));
 $("#resultTitle").addEventListener("click", () => setResultsCollapsed(!state.resultsCollapsed));
+$("#composerToggle").addEventListener("click", () => setComposerCollapsed(!state.composerCollapsed));
+$("#composerTitle").addEventListener("click", () => setComposerCollapsed(!state.composerCollapsed));
 
 $("#tracks").addEventListener("click", async (event) => {
   const tidalButton = event.target.closest("[data-tidal-open]");
