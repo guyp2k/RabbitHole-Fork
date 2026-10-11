@@ -193,11 +193,6 @@ body.lyrionFullscreenOpen {overflow:hidden;}
 #lyrionView .lyrionTemps .pcTempChip {min-height:36px;gap:8px;padding:0 14px;}
 #lyrionView .lyrionTemps .pcTempChip span {font-size:11px;}
 #lyrionView .lyrionTemps .pcTempChip strong {font-size:20px;line-height:1;}
-/* What HQPlayer is resampling to, under the playback chain of an HQPlayer bridge player. */
-.lyrionHqplayer {display:grid;grid-template-columns:minmax(96px,auto) minmax(0,1fr);gap:12px 24px;margin:12px 0 0;font-size:13px;line-height:1.4;}
-.lyrionHqplayer[hidden] {display:none;}
-.lyrionHqplayer dt {font-weight:600;color:var(--muted);}
-.lyrionHqplayer dd {margin:0;overflow-wrap:anywhere;}
 /* HQPlayer web interface and HQPTuner links under the Playback System bar. */
 .hqplayerLinksBar {display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin:-4px 0 12px;}
 .hqplayerLinksBar[hidden] {display:none;}

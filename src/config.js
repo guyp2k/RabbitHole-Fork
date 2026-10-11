@@ -368,6 +368,9 @@ module.exports = {
   playbackLinks: {
     rouenUrl: process.env.ROUEN_URL || ""
   },
+  roonHqplayer: {
+    zones: process.env.ROON_HQPLAYER_ZONES || ""
+  },
   hqplayer: {
     webUrl: process.env.HQPLAYER_WEB_URL || "",
     tunerUrl: process.env.HQPTUNER_URL || "",
