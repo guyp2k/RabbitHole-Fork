@@ -1515,6 +1515,28 @@ function nowSourceQualityHtml(info = null, track = null) {
   )).join("") + tagHtml;
 }
 
+let nowVolumeControl = null;
+let nowVolumeOutputId = "";
+
+function renderNowVolume(zone) {
+  const output = (zone?.outputs || []).find((candidate) => candidate.volume) || null;
+  nowVolumeOutputId = output?.output_id || "";
+  if (!nowVolumeControl) {
+    const change = async (how, value) => {
+      try {
+        await api("/api/volume", { outputId: nowVolumeOutputId, how, value });
+      } catch (error) {
+        alert(error.message);
+      }
+    };
+    nowVolumeControl = window.createVolumeControl($("#nowVolume"), {
+      set: (value) => change("absolute", value),
+      step: (value) => change("relative_step", value)
+    });
+  }
+  nowVolumeControl.update(output?.volume || null);
+}
+
 function renderNowSourceQuality(info = null, track = state.nowTrack) {
   const source = $("#nowSourceFormat");
   if (!source) return;
@@ -4793,6 +4815,7 @@ function renderState(payload) {
     ];
   setCoverImage(cover, coverCandidates);
 
+  renderNowVolume(zone);
   const outputs = $("#outputs");
   if (outputs) {
     outputs.hidden = true;
