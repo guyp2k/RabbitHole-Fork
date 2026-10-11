@@ -137,9 +137,10 @@ class LyrionClient {
     }
     if (s.remoteMeta) current = { ...current, ...s.remoteMeta };
     const hqplayer = await this.hqplayerFor(player, s);
+    const duration = Number(s.duration) || Number(current?.duration) || this.onDemandMetadata?.(current?.url)?.duration || 0;
     return { playerId: player, playerName: s.player_name, connected: !!Number(s.player_connected),
       state: s.mode === "play" ? "playing" : s.mode === "pause" ? "paused" : "stopped",
-      position: Number(s.time) || 0, duration: Number(s.duration) || Number(current?.duration) || this.onDemandMetadata?.(current?.url)?.duration || 0,
+      position: Number(s.time) || 0, duration, canSeek: !!Number(s.can_seek) && duration > 0,
       nowPlaying: current ? this.track(current) : null, queue: (s.playlist_loop || []).map(t => this.track(t)),
       queueCount: Number(s.playlist_tracks) || 0, queueIndex: index, offset, volume: lmsVolume(s), hqplayer };
   }
@@ -262,6 +263,10 @@ class LyrionClient {
     else if (number(value)) level = String(Math.max(0, Math.min(100, Math.round(Number(value)))));
     else throw new Error("Send a volume level or step.");
     return this.rpc(player, ["mixer", "volume", level]);
+  }
+  async seek(player, seconds) {
+    if (seconds === undefined || seconds === null || seconds === "" || !Number.isFinite(Number(seconds))) throw new Error("Send a position in seconds.");
+    return this.rpc(player, ["time", String(Math.max(0, Number(seconds)))]);
   }
   async control(player, action) {
     const commands = { play: ["play"], pause: ["pause", 1], next: ["playlist", "index", "+1"], previous: ["playlist", "index", "-1"], clear: ["playlist", "clear"] };
