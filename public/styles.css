@@ -12639,3 +12639,11 @@ body .nowVolume .volumeSlider,
 #lyrionView .lyrionStageFooter #lyrionProgress:disabled::-moz-range-thumb {
   visibility: hidden;
 }
+
+.nowVolume .volumeSlider:not(:disabled) {
+  cursor: pointer;
+}
+
+.nowVolume .volumeSlider:not(:disabled):active {
+  cursor: grabbing;
+}
