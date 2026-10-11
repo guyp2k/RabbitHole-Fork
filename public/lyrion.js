@@ -4,7 +4,7 @@
   const ui = document.createElement("section");
   ui.id = "lyrionView"; ui.hidden = true; ui.setAttribute("aria-label", "Lyrion playback");
   ui.innerHTML = `
-    <div class="panel lyrionToolbar"><label for="lyrionPlayer">Lyrion Player</label><select id="lyrionPlayer"><option value="">Choose a player</option></select><button id="lyrionRefresh" type="button">Refresh players</button></div>
+    <div class="panel lyrionToolbar"><label for="lyrionPlayer">Lyrion Player</label><select id="lyrionPlayer"><option value="">Choose a player</option></select><button id="lyrionRefresh" type="button">Refresh Players</button></div>
     <p id="lyrionMessage" role="status" aria-live="polite"></p>
     <section class="panel lyrionHome" id="lyrionHomeView" aria-label="Lyrion home">
       <section class="lyrionShelf" aria-labelledby="lyrionNewMusicHeading"><div class="lyrionShelfHead"><h2 id="lyrionNewMusicHeading">New Music</h2><button id="lyrionNewMusicMore" type="button">More</button></div><p id="lyrionNewMusicStatus" class="muted" role="status" hidden></p><ul id="lyrionNewMusic" class="lyrionShelfRow"></ul></section>
