@@ -209,3 +209,11 @@ body.lyrionFullscreenOpen {overflow:hidden;}
 .roonZoneBar {display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin:-4px 0 12px;}
 body[data-playback-system="lyrion"] #roonZoneBar,#roonZoneBar[hidden] {display:none;}
 .roonZoneLabel {color:var(--muted);font-size:16px;}
+#lyrionSourceChoices.isFolded button:not([aria-pressed="true"]) {display:none;}
+#lyrionView {--lyrion-label-col:48px;}
+:is(#lyrionSourceToggle,#lyrionResultsToggle) {margin-right:calc(var(--lyrion-label-col) - 34px);}
+#lyrionSearch {padding-left:calc(var(--lyrion-label-col) + 12px);}
+#lyrionSearch #lyrionQuery {flex:1 1 320px;max-width:640px;}
+.lyrionSourceRow {align-items:flex-start;flex-wrap:nowrap;}
+#lyrionSourceToggle {margin-top:5px;}
+@media(max-width:600px){#lyrionSearch {padding-left:0;} #lyrionSearch #lyrionQuery {flex-basis:100%;max-width:none;} .lyrionSourceRow #lyrionSourceChoices {flex:1 1 0;}}
