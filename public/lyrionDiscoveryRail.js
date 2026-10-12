@@ -2,11 +2,19 @@
 (() => {
  const stage=document.getElementById('lyrionNow');if(!stage)return;
  const rail=document.createElement('aside');rail.id='lyrionDiscoveryRail';rail.className='lyrionRail';rail.setAttribute('aria-label','Track details and playlists');
- rail.innerHTML=`<section id="lyrionBeatportSection" hidden><h3>Beatport metadata</h3><p id="lyrionBeatportStatus" class="muted" role="status">Play a track to find its details.</p><dl id="lyrionBeatportFields"></dl><a id="lyrionBeatportLink" target="_blank" rel="noopener noreferrer" hidden>View on Beatport</a><button id="lyrionBeatportRetry" type="button" hidden>Retry lookup</button></section>
+ rail.innerHTML=`<section class="lyrionFeedbackSection" hidden><h3>Rating</h3><div id="lyrionFeedback" class="feedbackButtons lyrionFeedback" role="group" aria-label="Rate this track"></div></section><section id="lyrionBeatportSection" hidden><h3>Beatport metadata</h3><p id="lyrionBeatportStatus" class="muted" role="status">Play a track to find its details.</p><dl id="lyrionBeatportFields"></dl><a id="lyrionBeatportLink" target="_blank" rel="noopener noreferrer" hidden>View on Beatport</a><button id="lyrionBeatportRetry" type="button" hidden>Retry lookup</button></section>
  <section class="lyrionPlaylistSection"><h3>Add to playlist</h3><p class="muted lyrionPlaylistHint">Save this track to TIDAL.</p><div id="lyrionPlaylistTargets"></div><button id="lyrionAddPlaylist" type="button" disabled>Add to TIDAL</button><button id="lyrionRefreshPlaylists" type="button">Refresh playlists</button><form id="lyrionCreatePlaylist"><label for="lyrionPlaylistName">New TIDAL playlist</label><input id="lyrionPlaylistName" required maxlength="200" placeholder="Playlist name"><button type="submit">Create playlist</button></form><p id="lyrionPlaylistStatus" role="status" aria-live="polite"></p></section>`;
  stage.querySelector('.lyrionStageFooter').before(rail);
  const stageFavorites=document.getElementById('lyrionStageFavorites');if(stageFavorites)rail.append(stageFavorites);
  const visible=()=>!stage.closest?.('.lyrionTabPanel')?.hidden;
+ const feedbackSection=rail.querySelector('.lyrionFeedbackSection');let feedbackKey='',feedbackSaving=false;
+ function renderFeedback(rating){
+  const canRate=typeof feedbackButtonsHtml==='function'&&!!track?.title&&!!track?.artist;
+  if(feedbackSection)feedbackSection.hidden=!canRate;if(!canRate)return;
+  $('lyrionFeedback').innerHTML=`<div class="feedbackRail">${feedbackButtonsHtml({feedback:rating},0,'lyrion')}</div>`;
+  $('lyrionFeedback').querySelectorAll('.feedbackButton').forEach(b=>b.setAttribute('aria-pressed',String(b.classList.contains('active'))));
+ }
+ function feedbackTrack(t){return {title:t.title,artist:t.artist,album:t.album||'',durationMs:Math.round((Number(t.duration)||0)*1000),url:t.url||'',source:'Lyrion'};}
  const $=id=>document.getElementById(id);let track=null,key='',lookupKey='',version=0,playlists=[],loaded=false,loading=false,writing=false;
  let metadataTimer=null,metadataAttempts=0,metadataBusy=false,playlistsRequested=false;
  function cancelMetadata(){clearTimeout(metadataTimer);metadataTimer=null;version++;metadataBusy=false;}
@@ -50,6 +58,7 @@
   $('lyrionBeatportFields').replaceChildren();$('lyrionBeatportLink').hidden=true;$('lyrionBeatportRetry').hidden=true;$('lyrionBeatportStatus').textContent='Looking up this track…';
   try{const result=await request('/api/lyrion/track-metadata',{track:inputTrack(captured)});if(currentVersion!==version)return;
    metadataBusy=false;const m=result.metadata;
+   if(feedbackKey===key)renderFeedback(result.feedback||'');
    if(typeof CustomEvent==='function')stage.dispatchEvent(new CustomEvent('lyrion-track-details',{detail:{track:captured,details:result.details||null}}));
    $('lyrionBeatportSection').hidden=result.beatportEnabled!==true;
    if(!m){if(result.beatportEnabled===false){$('lyrionBeatportStatus').textContent='';return;}retryMetadata(result.reason||'No Beatport match available.');return;}
@@ -60,8 +69,14 @@
  }
  stage.addEventListener('lyrion-track',event=>{
   track=event.detail;const next=JSON.stringify([track?.url,track?.title,track?.artist,track?.catalogue?.tidal?.id||'']);
-  if(next!==key){cancelMetadata();key=next;lookupKey='';metadataAttempts=0;$('lyrionBeatportFields').replaceChildren();$('lyrionBeatportLink').hidden=true;$('lyrionBeatportRetry').hidden=true;$('lyrionBeatportStatus').textContent=track?.artist?'':'Track title and artist are needed for a lookup.';}
+  if(next!==key){cancelMetadata();key=next;feedbackKey=key;renderFeedback('');lookupKey='';metadataAttempts=0;$('lyrionBeatportFields').replaceChildren();$('lyrionBeatportLink').hidden=true;$('lyrionBeatportRetry').hidden=true;$('lyrionBeatportStatus').textContent=track?.artist?'':'Track title and artist are needed for a lookup.';}
   buttons();if(visible()&&!playlistsRequested){playlistsRequested=true;void loadPlaylists();}scheduleMetadata();
+ });
+ $('lyrionFeedback').addEventListener?.('click',async event=>{
+  const button=event.target.closest?.('[data-lyrion-feedback]');if(!button||feedbackSaving||!track?.artist)return;
+  const rating=button.dataset.lyrionFeedback,captured={...track},capturedKey=key;feedbackSaving=true;
+  try{await request('/api/feedback',{track:feedbackTrack(captured),rating});if(capturedKey===key)renderFeedback(rating);}
+  catch(e){$('lyrionPlaylistStatus').textContent='Rating not saved: '+e.message;}finally{feedbackSaving=false;}
  });
  $('lyrionBeatportRetry').onclick=()=>metadata(true);$('lyrionRefreshPlaylists').onclick=()=>loadPlaylists(true);
  $('lyrionAddPlaylist').onclick=async()=>{

@@ -5,8 +5,9 @@ function trackDetails(entry){
  const details=Object.fromEntries(DETAIL_FIELDS.map(field=>[field,entry[field]]).filter(([,value])=>value!==null&&value!==undefined&&value!==''&&value!==0));
  return Object.keys(details).length?details:null;
 }
-function createLyrionTrackMetadata(enrichment,clock=Date.now,catalogue=null){
+function createLyrionTrackMetadata(enrichment,clock=Date.now,catalogue=null,feedbackFor=null){
  const cache=new Map(),pending=new Map();
+ const withFeedback=(value,track)=>({...value,feedback:String(feedbackFor?.(track)||'')});
  return async input=>{
   const track={title:String(input?.title||'').trim().slice(0,300),artist:String(input?.artist||'').trim().slice(0,300),album:String(input?.album||'').trim().slice(0,300)};
   const durationMs=Math.round(Number(input?.durationMs)||0);if(durationMs>0)track.durationMs=durationMs;
@@ -18,8 +19,8 @@ function createLyrionTrackMetadata(enrichment,clock=Date.now,catalogue=null){
   const suppliedId=String(input?.tidal?.id||'');
   const tidalId=/^\d{1,20}$/.test(suppliedId)?suppliedId:'';
   const key=JSON.stringify([track.title,track.artist,track.album,tidalId]),cached=cache.get(key);
-  if(cached&&clock()-cached.at<(cached.value.metadata||cached.value.details?600000:60000))return cached.value;
-  if(pending.has(key))return pending.get(key);
+  if(cached&&clock()-cached.at<(cached.value.metadata||cached.value.details?600000:60000))return withFeedback(cached.value,track);
+  if(pending.has(key))return withFeedback(await pending.get(key),track);
   const work=(async()=>{
    let entry=await enrichment.lookupBeatport(track,{retryMissingAfterMs:60000});
    let match=null;
@@ -29,7 +30,7 @@ function createLyrionTrackMetadata(enrichment,clock=Date.now,catalogue=null){
    value.beatportEnabled=enrichment.beatport?.isConfigured?.()===true;
    value.details=typeof enrichment.enrich==='function'?trackDetails(await enrichment.enrich(track).catch(()=>null)):null;
    cache.set(key,{at:clock(),value});if(cache.size>200)cache.delete(cache.keys().next().value);return value;
-  })().finally(()=>pending.delete(key));pending.set(key,work);return work;
+  })().finally(()=>pending.delete(key));pending.set(key,work);return withFeedback(await work,track);
  };
 }
 module.exports={createLyrionTrackMetadata};

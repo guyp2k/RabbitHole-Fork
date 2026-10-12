@@ -149,3 +149,24 @@ test("Now playing shows Track 7 of 15 and the library rows only when LMS knows t
   const plain = client.track({ ...localTrack, artist: "A", albumartist: "a", tracknum: "7" });
   assert.deepEqual(rows(plain, 219, null, null).map(r => r[0]), ["Track length", "Released", "Format", "Track"]);
 });
+
+test("the Lyrion track lookup reports the rating already stored for that track, fresh on every request", async () => {
+  let stored = "love";
+  const lookup = createLyrionTrackMetadata({ async lookupBeatport() { return null; } }, () => 0, null, track => track.title === "Sorrow" ? stored : "");
+  assert.equal((await lookup({ title: "Sorrow", artist: "David Gilmour" })).feedback, "love");
+  stored = "never";
+  assert.equal((await lookup({ title: "Sorrow", artist: "David Gilmour" })).feedback, "never", "a cached lookup still reports the latest rating");
+  assert.equal((await lookup({ title: "Other", artist: "David Gilmour" })).feedback, "");
+});
+
+test("the server reads the stored rating from the same track memory Roon uses", () => {
+  const server = fs.readFileSync(require.resolve("../src/server.js"), "utf8");
+  assert.match(server, /createLyrionTrackMetadata\(metadataEnrichment,Date\.now,lyrionCatalogue,track=>trackMemory\.find\(track\)\?\.feedback\);/);
+});
+
+test("the rail rates the track with Roon's buttons and the shared feedback endpoint, and marks the chosen rating", () => {
+  assert.match(rail, /<section class="lyrionFeedbackSection" hidden><h3>Rating<\/h3><div id="lyrionFeedback" class="feedbackButtons lyrionFeedback" role="group" aria-label="Rate this track"><\/div><\/section>/);
+  assert.match(rail, /\$\('lyrionFeedback'\)\.innerHTML=`<div class="feedbackRail">\$\{feedbackButtonsHtml\(\{feedback:rating\},0,'lyrion'\)\}<\/div>`;/);
+  assert.match(rail, /await request\('\/api\/feedback',\{track:feedbackTrack\(captured\),rating\}\);if\(capturedKey===key\)renderFeedback\(rating\);/);
+  assert.match(rail, /b\.setAttribute\('aria-pressed',String\(b\.classList\.contains\('active'\)\)\)/);
+});

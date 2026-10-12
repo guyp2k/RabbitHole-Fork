@@ -2939,7 +2939,7 @@ const siriusxmBrowser = new (require("./siriusxmBrowserRelay").SiriusXmBrowserRe
 // Browser heartbeats do not prove that SiriusXM refreshed its visible metadata.
 // Keep the experimental relay disabled until source freshness can be verified.
 lyrionApi.installPlaybackHandoffs();
-const lyrionTrackMetadata=require('./lyrionTrackMetadata').createLyrionTrackMetadata(metadataEnrichment,Date.now,lyrionCatalogue);
+const lyrionTrackMetadata=require('./lyrionTrackMetadata').createLyrionTrackMetadata(metadataEnrichment,Date.now,lyrionCatalogue,track=>trackMemory.find(track)?.feedback);
 const server = http.createServer(async (req, res) => {
   try {
     const url = new URL(req.url, `http://${req.headers.host}`);
