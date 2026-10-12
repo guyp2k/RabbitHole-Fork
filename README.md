@@ -1,4 +1,52 @@
-# The Rabbit Hole
+# The Rabbit Hole (guyp2k fork)
+
+> **This is a fork, not the original project.** The Rabbit Hole is written by
+> [darthspaders](https://github.com/darthspaders) and lives at
+> [darthspaders/RoonAI](https://github.com/darthspaders/RoonAI). All credit for
+> the app, its discovery engine and its Roon integration goes to him. This fork
+> adds Lyrion, HQPlayer and interface changes on top of his work. Please report
+> problems with this fork here, not upstream.
+
+Discussion: [Roon Community thread](https://community.roonlabs.com/t/326019).
+The original project's thread is [here](https://community.roonlabs.com/t/321144).
+
+## What this fork changes
+
+Built on upstream commit `f0b1e81` (0.2.2). Most of these changes are also
+offered upstream as pull requests.
+
+- **Lyrion player:** styled to match the Roon player, with a Home tab (new music,
+  favorites, explore), track and file details from LMS, ratings, a Setup menu
+  and folding Sources lists. One unanswered Roon call no longer freezes the
+  Lyrion controls.
+- **Now Playing:** source format and playback chain under the album art,
+  HQPlayer's output rate under the art for HQPlayer zones, a volume control,
+  rating stars, system temperatures, and a waveform seek bar on both players
+  (drawn from the LMS library file with FFmpeg).
+- **Playback System row:** Roon zones as pills, plus optional links to the
+  HQPlayer web interface, HQPTuner and Rouen.
+- **Themes:** Original, Obsidian & Copper, Roon Dark, Roon Light, Dark Orange
+  and Graphite & Brass, picked in Settings (`UI_THEME` sets the default).
+- **Discovery fixes:** artist-led searches are checked against the planned
+  artists, bare descriptor echoes and karaoke backing tracks are rejected, and
+  Last.fm relatives of the searched artist are kept.
+- **Layout:** foldable cards and panels, a header logo in the theme's colours,
+  and a favicon.
+
+The full list is in the commit history after `f0b1e81`. New settings are
+documented in `.env.example`.
+
+**Security:** like upstream, the web UI and API have no login. Run it on a
+trusted LAN only and never expose port 3777 to the internet.
+
+## License
+
+Apache License 2.0, the same as upstream. See [LICENSE](LICENSE) and
+[THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md). Files changed in this fork are
+listed in its commit history. "The Rabbit Hole" is darthspaders' project name;
+this fork makes no claim to it.
+
+---
 
 Rabbit Hole is a local music discovery and playback assistant for **Roon and
 Lyrion Music Server (LMS)**. Run it on your network and open its browser interface
@@ -54,8 +102,8 @@ Learned sonic models and Python/CUDA runtimes are separate optional installation
 ## Linux / Docker / Unraid
 
 ```sh
-git clone https://github.com/darthspaders/RoonAI.git
-cd RoonAI
+git clone https://github.com/guyp2k/RabbitHole-Fork.git
+cd RabbitHole-Fork
 cp .env.example .env
 # Edit .env: set LYRION_URL to your LMS HTTP address and configure your model.
 docker compose up -d --build

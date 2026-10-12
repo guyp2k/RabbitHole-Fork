@@ -12,8 +12,8 @@ databases, caches and personal files. SoundSpectrum, Python, CUDA and learned
 model weights are optional external runtimes and are not installed in this image.
 
 ```sh
-git clone https://github.com/darthspaders/RoonAI.git
-cd RoonAI
+git clone https://github.com/guyp2k/RabbitHole-Fork.git
+cd RabbitHole-Fork
 cp .env.example .env
 ```
 
