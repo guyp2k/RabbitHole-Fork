@@ -1,0 +1,9 @@
+.waveformSeek {--waveform-played:rgba(217,179,255,.95);--waveform-rest:rgba(255,255,255,.22);--waveform-head:#ff4d6d;position:relative;width:100%;min-width:0;height:28px;}
+.waveformSeek .waveformCanvas {position:absolute;inset:0;width:100%;height:100%;pointer-events:none;}
+.waveformSeek > input[type="range"] {position:absolute;inset:0;width:100%;height:100%;margin:0;opacity:0;cursor:pointer;}
+.waveformSeek > input[type="range"]:disabled {cursor:default;}
+.waveformSeek:has(> input:focus-visible) {outline:2px solid var(--accent);outline-offset:3px;border-radius:4px;}
+.waveformSeek.isIdle {height:auto;}
+.waveformSeek.isIdle .waveformCanvas {display:none;}
+.waveformSeek.isIdle > input[type="range"] {position:static;opacity:1;}
+.seekBlock:has(> .waveformSeek:not(.isIdle)) {grid-template-rows:auto 28px auto !important;}

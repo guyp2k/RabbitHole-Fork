@@ -39,6 +39,11 @@ function libraryMatches(track, rows = []) {
   return sameAlbum.length ? sameAlbum : matches;
 }
 
+function libraryTrackId(track, rows = []) {
+  const ids = new Set(libraryMatches(track, rows).map(row => String(row.id || "")).filter(id => /^\d+$/.test(id)));
+  return ids.size ? [...ids][0] : "";
+}
+
 function libraryFormat(matches) {
   if (!matches.length) return null;
   const formats = new Set(matches.map(row => `${row.type}|${row.samplerate}|${row.samplesize}`));
@@ -100,4 +105,4 @@ function lyrionTitleSearch(client) {
   return async (title) => (await client.rpc("", ["titles", 0, 50, `search:${title}`, LIBRARY_TAGS])).titles_loop || [];
 }
 
-module.exports = { createRoonSourceFormat, lyrionTitleSearch, libraryMatches, libraryFormat, tidalFormat, formatText };
+module.exports = { createRoonSourceFormat, lyrionTitleSearch, libraryMatches, libraryFormat, libraryTrackId, nowPlayingTrack, unbracketed, tidalFormat, formatText };

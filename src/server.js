@@ -15,7 +15,8 @@ const config = require("./config");
 const { acquireProcessLock } = require("./processLock");
 const { createHqplayerControl } = require("./hqplayerControl");
 const { parseRoonHqplayerZones, createRoonHqplayerRoute } = require("./roonHqplayer");
-const { createRoonSourceFormat, lyrionTitleSearch } = require("./roonSourceFormat");
+const { createRoonSourceFormat, lyrionTitleSearch, libraryTrackId, nowPlayingTrack, unbracketed } = require("./roonSourceFormat");
+const { createWaveformPeaks } = require("./waveformPeaks");
 let appProcessLock;
 try {
   appProcessLock = acquireProcessLock(path.join(__dirname, "..", "data", "rabbit-hole.app.lock"), "Rabbit Hole app");
@@ -1973,6 +1974,14 @@ async function handleApi(req, res, url) {
   if (req.method === "GET" && pathname === "/api/roon/hqplayer") {
     return sendJson(res, 200, await roonHqplayerStatus(url.searchParams.get("zone")));
   }
+  if (req.method === "GET" && pathname === "/api/roon/waveform") {
+    const track = nowPlayingTrack(roon.zones.get(String(url.searchParams.get("zone_id") || "")));
+    if (!track) return sendJson(res, 200, { peaks: null, reason: "Nothing is playing in this zone." });
+    const rows = await lyrionTitleSearch(lyrionApi.client)(unbracketed(track.title) || track.title).catch(() => []);
+    const trackId = libraryTrackId(track, rows);
+    if (!trackId) return sendJson(res, 200, { peaks: null, reason: "This track is not a file in the Lyrion library." });
+    return sendJson(res, 200, await waveformPeaks.forLmsTrack(trackId));
+  }
   if (req.method === "GET" && pathname === "/api/roon/source-format") {
     return sendJson(res, 200, await roonSourceFormat(url.searchParams.get("zone_id")));
   }
@@ -2927,6 +2936,7 @@ const roonHqplayerZones = parseRoonHqplayerZones(config.roonHqplayer.zones);
 const roonHqplayerControl = createHqplayerControl();
 const roonHqplayerStatus = createRoonHqplayerRoute({ zones: roonHqplayerZones, control: roonHqplayerControl });
 const lyrionApi = require("./lyrionApi").createLyrionApi({ roon, readJson, sendJson, catalogue:lyrionCatalogue, hqplayerLinks: config.hqplayer, playbackLinks: config.playbackLinks });
+const waveformPeaks = createWaveformPeaks({ ffmpegPath: process.env.FFMPEG_PATH || "ffmpeg", lmsBaseUrl: lyrionApi.client.baseUrl, cacheDir: path.join(__dirname, "..", "data", "waveforms") });
 const roonSourceFormat = createRoonSourceFormat({ getZone: (id) => roon.zones.get(id), hqplayerZones: roonHqplayerZones, control: roonHqplayerControl,
   lyrionTitles: lyrionTitleSearch(lyrionApi.client), tidalQuality: resolveCurrentTrackQuality });
 const soundcloudApi = require("./soundcloudApi").createSoundCloudApi({readJson,sendJson,items:lyrionApi.client.items});
@@ -2945,6 +2955,8 @@ const server = http.createServer(async (req, res) => {
     const url = new URL(req.url, `http://${req.headers.host}`);
     if(url.pathname.startsWith('/api/soundspectrum/')){
       await soundSpectrumApi.handle(req,res,url);
+    } else if(url.pathname==='/api/lyrion/waveform'&&req.method==='GET'){
+      return sendJson(res,200,await waveformPeaks.forLmsTrack(url.searchParams.get('trackId')));
     } else if(url.pathname==='/api/lyrion/track-metadata'&&req.method==='POST'){
       return sendJson(res,200,await lyrionTrackMetadata((await readJson(req)).track));
     } else if(url.pathname.startsWith("/api/siriusxm/ondemand/")){
