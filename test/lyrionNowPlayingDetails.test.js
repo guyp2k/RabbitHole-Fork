@@ -40,7 +40,7 @@ test("Now playing shows track length, release year, genre, format and track numb
   const client = new LyrionClient({ baseUrl: "http://lms.example:9000" });
   assert.deepEqual(rows(client.track(localTrack), 219.44), [
     ["Track length", "3:39"], ["Released", "2018"], ["Genre", "Post-Punk"],
-    ["Format", "FLAC · 44.1 kHz / 16-bit · 1011 kbps VBR"], ["Track", "7 · Disc 1 of 2"]]);
+    ["Format", "FLAC · 44.1 kHz / 16-bit · 1011 kbps VBR", "Library file"], ["Track", "7 · Disc 1 of 2"]]);
 });
 
 test("a stream shows Live stream and its stream type, and no empty rows", () => {
@@ -52,7 +52,7 @@ test("a stream shows Live stream and its stream type, and no empty rows", () => 
 test("formats name the codec, show whole kilohertz without decimals and skip a single disc", () => {
   const client = new LyrionClient({ baseUrl: "http://lms.example:9000" });
   const hires = client.track({ ...localTrack, type: "dsf", samplerate: "2822400", samplesize: "1", bitrate: "", disccount: "1", tracknum: "3" });
-  assert.deepEqual(rows(hires, 300).filter(r => ["Format", "Track"].includes(r[0])), [["Format", "DSD · 2822.4 kHz / 1-bit"], ["Track", "3"]]);
+  assert.deepEqual(rows(hires, 300).filter(r => ["Format", "Track"].includes(r[0])), [["Format", "DSD · 2822.4 kHz / 1-bit", "Library file"], ["Track", "3"]]);
   const alac = client.track({ ...localTrack, type: "alc", samplerate: "96000", samplesize: "24", bitrate: "3000kbps" });
   assert.equal(rows(alac, 300).find(r => r[0] === "Format")[1], "ALAC · 96 kHz / 24-bit · 3000 kbps");
 });

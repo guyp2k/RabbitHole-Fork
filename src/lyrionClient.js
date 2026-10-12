@@ -56,6 +56,13 @@ function lmsVolume(s) {
   const level = Number(raw);
   return { type: "number", min: 0, max: 100, step: 1, value: Math.min(100, Math.abs(Math.round(level))), is_muted: level < 0 };
 }
+function stationFor(current, s) {
+  if (!current || !Number(current.remote)) return null;
+  const name = String(current.remote_title || "").trim(), title = String(current.title || "").trim();
+  const description = String(s.current_title || "").trim();
+  const station = { name, description: description && description !== title && description !== name ? description : "" };
+  return station.name || station.description ? station : null;
+}
 const usableHost = host => !!host && !/^(127\.|0\.0\.0\.0$|localhost$|::1?$|\[::1?\]$)/i.test(host);
 class LyrionClient {
   constructor({ baseUrl = process.env.LYRION_URL || "http://127.0.0.1:9000", fetchImpl = fetch, itemsFile } = {}) {
@@ -142,7 +149,7 @@ class LyrionClient {
       state: s.mode === "play" ? "playing" : s.mode === "pause" ? "paused" : "stopped",
       position: Number(s.time) || 0, duration, canSeek: !!Number(s.can_seek) && duration > 0,
       nowPlaying: current ? this.track(current) : null, queue: (s.playlist_loop || []).map(t => this.track(t)),
-      queueCount: Number(s.playlist_tracks) || 0, queueIndex: index, offset, volume: lmsVolume(s), hqplayer };
+      queueCount: Number(s.playlist_tracks) || 0, queueIndex: index, offset, volume: lmsVolume(s), hqplayer, station: stationFor(current, s) };
   }
   remember(action, player, source) {
     while (this.actions.size >= 10000) this.actions.delete(this.actions.keys().next().value);

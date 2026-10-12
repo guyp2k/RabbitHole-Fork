@@ -132,6 +132,7 @@
   }
   const message = text => { $("lyrionMessage").textContent = text; $("lyrionStageMessage").textContent = text; };
   const stage=$("lyrionNow"), fullButton=$("lyrionFullscreen");
+  stage.addEventListener("lyrion-track-details",event=>{enrichedDetails={key:detailKey(event.detail?.track),details:event.detail?.details||null};renderLyrionDetails(shownTrack,shownDuration,shownStatus);});
   let stageExpanded=false, nativeStage=false, inertBefore=[];
   const fullscreenElement=()=>document.fullscreenElement || document.webkitFullscreenElement;
   function expandStage(value) {
@@ -527,22 +528,32 @@
     try{const data=await api("home",null,playerQuery());if(version===epoch&&requestedPlayer===player)renderHome(data);}
     catch(error){if(version===epoch&&requestedPlayer===player)renderHome({newMusic:{error:error.message},favorites:{error:error.message},explore:{error:error.message}});}
   }
-  function lyrionDetailRows(track,duration){
+  let enrichedDetails=null,shownTrack=null,shownDuration=0,shownStatus=null;
+  const detailKey=t=>JSON.stringify([t?.title||"",t?.artist||""]);
+  function lyrionDetailRows(track,duration,status=null,enriched=null){
     if(!track)return [];
-    const d=track.details||{},rows=[];
+    const station=status?.siriusxmMetadata?null:status?.station;
+    const d=track.details||{},e=enriched||{},rows=[];
     const codecs={flc:"FLAC",alc:"ALAC",mp3:"MP3",aac:"AAC",mp4:"AAC",wav:"WAV",aif:"AIFF",dsf:"DSD",dff:"DSD",ogg:"Ogg Vorbis",ops:"Opus",wma:"WMA",wvp:"WavPack",ape:"Monkey's Audio"};
-    if(duration>0)rows.push(["Track length",time(duration)]);else if(track.source!=="Local")rows.push(["Track length","Live stream"]);
-    if(d.year)rows.push(["Released",String(d.year)]);
-    if(d.genre)rows.push(["Genre",d.genre]);
+    if(station?.name)rows.push(["Station",station.name]);
+    if(duration>0)rows.push(["Track length",time(duration)]);else if(track.source!=="Local")rows.push(["Track length",Number(status?.position)>0?`Live stream · ${time(Number(status.position))}`:"Live stream"]);
+    if(station?.description)rows.push(["About",station.description]);
+    const released=e.releaseDate||(d.year?String(d.year):"")||(e.releaseYear?String(e.releaseYear):"");
+    if(released)rows.push(["Released",released]);
+    if(e.label)rows.push(["Label",e.label]);
+    const genre=d.genre||e.genre;if(genre)rows.push(["Genre",genre]);
     const rate=[d.sampleRate?`${+(d.sampleRate/1000).toFixed(1)} kHz`:"",d.bitDepth?`${d.bitDepth}-bit`:""].filter(Boolean).join(" / ");
     const format=[d.format?codecs[d.format.toLowerCase()]||d.format:"",rate,(d.bitrate||"").replace(/(\d)kbps/i,"$1 kbps")].filter(Boolean).join(" · ");
-    if(format)rows.push(["Format",format]);
+    if(format)rows.push(track.source==="Local"?["Format",format,"Library file"]:["Format",format]);
+    const bpmKey=[Number(e.bpm)>0?`${Math.round(Number(e.bpm))} BPM`:"",e.keyName||"",e.camelot&&e.camelot!==e.keyName?e.camelot:""].filter(Boolean).join(" • ");
+    if(bpmKey)rows.push(["BPM / Key",bpmKey]);
     if(d.trackNumber)rows.push(["Track",String(d.trackNumber)+(d.disc&&d.discCount>1?` · Disc ${d.disc} of ${d.discCount}`:"")]);
     return rows;
   }
-  function renderLyrionDetails(track,duration){
-    const list=$("lyrionDetails"),rows=lyrionDetailRows(track,duration);
-    list.replaceChildren(...rows.map(([label,value])=>{const row=document.createElement("div"),dt=document.createElement("dt"),dd=document.createElement("dd");row.className="sourceRow";dt.className="sourceLabel";dd.className="sourceValue";dt.textContent=label;dd.textContent=value;row.append(dt,dd);return row;}));
+  function renderLyrionDetails(track,duration,status=null){
+    shownTrack=track;shownDuration=duration;shownStatus=status;
+    const list=$("lyrionDetails"),rows=lyrionDetailRows(track,duration,status,enrichedDetails?.key===detailKey(track)?enrichedDetails.details:null);
+    list.replaceChildren(...rows.map(([label,value,note])=>{const row=document.createElement("div"),dt=document.createElement("dt"),dd=document.createElement("dd");row.className="sourceRow";dt.className="sourceLabel";dd.className="sourceValue";dt.textContent=label;dd.textContent=value;if(note){const n=document.createElement("span");n.className="sourceNote";n.textContent=note;dd.append(" ",n);}row.append(dt,dd);return row;}));
     list.hidden=!rows.length;
   }
   function renderLyrionSystem(snapshot){
@@ -562,6 +573,11 @@
     line.textContent=text;line.hidden=!text;
   }
   let statusRequest=0,lastAppliedStatus=0;
+  function upNext(s){
+    const next=(s.queue||[]).find(q=>q.index===s.queueIndex+1),remaining=Math.max(0,(Number(s.queueCount)||0)-(Number(s.queueIndex)||0)-1);
+    if(next)return `Up next: ${[next.title,next.artist].filter(Boolean).join(" - ")} · ${remaining} remaining`;
+    return remaining?`${remaining} remaining`:"Nothing queued after this";
+  }
   async function refreshStatus() {
     if(!player)return; const version=epoch,requestedPlayer=player;
     const request=++statusRequest;
@@ -584,7 +600,7 @@
     }
     void refreshFavoriteMetadata();
     setScrollingLabel("lyrionTitle",t?.title||"Nothing playing"); setScrollingLabel("lyrionArtist",[t?.artist,t?.album].filter(Boolean).join(" - "));
-    renderLyrionDetails(t,s.duration);
+    renderLyrionDetails(t,s.duration,s);
     lyrionVolume.update(s.connected?s.volume:null);
     $("lyrionCompactTitle").textContent=[t?.title,t?.artist].filter(Boolean).join(" - ");
     renderHqplayer(s.hqplayer);
@@ -592,7 +608,7 @@
     const artworkIdentity=JSON.stringify([requestedPlayer,t?.url||'',t?.title||'',t?.artist||'']);
     artworkImage($("lyrionCover"),t?.artwork || "",artworkIdentity,t?.artworkFallback||"");
     artworkImage($("lyrionBackdrop"),t?.artwork || "",artworkIdentity,t?.artworkFallback||"");
-    $("lyrionStageQueue").textContent=s.queueCount+" items queued";
+    $("lyrionStageQueue").textContent=upNext(s);
     ui.querySelectorAll("img[data-retry-at]").forEach(img=>artworkImage(img,img.dataset.artwork,img.dataset.artworkIdentity||'',img.dataset.artworkFallback||''));
     renderLyrionSeek(s);
     $("lyrionQueueCount").textContent=`${s.queueCount} items${s.queueCount?` · showing ${queueOffset+1}-${queueOffset+s.queue.length}`:""}`;

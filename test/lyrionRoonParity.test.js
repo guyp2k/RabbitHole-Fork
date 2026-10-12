@@ -50,7 +50,7 @@ test("Lyrion detail rows are Roon source rows: a label and a value side by side 
 
 test("Lyrion transport buttons start from the Roon transport's size, padding and weight", () => {
   assert.match(styles, /:is\(\.feedbackButton, \.nowDiscoveryActions button, \.nowTidalPlaylistCreate button, \.controls button\) \{\n  width: 100%;\n  min-width: 0;\n  min-height: 28px;\n  padding: 0 10px;[\s\S]*?font-size: 13px;\n  font-weight: 780;\n  line-height: 1\.05;/);
-  assert.match(css, /#lyrionView \.lyrionNow \.lyrionStageFooter \.lyrionActions button \{width:100%;min-width:0;min-height:28px;padding:0 10px;[^}]*font-size:13px;font-weight:780;line-height:1\.05;\}/);
+  assert.match(css, /#lyrionView \.lyrionNow :is\(\.lyrionStageFooter \.lyrionActions button,#lyrionDiscoveryRail button\) \{width:100%;min-width:0;min-height:28px;padding:0 10px;[^}]*font-size:13px;font-weight:780;line-height:1\.05;\}/);
 });
 
 test("Lyrion panels share the Roon views' desktop and phone surfaces, except the Now Playing stage", () => {

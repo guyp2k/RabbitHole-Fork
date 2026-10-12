@@ -55,7 +55,7 @@ test('UI waits for stable identity, retries misses and caps attempts',async()=>{
  const h=harness();const a={title:'A',artist:'Artist'},b={title:'B',artist:'Artist'};
  h.track(a);await h.advance(4000);assert.equal(h.requests.length,0);
  h.track(b);await h.advance(4000);assert.equal(h.requests.length,0);
- h.track(b);await h.advance(1000);assert.deepEqual(h.requests,[b]);
+ h.track(b);await h.advance(1000);assert.deepEqual(h.requests,[{...b,album:'',durationMs:0}]);
  await h.advance(65000);assert.equal(h.requests.length,2);
  await h.advance(120000);await h.advance(120000);assert.equal(h.requests.length,4);
  h.track(b);await h.advance(600000);assert.equal(h.requests.length,4);
