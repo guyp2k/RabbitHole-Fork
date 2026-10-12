@@ -119,7 +119,7 @@ test("PCM output reads in kHz with its depth, and an empty shaper or missing sta
 });
 
 test("Lyrion's playback chain and HQPlayer output sit in one strip under the album art", () => {
-  assert.match(source, /<p class="lyrionArtEmpty muted">Artwork will appear here<\/p><div id="lyrionPlayback" class="playbackStrip"><p id="lyrionChain">Lyrion<\/p><p id="lyrionHqplayer" class="playbackStripSignal" hidden><\/p><\/div>/);
+  assert.match(source, /<p class="lyrionArtEmpty muted">Artwork will appear here<\/p><div id="lyrionPlayback" class="playbackStrip"><p id="lyrionChain">Lyrion<\/p><p id="lyrionHqplayer" class="playbackStripSignal" hidden><\/p><p id="lyrionRating" class="nowRating" hidden><\/p><\/div>/);
   assert.doesNotMatch(source, /<h3>Playback<\/h3>/);
   const refresh = section("  async function refreshStatus()", "  async function loadPlayer()");
   assert.match(refresh, /renderHqplayer\(s\.hqplayer\);/);

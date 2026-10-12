@@ -10,7 +10,7 @@ const fn = name => { const start = app.indexOf(`function ${name}(`); assert.ok(s
 
 function ratingContext() {
   const context = {};
-  vm.runInNewContext(["escapeHtml", "normalizeFeedbackValue", "scoreBandFor", "feedbackBadgeLabel", "nowRatingHtml"].map(fn).join("\n") + "\nfunction feedbackForTrack() { return ''; }", context);
+  vm.runInNewContext(["escapeHtml", "normalizeFeedbackValue", "scoreBandFor", "feedbackBadgeLabel", "ratingStarsHtml", "nowRatingHtml"].map(fn).join("\n") + "\nfunction feedbackForTrack() { return ''; }", context);
   return context;
 }
 
@@ -52,4 +52,13 @@ test("the cover leaves room for a third strip line when the rating is showing", 
 test("Lyrion's artwork starts at the top of its lane like Roon's, and stays centred in Fullscreen", () => {
   assert.match(lyrionCss, /\.lyrionArtworkLane \{min-width:0;min-height:0;align-self:start;/);
   assert.match(lyrionCss, /\.lyrionNow--fullscreen \.lyrionArtworkLane \{align-self:center;\}/);
+});
+
+test("Lyrion shows the same stars under its album art, and updates them with the rating buttons", () => {
+  const lyrion = read("lyrion.js"), rail = read("lyrionDiscoveryRail.js");
+  assert.match(lyrion, /<div id="lyrionPlayback" class="playbackStrip"><p id="lyrionChain">Lyrion<\/p><p id="lyrionHqplayer" class="playbackStripSignal" hidden><\/p><p id="lyrionRating" class="nowRating" hidden><\/p><\/div>/);
+  assert.match(rail, /function renderFeedback\(rating\)\{\n  const canRate=typeof feedbackButtonsHtml==='function'&&!!track\?\.title&&!!track\?\.artist;\n  const line=\$\('lyrionRating'\);line\.innerHTML=canRate\?ratingStarsHtml\(normalizeFeedbackValue\(rating\)\):'';line\.hidden=!line\.innerHTML;/);
+  const { ratingStarsHtml } = ratingContext();
+  assert.equal(ratingStarsHtml("never"), '<span class="nowRatingStars" role="img" aria-label="1 of 5 stars">★<span class="nowRatingEmpty">★★★★</span></span> Never Again');
+  assert.equal(ratingStarsHtml(""), "");
 });

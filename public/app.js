@@ -2477,17 +2477,16 @@ function scrollToDiscoveryTrack(index) {
   setTimeout(() => target.classList.remove("trackFocus"), 1800);
 }
 
-function nowRatingHtml(track = {}) {
-  const rating = normalizeFeedbackValue(track.feedback || feedbackForTrack(track));
-  const parts = [];
+function ratingStarsHtml(rating) {
   const stars = { love: [5, "Loved"], like: [4, "Liked"], ok: [3, "Okay"], dislike: [2, "Disliked"], never: [1, "Never Again"] }[rating];
-  if (stars) {
-    const [filled, label] = stars;
-    const empty = filled < 5 ? `<span class="nowRatingEmpty">${"★".repeat(5 - filled)}</span>` : "";
-    parts.push(`<span class="nowRatingStars" role="img" aria-label="${filled} of 5 stars">${"★".repeat(filled)}${empty}</span> ${label}`);
-  } else if (feedbackBadgeLabel(rating)) {
-    parts.push(feedbackBadgeLabel(rating));
-  }
+  if (!stars) return feedbackBadgeLabel(rating);
+  const [filled, label] = stars;
+  const empty = filled < 5 ? `<span class="nowRatingEmpty">${"★".repeat(5 - filled)}</span>` : "";
+  return `<span class="nowRatingStars" role="img" aria-label="${filled} of 5 stars">${"★".repeat(filled)}${empty}</span> ${label}`;
+}
+
+function nowRatingHtml(track = {}) {
+  const parts = [ratingStarsHtml(normalizeFeedbackValue(track.feedback || feedbackForTrack(track)))].filter(Boolean);
   const score = track.score || track.scoreBreakdown?.total || "";
   if (score) parts.push(escapeHtml(`Discovery ${score} - ${scoreBandFor(score).label}${track.belowMinimum ? " - below minimum" : ""}`));
   return parts.join(" · ");

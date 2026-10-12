@@ -10,6 +10,7 @@
  const feedbackSection=rail.querySelector('.lyrionFeedbackSection');let feedbackKey='',feedbackSaving=false;
  function renderFeedback(rating){
   const canRate=typeof feedbackButtonsHtml==='function'&&!!track?.title&&!!track?.artist;
+  const line=$('lyrionRating');line.innerHTML=canRate?ratingStarsHtml(normalizeFeedbackValue(rating)):'';line.hidden=!line.innerHTML;
   if(feedbackSection)feedbackSection.hidden=!canRate;if(!canRate)return;
   $('lyrionFeedback').innerHTML=`<div class="feedbackRail">${feedbackButtonsHtml({feedback:rating},0,'lyrion')}</div>`;
   $('lyrionFeedback').querySelectorAll('.feedbackButton').forEach(b=>b.setAttribute('aria-pressed',String(b.classList.contains('active'))));
