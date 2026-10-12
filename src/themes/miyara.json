@@ -1,0 +1,12 @@
+{
+  "id": "miyara",
+  "label": "Miyara",
+  "stylesheet": "theme.css",
+  "rules": [
+    { "hue": [0, 360], "light": [0, 0.2], "set": { "hue": 219, "maxSat": 0.5, "addLight": 0.035 } },
+    { "hue": [160, 345], "light": [0.7, 1], "alpha": [0.28, 0.6], "set": { "hue": 355, "maxSat": 1, "minLight": 0.64, "maxLight": 0.64, "minAlpha": 0.95 } },
+    { "hue": [160, 345], "light": [0.7, 1], "set": { "hue": 216, "maxSat": 0.45, "maxLight": 0.95 } },
+    { "hue": [200, 345], "set": { "hue": 355, "maxSat": 1, "minLight": 0.6, "maxLight": 0.64 } },
+    { "hue": [160, 200], "set": { "hue": 213, "maxSat": 0.45 } }
+  ]
+}

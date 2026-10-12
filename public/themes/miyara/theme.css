@@ -1,0 +1,39 @@
+/* Miyara: miyarahub.com's type, Archivo for text, Fraunces for headings and IBM Plex Mono for labels. */
+@font-face { font-family: "Archivo"; src: url("/themes/miyara/fonts/archivo.woff2") format("woff2"); font-weight: 400 600; font-display: swap; }
+@font-face { font-family: "Fraunces"; src: url("/themes/miyara/fonts/fraunces.woff2") format("woff2"); font-weight: 400 600; font-display: swap; }
+@font-face { font-family: "IBM Plex Mono"; src: url("/themes/miyara/fonts/ibm-plex-mono-400.woff2") format("woff2"); font-weight: 400; font-display: swap; }
+@font-face { font-family: "IBM Plex Mono"; src: url("/themes/miyara/fonts/ibm-plex-mono-500.woff2") format("woff2"); font-weight: 500; font-display: swap; }
+
+body {
+  font-family: "Archivo", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+button, input, select, textarea {
+  font-family: inherit;
+}
+
+h1, h2, .appIdentityName, #nowTitle, #lyrionTitle {
+  font-family: "Fraunces", Georgia, "Times New Roman", serif;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+
+.eyebrow, .appIdentityTagline, .systemTag {
+  font-family: "IBM Plex Mono", ui-monospace, "SFMono-Regular", monospace;
+  font-weight: 500;
+}
+
+@layer pills {
+  :is(.lyrionChoices, .lyrionTabs, .viewTabs, .secondaryNavItems, .lyrionCenterViews, .dbViewSwitch, .tidalLibraryFilters) button:is(.active, [aria-pressed="true"], [aria-current="page"], [aria-selected="true"]) {
+    background: #e63946 !important;
+    border-color: #e63946 !important;
+    box-shadow: none !important;
+    color: #070c16 !important;
+    font-weight: 600 !important;
+  }
+
+  :is(.lyrionChoices, .lyrionTabs, .viewTabs, .secondaryNavItems, .lyrionCenterViews, .dbViewSwitch, .tidalLibraryFilters) button:is(.active, [aria-pressed="true"], [aria-current="page"], [aria-selected="true"]):hover {
+    background: #ff4757 !important;
+    border-color: #ff4757 !important;
+  }
+}

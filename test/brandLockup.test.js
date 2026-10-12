@@ -31,7 +31,7 @@ test("the name and tagline are drawn in the logo's colour for every theme", () =
   const themes = createThemes({ themesDir: path.join(root, "src", "themes"), defaultTheme: "copper" });
   const brand = id => /\.appIdentityName \{\n  flex: 0 0 auto;\n  color: (#[0-9a-f]{6});/.exec(themes.render(publicDir, path.join(publicDir, "styles.css"), Buffer.from(css), `rh_theme=${id}`).toString())[1];
   assert.deepEqual(Object.fromEntries(themes.list().themes.map(({ id }) => [id, brand(id)])), {
-    copper: "#dab981", "dark-orange": "#ff430f", "graphite-brass": "#d3ae69", original: "#9b5cff", "roon-light": "#1c469c", roon: "#749ae7"
+    copper: "#dab981", "dark-orange": "#ff430f", "graphite-brass": "#d3ae69", miyara: "#ff4757", original: "#9b5cff", "roon-light": "#1c469c", roon: "#749ae7"
   });
 });
 

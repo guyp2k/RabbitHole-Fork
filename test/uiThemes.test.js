@@ -38,7 +38,7 @@ function publicDir() {
 
 test("every bundled theme is listed with its label and the default is reported", () => {
   const listed = themes.list();
-  assert.deepEqual(listed.themes.map((t) => t.id).sort(), ["copper", "dark-orange", "graphite-brass", "original", "roon", "roon-light"]);
+  assert.deepEqual(listed.themes.map((t) => t.id).sort(), ["copper", "dark-orange", "graphite-brass", "miyara", "original", "roon", "roon-light"]);
   assert.equal(listed.themes.find((t) => t.id === "copper").label, "Obsidian & Copper");
   assert.equal(listed.default, "original");
 });
@@ -264,4 +264,40 @@ test("graphite and brass fills the selected pill in every pill group, Lyrion's t
   assert.ok(hover, "selected pill hover rule");
   for (const fill of [value(solid, "background"), value(hover, "background")]) assert.ok(contrast(fill, "#17191c") >= 4.5, `${fill} on #17191c`);
   assert.doesNotMatch(css, /scoringModeCard/);
+});
+
+test("miyara makes the page miyarahub.com's navy ink, text its star white and accents its red, readable on the ink", () => {
+  const ink = mapColor("#05020b", rules("miyara"));
+  const page = hsl(ink);
+  assert.ok(Math.abs(page.h - 219) < 4 && page.s <= 0.5 && page.l >= 0.05 && page.l <= 0.07, `${ink} ${JSON.stringify(page)}`);
+  assert.equal(mapColor("#0b0614", rules("miyara")), "#0b1321", "surfaces land on the site's --ink-2 #0b1322");
+  const text = hsl(mapColor("#faf6ff", rules("miyara")));
+  assert.ok(Math.abs(text.h - 216) < 4 && text.s <= 0.45 && text.l >= 0.93 && text.l <= 0.96, JSON.stringify(text));
+  assert.equal(mapColor("#9b5cff", rules("miyara")), "#ff4757", "the violet accent becomes the site's --accent-deep");
+  assert.equal(mapColor("rgba(167, 124, 255, 0.32)", rules("miyara")), "rgba(255, 71, 87, 0.95)");
+  for (const mid of ["#7a4dff", "#9b3dd6", "#5b2a9e", "#c02bb0", "#9b5cff"]) {
+    const out = mapColor(mid, rules("miyara"));
+    assert.ok(hsl(out).h >= 350 && hsl(out).h <= 360, `${mid} -> ${out}`);
+    assert.ok(contrast(out, ink) >= 4.5, `${mid} -> ${out} contrast ${contrast(out, ink).toFixed(2)}`);
+  }
+});
+
+test("miyara ships Fraunces, Archivo and IBM Plex Mono with their licence, and fills selected pills with the site's button red and readable ink text", () => {
+  const dir = path.join(__dirname, "..", "public", "themes", "miyara");
+  assert.equal(theme("miyara").stylesheet, "theme.css");
+  const fonts = { "fraunces.woff2": "Fraunces", "archivo.woff2": "Archivo", "ibm-plex-mono-400.woff2": "IBM Plex Mono", "ibm-plex-mono-500.woff2": "IBM Plex Mono" };
+  const css = fs.readFileSync(path.join(dir, "theme.css"), "utf8");
+  for (const [file, family] of Object.entries(fonts)) {
+    const bytes = fs.readFileSync(path.join(dir, "fonts", file));
+    assert.ok(bytes.length > 10000 && bytes.subarray(0, 4).toString() === "wOF2", file);
+    assert.ok(css.includes(`@font-face { font-family: "${family}"; src: url("/themes/miyara/fonts/${file}") format("woff2");`), file);
+  }
+  assert.match(fs.readFileSync(path.join(dir, "fonts", "LICENSE.txt"), "utf8"), /SIL Open Font License/);
+  assert.match(css, /body \{[^}]*font-family: "Archivo"/);
+  assert.match(css, /h1, h2[^{]*\{[^}]*font-family: "Fraunces"/);
+  assert.match(css, /\.eyebrow, \.appIdentityTagline, \.systemTag \{[^}]*font-family: "IBM Plex Mono"/);
+  const fills = [...css.matchAll(/background: (#[0-9a-f]{6}) !important;/g)].map((m) => m[1]);
+  assert.deepEqual(fills, ["#e63946", "#ff4757"], "the site's own button red and its hover red");
+  assert.match(css, /color: #070c16 !important;/);
+  for (const fill of fills) assert.ok(contrast(fill, "#070c16") >= 4.5, `${fill} on #070c16 ${contrast(fill, "#070c16").toFixed(2)}`);
 });
