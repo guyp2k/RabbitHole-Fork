@@ -22,8 +22,8 @@ ENV NODE_ENV=production \
     LOCAL_LIBRARY_FFPROBE_PATH=/usr/bin/ffprobe \
     PC_MONITOR_ENABLED=false
 
-USER node
 EXPOSE 3777
 HEALTHCHECK --interval=30s --timeout=5s --start-period=30s --retries=3 \
     CMD node -e "fetch('http://127.0.0.1:'+(process.env.PORT||3777)+'/').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
+ENTRYPOINT ["/app/scripts/docker-entrypoint.sh"]
 CMD ["node", "src/server.js"]

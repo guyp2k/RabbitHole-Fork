@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<Container version="2">
+  <Name>RabbitHole-Fork</Name>
+  <Repository>ghcr.io/guyp2k/rabbithole-fork:latest</Repository>
+  <Registry>https://github.com/guyp2k/RabbitHole-Fork/pkgs/container/rabbithole-fork</Registry>
+  <Network>host</Network>
+  <Shell>sh</Shell>
+  <Privileged>false</Privileged>
+  <Support>https://community.roonlabs.com/t/326019</Support>
+  <Project>https://github.com/guyp2k/RabbitHole-Fork</Project>
+  <Overview>A fork of The Rabbit Hole by darthspaders (github.com/darthspaders/RoonAI): music discovery and playback for Roon and Lyrion Music Server, with Lyrion, HQPlayer and interface additions. Host networking lets Roon find the extension; a br0 custom network with its own IP on the Roon Core's network also works. After starting, enable The Rabbit Hole in Roon under Settings, Extensions. The web UI and API have no login: keep it on a trusted LAN and never forward port 3777.</Overview>
+  <Category>MediaApp:Music</Category>
+  <WebUI>http://[IP]:[PORT:3777]/</WebUI>
+  <TemplateURL>https://raw.githubusercontent.com/guyp2k/RabbitHole-Fork/main/unraid/RabbitHole-Fork.xml</TemplateURL>
+  <Icon>https://raw.githubusercontent.com/guyp2k/RabbitHole-Fork/main/public/assets/rabbit-hole-mark.png</Icon>
+  <ExtraParams>--init</ExtraParams>
+  <PostArgs/>
+  <Config Name="Data" Target="/app/data" Default="/mnt/user/appdata/rabbithole-fork" Mode="rw" Description="Roon pairing, ratings, history, saved candidates and provider tokens." Type="Path" Display="always" Required="true" Mask="false">/mnt/user/appdata/rabbithole-fork</Config>
+  <Config Name="Web UI port" Target="PORT" Default="3777" Mode="" Description="Port for the web UI and API. With host networking this is the port on the Unraid server." Type="Variable" Display="always" Required="true" Mask="false">3777</Config>
+  <Config Name="Lyrion server URL" Target="LYRION_URL" Default="" Mode="" Description="LMS web address, for example http://192.168.1.10:9000. Leave empty if you only use Roon." Type="Variable" Display="always" Required="false" Mask="false"></Config>
+  <Config Name="LLM provider" Target="LLM_PROVIDER" Default="ollama" Mode="" Description="ollama, openai-compatible (LM Studio, llama.cpp) or openrouter. Their URL, model and key fields are under Show more settings." Type="Variable" Display="always" Required="false" Mask="false">ollama</Config>
+  <Config Name="Ollama URL" Target="OLLAMA_BASE_URL" Default="" Mode="" Description="Ollama address, for example http://192.168.1.10:11434." Type="Variable" Display="always" Required="false" Mask="false"></Config>
+  <Config Name="Ollama model" Target="OLLAMA_MODEL" Default="" Mode="" Description="Model name exactly as ollama list shows it, for example qwen2.5:14b." Type="Variable" Display="always" Required="false" Mask="false"></Config>
+  <Config Name="LLM URL" Target="LLM_BASE_URL" Default="" Mode="" Description="For openai-compatible: the server's /v1 address, for example http://192.168.1.10:1234/v1." Type="Variable" Display="advanced" Required="false" Mask="false"></Config>
+  <Config Name="LLM model" Target="LLM_MODEL" Default="" Mode="" Description="For openai-compatible: the model name the server reports." Type="Variable" Display="advanced" Required="false" Mask="false"></Config>
+  <Config Name="LLM API key" Target="LLM_API_KEY" Default="" Mode="" Description="For an openai-compatible server that needs a key." Type="Variable" Display="advanced" Required="false" Mask="true"></Config>
+  <Config Name="OpenRouter API key" Target="OPENROUTER_API_KEY" Default="" Mode="" Description="For openrouter." Type="Variable" Display="advanced" Required="false" Mask="true"></Config>
+  <Config Name="OpenRouter model" Target="OPENROUTER_MODEL" Default="" Mode="" Description="For openrouter, for example openai/gpt-4o-mini." Type="Variable" Display="advanced" Required="false" Mask="false"></Config>
+  <Config Name="TIDAL client ID" Target="TIDAL_CLIENT_ID" Default="" Mode="" Description="From developer.tidal.com. Discovery searches the TIDAL catalogue." Type="Variable" Display="always" Required="false" Mask="false"></Config>
+  <Config Name="TIDAL client secret" Target="TIDAL_CLIENT_SECRET" Default="" Mode="" Description="From developer.tidal.com." Type="Variable" Display="always" Required="false" Mask="true"></Config>
+  <Config Name="Default theme" Target="UI_THEME" Default="original" Mode="" Description="original, copper, roon, roon-light, dark-orange or graphite-brass. Each browser can pick its own in Settings." Type="Variable" Display="advanced" Required="false" Mask="false">original</Config>
+  <Config Name="Roon HQPlayer zones" Target="ROON_HQPLAYER_ZONES" Default="" Mode="" Description="Shows HQPlayer's output under the art for Roon zones that play through HQPlayer: zone=host pairs, comma separated, for example HQPd=192.168.1.30." Type="Variable" Display="advanced" Required="false" Mask="false"></Config>
+  <Config Name="HQPlayer web URL" Target="HQPLAYER_WEB_URL" Default="" Mode="" Description="Overrides the HQPlayer web interface link found from the HQPlayer Bridge plugin." Type="Variable" Display="advanced" Required="false" Mask="false"></Config>
+  <Config Name="HQPTuner URL" Target="HQPTUNER_URL" Default="" Mode="" Description="Adds an HQPTuner link under Playback System, for example http://192.168.1.20:8090." Type="Variable" Display="advanced" Required="false" Mask="false"></Config>
+  <Config Name="Rouen URL" Target="ROUEN_URL" Default="" Mode="" Description="Adds a Rouen link next to Roon and Lyrion, for example http://192.168.1.21:3399." Type="Variable" Display="advanced" Required="false" Mask="false"></Config>
+  <Config Name="PUID" Target="PUID" Default="99" Mode="" Description="User that owns the data folder. 99 is Unraid's nobody." Type="Variable" Display="advanced" Required="true" Mask="false">99</Config>
+  <Config Name="PGID" Target="PGID" Default="100" Mode="" Description="Group that owns the data folder. 100 is Unraid's users." Type="Variable" Display="advanced" Required="true" Mask="false">100</Config>
+  <Config Name="TZ" Target="TZ" Default="" Mode="" Description="Time zone, for example America/Chicago. Empty uses UTC." Type="Variable" Display="advanced" Required="false" Mask="false"></Config>
+</Container>

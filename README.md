@@ -32,9 +32,27 @@ offered upstream as pull requests.
   Last.fm relatives of the searched artist are kept.
 - **Layout:** foldable cards and panels, a header logo in the theme's colours,
   and a favicon.
+- **Unraid:** a published image and an Unraid template. The image hands its data
+  folder to `PUID`/`PGID`, so a fresh appdata folder works without fixing
+  permissions by hand. Without `PUID`/`PGID` it runs as `node` (1000), as upstream does.
 
 The full list is in the commit history after `f0b1e81`. New settings are
 documented in `.env.example`.
+
+## Install on Unraid
+
+The image is published to `ghcr.io/guyp2k/rabbithole-fork` after every green CI
+run on `main`. To install it from the template, run this in the Unraid terminal:
+
+```sh
+wget -O /boot/config/plugins/dockerMan/templates-user/my-RabbitHole-Fork.xml \
+  https://raw.githubusercontent.com/guyp2k/RabbitHole-Fork/main/unraid/RabbitHole-Fork.xml
+```
+
+Then open **Docker > Add Container**, pick **RabbitHole-Fork** from the template
+list, fill in your Lyrion and model addresses, and apply. Open the web UI and
+enable **The Rabbit Hole** in **Roon > Settings > Extensions**. Data is kept in
+`/mnt/user/appdata/rabbithole-fork`, owned by `PUID`/`PGID` (99:100 by default).
 
 **Security:** like upstream, the web UI and API have no login. Run it on a
 trusted LAN only and never expose port 3777 to the internet.

@@ -72,5 +72,25 @@ jobs:
       - name: Stop smoke container
         if: always()
         run: docker rm -f rabbit-hole-smoke || true
+      - name: Check the entrypoint hands a root-owned data folder to PUID:PGID
+        run: |
+          data="$RUNNER_TEMP/unraid-data"; sudo mkdir -p "$data"; sudo chown 0:0 "$data"
+          docker run -d --name rabbit-hole-puid --network none -e PUID=99 -e PGID=100 -v "$data:/app/data" \
+            rabbit-hole:ci node -e "const RoonApi=require('node-roon-api'); RoonApi.prototype.start_discovery=()=>{}; require('./src/server.js')"
+          for attempt in $(seq 1 30); do
+            docker exec rabbit-hole-puid node -e "fetch('http://127.0.0.1:3777/').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))" && break
+            sleep 1
+          done
+          docker exec rabbit-hole-puid sh -c 'tr "\0" " " < /proc/1/cmdline; echo; grep -E "^(Uid|Gid):" /proc/1/status' | tee ids
+          grep -q "^node -e" ids
+          test "$(grep -E '^(Uid|Gid):' ids | awk '{print $2}' | tr '\n' ' ')" = "99 100 "
+          test "$(stat -c %u:%g "$data")" = "99:100"
+          test -z "$(sudo find "$data" ! -user 99 -print -quit)"
+          test -n "$(sudo find "$data" -type f -print -quit)"
+          if docker run --rm --network none -e PUID=abc rabbit-hole:ci node -v 2> bad-puid; then exit 1; fi
+          grep -q "PUID and PGID must be numbers" bad-puid
+      - name: Stop PUID container
+        if: always()
+        run: docker rm -f rabbit-hole-puid || true
       - name: Check crash recovery with persistent data and live-owner exclusion
         run: bash scripts/test-docker-lock-recovery.sh rabbit-hole:ci
