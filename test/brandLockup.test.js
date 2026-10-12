@@ -40,6 +40,12 @@ test("the tagline matches the name's colour, and phones get a smaller lockup", (
   assert.match(css, /@media \(max-width: 699px\) \{\n  \.appIdentityMark \{\n    width: 40px;\n    height: 40px;\n  \}\n\n  \.appIdentityTagline \{\n    font-size: 9px;\n    letter-spacing: 0\.14em;\n  \}\n\}/);
 });
 
+test("the provider line beside the lockup is drawn at 12px by the rule scoped to the lockup", () => {
+  assert.match(css, /\n\.appIdentity \.systemTag \{\n  max-width: min\(48vw, 560px\);\n  padding: 0;\n  border: 0;\n  background: transparent;\n  box-shadow: none;\n  color: rgba\(238, 228, 252, 0\.58\);\n  font-size: 12px;\n\}/);
+  assert.equal([...css.matchAll(/\.appIdentity \.systemTag \{[^}]*font-size/g)].length, 1, "no other lockup rule resizes it");
+  assert.match(css, /\.appIdentity \.systemTag \{\n    max-width: min\(54vw, 640px\);/, "the wider cap fits the full provider line at 12px");
+});
+
 test("the top right of the Playback System row stays empty, with no second logo and no hint", () => {
   assert.doesNotMatch(lyrion + lyrionCss, /playbackSystemLogo|playbackSystemHint|Independent [Pp]layers and [Qq]ueues/);
   assert.equal(fs.existsSync(path.join(publicDir, "assets", "rabbit-hole-logo.webp")), false);

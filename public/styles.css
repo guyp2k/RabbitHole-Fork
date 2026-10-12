@@ -9672,13 +9672,13 @@ body.playerFullWindow .player.player--fullscreen.isFullWindow ::placeholder,
 }
 
 .appIdentity .systemTag {
-  max-width: min(48vw, 460px);
+  max-width: min(48vw, 560px);
   padding: 0;
   border: 0;
   background: transparent;
   box-shadow: none;
   color: rgba(238, 228, 252, 0.58);
-  font-size: 10px;
+  font-size: 12px;
 }
 
 .primaryNav {
@@ -10926,7 +10926,7 @@ body:not(.playerFullWindow):not(.playerMaximized) .settingsPanel > .topControls 
   }
 
   body:not(.playerFullWindow):not(.playerMaximized) .appIdentity .systemTag {
-    max-width: min(54vw, 520px);
+    max-width: min(54vw, 640px);
   }
 
   body:not(.playerFullWindow):not(.playerMaximized) .statusStack {
