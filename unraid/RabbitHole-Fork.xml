@@ -35,5 +35,4 @@
   <Config Name="Rouen URL" Target="ROUEN_URL" Default="" Mode="" Description="Adds a Rouen link next to Roon and Lyrion, for example http://192.168.1.21:3399." Type="Variable" Display="advanced" Required="false" Mask="false"></Config>
   <Config Name="PUID" Target="PUID" Default="99" Mode="" Description="User that owns the data folder. 99 is Unraid's nobody." Type="Variable" Display="advanced" Required="true" Mask="false">99</Config>
   <Config Name="PGID" Target="PGID" Default="100" Mode="" Description="Group that owns the data folder. 100 is Unraid's users." Type="Variable" Display="advanced" Required="true" Mask="false">100</Config>
-  <Config Name="TZ" Target="TZ" Default="" Mode="" Description="Time zone, for example America/Chicago. Empty uses UTC." Type="Variable" Display="advanced" Required="false" Mask="false"></Config>
 </Container>

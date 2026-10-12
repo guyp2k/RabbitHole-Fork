@@ -19,7 +19,7 @@ test("every template setting is parsed, so none is silently dropped by a typo", 
 test("every template variable is one the app or the entrypoint actually reads", () => {
   const entrypoint = read("scripts/docker-entrypoint.sh");
   for (const { target, type } of configs.filter((c) => c.type === "Variable")) {
-    const read = new RegExp(`process\\.env\\.${target}\\b`).test(source) || new RegExp(`\\$\\{${target}[:}]`).test(entrypoint) || target === "TZ";
+    const read = new RegExp(`process\\.env\\.${target}\\b`).test(source) || new RegExp(`\\$\\{${target}[:}]`).test(entrypoint);
     assert.ok(read, `${target} (${type}) is not read anywhere`);
   }
 });
@@ -38,6 +38,10 @@ test("the template keeps data in the image's data folder and pulls the image CI 
   assert.match(template, /<Repository>ghcr\.io\/guyp2k\/rabbithole-fork:latest<\/Repository>/);
   assert.match(read(".github/workflows/image.yml"), /image=ghcr\.io\/\$\{GITHUB_REPOSITORY,,\}/);
   assert.match(template, /<Network>host<\/Network>/);
+});
+
+test("the template leaves TZ to Unraid, which passes the server's own time zone", () => {
+  assert.doesNotMatch(template, /Target="TZ"/, "a template TZ comes after Unraid's and an empty one silently switches the app to UTC");
 });
 
 test("exactly the secrets are masked, and Unraid's nobody:users owns the data", () => {
