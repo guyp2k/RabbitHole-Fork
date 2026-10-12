@@ -23,8 +23,8 @@ test("status asks LMS for year, genre, format, rate, depth, bitrate and track an
 test("a local track carries its LMS details and a stream carries only what LMS knows", () => {
   const client = new LyrionClient({ baseUrl: "http://lms.example:9000" });
   const local = client.track(localTrack);
-  assert.deepEqual(local.details, { year: 2018, genre: "Post-Punk", format: "flc", sampleRate: 44100, bitDepth: 16, bitrate: "1011kbps VBR", trackNumber: 7, disc: 1, discCount: 2 });
-  assert.deepEqual(client.track(stream).details, { year: 0, genre: "", format: "HLS Radio", sampleRate: 0, bitDepth: 0, bitrate: "", trackNumber: 0, disc: 0, discCount: 0 });
+  assert.deepEqual(local.details, { year: 2018, genre: "Post-Punk", format: "flc", sampleRate: 44100, bitDepth: 16, bitrate: "1011kbps VBR", trackNumber: 7, disc: 1, discCount: 2, albumArtist: "", composer: "", conductor: "", fileSize: 0, added: 0, compilation: false, replayGain: null, albumId: "" });
+  assert.deepEqual(client.track(stream).details, { year: 0, genre: "", format: "HLS Radio", sampleRate: 0, bitDepth: 0, bitrate: "", trackNumber: 0, disc: 0, discCount: 0, albumArtist: "", composer: "", conductor: "", fileSize: 0, added: 0, compilation: false, replayGain: null, albumId: "" });
   assert.equal(client.track({ ...localTrack, genre: "No Genre" }).details.genre, "");
 });
 

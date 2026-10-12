@@ -71,8 +71,9 @@ test("the rail shows beside the artwork in the normal view, not only in Fullscre
   assert.match(rail, /const stageFavorites=document\.getElementById\('lyrionStageFavorites'\);if\(stageFavorites\)rail\.append\(stageFavorites\);/);
 });
 
-test("with Beatport turned off the rail hides its Beatport section instead of retrying a lookup that cannot succeed", () => {
-  assert.match(rail, /\$\('lyrionBeatportSection'\)\.hidden=result\.beatportEnabled===false;/);
+test("the Beatport section stays hidden until the server says Beatport is on, and a lookup that cannot succeed is not retried", () => {
+  assert.match(rail, /<section id="lyrionBeatportSection" hidden><h3>Beatport metadata<\/h3>/);
+  assert.match(rail, /\$\('lyrionBeatportSection'\)\.hidden=result\.beatportEnabled!==true;/);
   assert.match(rail, /if\(!m\)\{if\(result\.beatportEnabled===false\)\{\$\('lyrionBeatportStatus'\)\.textContent='';return;\}retryMetadata/);
 });
 
@@ -116,4 +117,35 @@ test("under the artwork Lyrion names the next track and how many remain, instead
   assert.equal(context.upNext({ queue: [{ index: 4, title: "Now" }], queueIndex: 4, queueCount: 12 }), "7 remaining");
   assert.equal(context.upNext({ queue: [{ index: 0, title: "Only" }], queueIndex: 0, queueCount: 1 }), "Nothing queued after this");
   assert.doesNotMatch(source, /items queued/);
+});
+
+test("a library file carries its album artist, roles, size, date added, compilation flag, ReplayGain and album", () => {
+  const t = client.track({ ...localTrack, artist: "Echo & The Bunnymen", albumartist: "Various Artists", composer: "Ian McCulloch", conductor: "",
+    filesize: "27843654", addedTime: "1791062848", compilation: "1", replay_gain: "-7.24", album_id: "13902" });
+  assert.deepEqual([t.details.albumArtist, t.details.composer, t.details.conductor, t.details.fileSize, t.details.added, t.details.compilation, t.details.replayGain, t.details.albumId],
+    ["Various Artists", "Ian McCulloch", "", 27843654, 1791062848, true, -7.24, "13902"]);
+  assert.equal(client.track({ ...localTrack, addedTime: "Saturday, October 3, 2026" }).details.added, 0);
+});
+
+test("status asks LMS for the roles, size, date added, ReplayGain, compilation and album of the playing file", async () => {
+  const lms = new LyrionClient({ baseUrl: "http://lms.example:9000" }), calls = [];
+  lms.hqplayerFor = async () => null;
+  lms.rpc = async (player, command) => { calls.push(command); return command[0] === "titles" ? { count: 15 } : { mode: "play", player_connected: 1, playlist_tracks: 1, playlist_cur_index: 0, playlist_loop: [{ ...localTrack, tracknum: "7", album_id: "13902" }] }; };
+  const status = await lms.status("p");
+  const tags = calls[0].find(part => /^tags:/.test(part)).slice(5);
+  for (const letter of "AfDYCe") assert.ok(tags.includes(letter), `tags:${tags} lacks ${letter}`);
+  assert.equal(status.nowPlaying.details.albumTrackCount, 15);
+  await lms.status("p");
+  assert.equal(calls.filter(c => c[0] === "titles").length, 1, "the album's track count is asked for once, then cached");
+});
+
+test("Now playing shows Track 7 of 15 and the library rows only when LMS knows them", () => {
+  const t = client.track({ ...localTrack, artist: "Echo & The Bunnymen", albumartist: "Various Artists", composer: "Ian McCulloch",
+    filesize: "27843654", addedTime: "1791062848", compilation: "1", replay_gain: "-7.24", tracknum: "7", album_id: "13902" });
+  t.details.albumTrackCount = 15;
+  const shown = rows(t, 219, null, null).slice(3);
+  assert.deepEqual(shown, [["Album artist", "Various Artists"], ["Composer", "Ian McCulloch"], ["Track", "7 of 15"], ["Compilation", "Yes"],
+    ["ReplayGain", "-7.2 dB"], ["File size", "27.8 MB"], ["Added", new Date(1791062848000).toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" })]]);
+  const plain = client.track({ ...localTrack, artist: "A", albumartist: "a", tracknum: "7" });
+  assert.deepEqual(rows(plain, 219, null, null).map(r => r[0]), ["Track length", "Released", "Format", "Track"]);
 });

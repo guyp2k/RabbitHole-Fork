@@ -2,7 +2,7 @@
 (() => {
  const stage=document.getElementById('lyrionNow');if(!stage)return;
  const rail=document.createElement('aside');rail.id='lyrionDiscoveryRail';rail.className='lyrionRail';rail.setAttribute('aria-label','Track details and playlists');
- rail.innerHTML=`<section id="lyrionBeatportSection"><h3>Beatport metadata</h3><p id="lyrionBeatportStatus" class="muted" role="status">Play a track to find its details.</p><dl id="lyrionBeatportFields"></dl><a id="lyrionBeatportLink" target="_blank" rel="noopener noreferrer" hidden>View on Beatport</a><button id="lyrionBeatportRetry" type="button" hidden>Retry lookup</button></section>
+ rail.innerHTML=`<section id="lyrionBeatportSection" hidden><h3>Beatport metadata</h3><p id="lyrionBeatportStatus" class="muted" role="status">Play a track to find its details.</p><dl id="lyrionBeatportFields"></dl><a id="lyrionBeatportLink" target="_blank" rel="noopener noreferrer" hidden>View on Beatport</a><button id="lyrionBeatportRetry" type="button" hidden>Retry lookup</button></section>
  <section class="lyrionPlaylistSection"><h3>Add to playlist</h3><p class="muted lyrionPlaylistHint">Save this track to TIDAL.</p><div id="lyrionPlaylistTargets"></div><button id="lyrionAddPlaylist" type="button" disabled>Add to TIDAL</button><button id="lyrionRefreshPlaylists" type="button">Refresh playlists</button><form id="lyrionCreatePlaylist"><label for="lyrionPlaylistName">New TIDAL playlist</label><input id="lyrionPlaylistName" required maxlength="200" placeholder="Playlist name"><button type="submit">Create playlist</button></form><p id="lyrionPlaylistStatus" role="status" aria-live="polite"></p></section>`;
  stage.querySelector('.lyrionStageFooter').before(rail);
  const stageFavorites=document.getElementById('lyrionStageFavorites');if(stageFavorites)rail.append(stageFavorites);
@@ -51,7 +51,7 @@
   try{const result=await request('/api/lyrion/track-metadata',{track:inputTrack(captured)});if(currentVersion!==version)return;
    metadataBusy=false;const m=result.metadata;
    if(typeof CustomEvent==='function')stage.dispatchEvent(new CustomEvent('lyrion-track-details',{detail:{track:captured,details:result.details||null}}));
-   $('lyrionBeatportSection').hidden=result.beatportEnabled===false;
+   $('lyrionBeatportSection').hidden=result.beatportEnabled!==true;
    if(!m){if(result.beatportEnabled===false){$('lyrionBeatportStatus').textContent='';return;}retryMetadata(result.reason||'No Beatport match available.');return;}
    const fields=[['Label',m.label],['Genre',[m.genre,m.subGenre].filter(Boolean).join(' · ')],['BPM',m.bpm],['Key',[m.keyName,m.camelot].filter(Boolean).join(' · ')],['Released',m.releaseDate],['Track length',m.durationMs?`${Math.floor(m.durationMs/60000)}:${String(Math.floor(m.durationMs/1000)%60).padStart(2,'0')}`:null],['Track ID',m.id],['Release ID',m.releaseId]];
    for(const [label,value] of fields){if(value===null||value===undefined||value==='')continue;const dt=document.createElement('dt'),dd=document.createElement('dd');dt.textContent=label;dd.textContent=value;$('lyrionBeatportFields').append(dt,dd);}

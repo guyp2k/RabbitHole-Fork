@@ -20,13 +20,17 @@ function resolveAction(item, base, name) {
   if (action.itemsParams && !itemParams) return null;
   return { cmd: action.cmd, params: { ...action.params, ...itemParams } };
 }
-const STATUS_TAGS = "tags:aljJKNuxdygorTItiq";
+const STATUS_TAGS = "tags:aljJKNuxdygorTItiqAfDYCe";
 const count = value => Math.max(0, Math.floor(Number(value) || 0));
+const text = value => String(value || "").trim();
 function trackDetails(t) {
   const bitrate = String(t.bitrate || "").trim();
   return { year: count(t.year), genre: /^no genre$/i.test(String(t.genre || "").trim()) ? "" : String(t.genre || "").trim(),
     format: String(t.type || "").trim(), sampleRate: count(t.samplerate), bitDepth: count(t.samplesize),
-    bitrate: bitrate === "0" ? "" : bitrate, trackNumber: count(t.tracknum), disc: count(t.disc), discCount: count(t.disccount) };
+    bitrate: bitrate === "0" ? "" : bitrate, trackNumber: count(t.tracknum), disc: count(t.disc), discCount: count(t.disccount),
+    albumArtist: text(t.albumartist), composer: text(t.composer), conductor: text(t.conductor), fileSize: count(t.filesize),
+    added: /^\d+$/.test(String(t.addedTime || "")) ? Number(t.addedTime) : 0, compilation: Number(t.compilation) === 1,
+    replayGain: Number.isFinite(Number.parseFloat(t.replay_gain)) ? Number.parseFloat(t.replay_gain) : null, albumId: /^\d+$/.test(String(t.album_id || "")) ? String(t.album_id) : "" };
 }
 const LIBRARY_SOURCES = [
   { id: "local", title: "Local Library / NAS", icon: "html/images/musicfolder.png" },
@@ -134,6 +138,15 @@ class LyrionClient {
     return { id: String(t.id || ""), title: t.title || t.track || "Untitled", artist: t.artist || "", album: t.album || "",
       duration: Number(t.duration) || 0, artwork: this.artwork(t), source: /siriusxm/i.test(`${t.album} ${t.artwork_url}`) ? "SiriusXM" : sourceFor(t.url), soundcloudUrn:soundcloudUrn(t.url), index: Number(t["playlist index"]), url: t.url || "", details: trackDetails(t) };
   }
+  async albumTrackCount(albumId) {
+    this.albumCounts ||= new Map();
+    if (this.albumCounts.has(albumId)) return this.albumCounts.get(albumId);
+    let total = 0;
+    try { total = count((await this.rpc("", ["titles", 0, 0, `album_id:${albumId}`])).count); } catch { return 0; }
+    if (this.albumCounts.size >= 500) this.albumCounts.delete(this.albumCounts.keys().next().value);
+    this.albumCounts.set(albumId, total);
+    return total;
+  }
   async status(player, offset = 0, limit = 100) {
     const s = await this.rpc(player, ["status", offset, limit, STATUS_TAGS]);
     const index = Number(s.playlist_cur_index || 0);
@@ -145,10 +158,12 @@ class LyrionClient {
     if (s.remoteMeta) current = { ...current, ...s.remoteMeta };
     const hqplayer = await this.hqplayerFor(player, s);
     const duration = Number(s.duration) || Number(current?.duration) || this.onDemandMetadata?.(current?.url)?.duration || 0;
+    const nowPlaying = current ? this.track(current) : null;
+    if (nowPlaying?.details?.albumId) nowPlaying.details.albumTrackCount = await this.albumTrackCount(nowPlaying.details.albumId);
     return { playerId: player, playerName: s.player_name, connected: !!Number(s.player_connected),
       state: s.mode === "play" ? "playing" : s.mode === "pause" ? "paused" : "stopped",
       position: Number(s.time) || 0, duration, canSeek: !!Number(s.can_seek) && duration > 0,
-      nowPlaying: current ? this.track(current) : null, queue: (s.playlist_loop || []).map(t => this.track(t)),
+      nowPlaying, queue: (s.playlist_loop || []).map(t => this.track(t)),
       queueCount: Number(s.playlist_tracks) || 0, queueIndex: index, offset, volume: lmsVolume(s), hqplayer, station: stationFor(current, s) };
   }
   remember(action, player, source) {

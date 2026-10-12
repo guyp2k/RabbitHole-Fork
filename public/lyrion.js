@@ -547,7 +547,14 @@
     if(format)rows.push(track.source==="Local"?["Format",format,"Library file"]:["Format",format]);
     const bpmKey=[Number(e.bpm)>0?`${Math.round(Number(e.bpm))} BPM`:"",e.keyName||"",e.camelot&&e.camelot!==e.keyName?e.camelot:""].filter(Boolean).join(" • ");
     if(bpmKey)rows.push(["BPM / Key",bpmKey]);
-    if(d.trackNumber)rows.push(["Track",String(d.trackNumber)+(d.disc&&d.discCount>1?` · Disc ${d.disc} of ${d.discCount}`:"")]);
+    if(d.albumArtist&&d.albumArtist.toLowerCase()!==String(track.artist||"").toLowerCase())rows.push(["Album artist",d.albumArtist]);
+    if(d.composer)rows.push(["Composer",d.composer]);
+    if(d.conductor)rows.push(["Conductor",d.conductor]);
+    if(d.trackNumber)rows.push(["Track",String(d.trackNumber)+(d.albumTrackCount>=d.trackNumber?` of ${d.albumTrackCount}`:"")+(d.disc&&d.discCount>1?` · Disc ${d.disc} of ${d.discCount}`:"")]);
+    if(d.compilation)rows.push(["Compilation","Yes"]);
+    if(d.replayGain!==null&&d.replayGain!==undefined)rows.push(["ReplayGain",`${d.replayGain>0?"+":""}${d.replayGain.toFixed(1)} dB`]);
+    if(d.fileSize>0)rows.push(["File size",d.fileSize>=1e9?`${(d.fileSize/1e9).toFixed(2)} GB`:`${(d.fileSize/1e6).toFixed(1)} MB`]);
+    if(d.added>0)rows.push(["Added",new Date(d.added*1000).toLocaleDateString("en-US",{year:"numeric",month:"short",day:"numeric"})]);
     return rows;
   }
   function renderLyrionDetails(track,duration,status=null){
