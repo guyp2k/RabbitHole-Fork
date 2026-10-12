@@ -9632,7 +9632,7 @@ body.playerFullWindow .player.player--fullscreen.isFullWindow ::placeholder,
   width: 56px;
   height: 56px;
   border-radius: 50%;
-  background: url("/assets/rabbit-hole-fallback.jpg") 50% 9.55% / 152.4% no-repeat;
+  background: url("/assets/rabbit-hole-mark.png") center / cover no-repeat;
 }
 
 .appIdentityText {

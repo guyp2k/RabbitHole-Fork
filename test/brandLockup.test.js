@@ -14,15 +14,17 @@ test("the app header carries the Rabbit Hole lockup: the disc, the name and the 
   assert.match(html, /<div class="appIdentity">\n          <span class="appIdentityMark" aria-hidden="true"><\/span>\n          <span class="appIdentityText"><span class="appIdentityName">The Rabbit Hole<\/span><span class="appIdentityTagline">Discover Beyond the Playlist<\/span><\/span>\n          <p id="systemTag" class="systemTag">/);
 });
 
-test("the disc is cut from the Rabbit Hole artwork, so it is drawn from the active theme's copy", () => {
-  assert.match(css, /\.appIdentityMark \{\n  flex: 0 0 auto;\n  width: 56px;\n  height: 56px;\n  border-radius: 50%;\n  background: url\("\/assets\/rabbit-hole-fallback\.jpg"\) 50% 9\.55% \/ 152\.4% no-repeat;/);
+test("the disc is a pre-rendered mark at three times its drawn size, served in the active theme's colours", () => {
+  assert.match(css, /\.appIdentityMark \{\n  flex: 0 0 auto;\n  width: 56px;\n  height: 56px;\n  border-radius: 50%;\n  background: url\("\/assets\/rabbit-hole-mark\.png"\) center \/ cover no-repeat;/);
   const themes = createThemes({ themesDir: path.join(root, "src", "themes"), defaultTheme: "copper" });
   for (const { id } of themes.list().themes) {
-    const served = themes.assetPath(publicDir, "/assets/rabbit-hole-fallback.jpg", `rh_theme=${id}`);
-    const expected = id === "original" ? null : path.join(publicDir, "themes", id, "assets", "rabbit-hole-fallback.jpg");
+    const served = themes.assetPath(publicDir, "/assets/rabbit-hole-mark.png", `rh_theme=${id}`);
+    const expected = id === "original" ? null : path.join(publicDir, "themes", id, "assets", "rabbit-hole-mark.png");
     assert.equal(served, expected, id);
+    const png = fs.readFileSync(served || path.join(publicDir, "assets", "rabbit-hole-mark.png"));
+    assert.deepEqual([png.readUInt32BE(16), png.readUInt32BE(20), png[25]], [168, 168, 6], `${id} is a 168px PNG with an alpha channel`);
   }
-  assert.ok(fs.statSync(path.join(publicDir, "assets", "rabbit-hole-fallback.jpg")).isFile(), "the Original theme's copy");
+  assert.match(fs.readFileSync(path.join(root, "scripts", "render-theme-art.js"), "utf8"), /remapPixels\(Buffer\.from\(original\.raw\), 3, rules\)/, "each theme recolours the original pixels, not the previous theme's");
 });
 
 test("the name and tagline are drawn in the logo's colour for every theme", () => {
