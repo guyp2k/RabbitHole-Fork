@@ -60,6 +60,13 @@ function lmsVolume(s) {
   const level = Number(raw);
   return { type: "number", min: 0, max: 100, step: 1, value: Math.min(100, Math.abs(Math.round(level))), is_muted: level < 0 };
 }
+function playerFor(id, s, known, serverVersion) {
+  const self = known.find(p => p.id === id) || {};
+  const group = [s.sync_master, ...String(s.sync_slaves || "").split(",")].map(text).filter(other => other && other !== id);
+  return { model: self.modelName || "", firmware: self.firmware || "", ip: text(s.player_ip || self.ip).replace(/:\d+$/, ""), power: Number(s.power) === 1,
+    repeat: ["off", "song", "all"][Number(s["playlist repeat"])] || "", shuffle: ["off", "songs", "albums"][Number(s["playlist shuffle"])] || "",
+    syncedWith: [...new Set(group)].map(other => known.find(p => p.id === other)?.name || other), server: serverVersion || "" };
+}
 function stationFor(current, s) {
   if (!current || !Number(current.remote)) return null;
   const name = String(current.remote_title || "").trim(), title = String(current.title || "").trim();
@@ -91,7 +98,9 @@ class LyrionClient {
   }
   async players() {
     const result = await this.rpc("", ["serverstatus", 0, 999]);
-    return (result.players_loop || []).map(p => ({ id: p.playerid, name: p.name, connected: !!Number(p.connected), playing: !!Number(p.isplaying), model: p.model, ip: p.ip || "" }));
+    this.serverVersion = text(result.version);
+    return (result.players_loop || []).map(p => ({ id: p.playerid, name: p.name, connected: !!Number(p.connected), playing: !!Number(p.isplaying), model: p.model, ip: p.ip || "",
+      modelName: text(p.modelname), firmware: /^0?$/.test(text(p.firmware)) ? "" : text(p.firmware) }));
   }
   async bridgeModels() {
     if (!this.playerModels || Date.now() - this.playerModels.at > 30000) {
@@ -159,12 +168,13 @@ class LyrionClient {
     const hqplayer = await this.hqplayerFor(player, s);
     const duration = Number(s.duration) || Number(current?.duration) || this.onDemandMetadata?.(current?.url)?.duration || 0;
     const nowPlaying = current ? this.track(current) : null;
+    const known = (await this.bridgeModels().catch(() => ({ list: [] }))).list || [];
     if (nowPlaying?.details?.albumId) nowPlaying.details.albumTrackCount = await this.albumTrackCount(nowPlaying.details.albumId);
     return { playerId: player, playerName: s.player_name, connected: !!Number(s.player_connected),
       state: s.mode === "play" ? "playing" : s.mode === "pause" ? "paused" : "stopped",
       position: Number(s.time) || 0, duration, canSeek: !!Number(s.can_seek) && duration > 0,
       nowPlaying, queue: (s.playlist_loop || []).map(t => this.track(t)),
-      queueCount: Number(s.playlist_tracks) || 0, queueIndex: index, offset, volume: lmsVolume(s), hqplayer, station: stationFor(current, s) };
+      queueCount: Number(s.playlist_tracks) || 0, queueIndex: index, offset, volume: lmsVolume(s), hqplayer, station: stationFor(current, s), player: playerFor(player, s, known, this.serverVersion) };
   }
   remember(action, player, source) {
     while (this.actions.size >= 10000) this.actions.delete(this.actions.keys().next().value);

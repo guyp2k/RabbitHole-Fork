@@ -62,7 +62,8 @@ function element() {
     replaceChildren(...n) { this.children = n; }, append(...n) { this.children.push(...n); } };
 }
 function systemHarness() {
-  const nodes = Object.fromEntries(["lyrionSystem", "lyrionTempCpu", "lyrionTempGpu", "lyrionTempCpuChip", "lyrionTempGpuChip"].map(id => [id, element()]));
+  const nodes = Object.fromEntries(["lyrionSystem", "lyrionTemps", "lyrionConnections", "lyrionTempCpu", "lyrionTempGpu", "lyrionTempCpuChip", "lyrionTempGpuChip"].map(id => [id, element()]));
+  nodes.lyrionConnections.hidden = true;
   const context = { $: id => nodes[id], pcMonitorTempText: v => v == null ? "--" : `${Math.round(v)}C`,
     setPcTempChipState: (chip, v) => chip.classList.toggle("isHot", v >= 80) };
   vm.runInNewContext(section("  function renderLyrionSystem(", "  async function refreshLyrionSystem("), context);

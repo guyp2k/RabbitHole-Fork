@@ -14,7 +14,7 @@
     <section class="panel lyrionNow" id="lyrionNow" aria-label="Lyrion now playing">
       <img id="lyrionBackdrop" class="lyrionBackdrop" alt="" aria-hidden="true" hidden>
       <div class="lyrionStageBar"><button id="lyrionFullscreen" type="button" aria-controls="lyrionNow" aria-pressed="false">Fullscreen</button></div>
-      <div class="lyrionNowDetails lyrionRail"><p class="eyebrow">Now Playing</p><h2 id="lyrionTitle">Choose your Lyrion player</h2><p id="lyrionArtist"></p><dl id="lyrionDetails" class="lyrionDetails" hidden></dl><div id="lyrionVolume" class="nowVolume" hidden></div><section id="lyrionSxm" class="lyrionSxm" aria-label="SiriusXM program information" hidden></section><section id="lyrionSystem" class="lyrionSystem" hidden><h3>System</h3><div class="lyrionTemps"><span id="lyrionTempCpuChip" class="pcTempChip"><span>CPU</span><strong id="lyrionTempCpu">--</strong></span><span id="lyrionTempGpuChip" class="pcTempChip"><span>GPU</span><strong id="lyrionTempGpu">--</strong></span></div></section></div>
+      <div class="lyrionNowDetails lyrionRail"><p class="eyebrow">Now Playing</p><h2 id="lyrionTitle">Choose your Lyrion player</h2><p id="lyrionArtist"></p><dl id="lyrionDetails" class="lyrionDetails" hidden></dl><div id="lyrionVolume" class="nowVolume" hidden></div><section id="lyrionSxm" class="lyrionSxm" aria-label="SiriusXM program information" hidden></section><section id="lyrionSystem" class="lyrionSystem" hidden><h3>System</h3><div id="lyrionTemps" class="lyrionTemps" hidden><span id="lyrionTempCpuChip" class="pcTempChip"><span>CPU</span><strong id="lyrionTempCpu">--</strong></span><span id="lyrionTempGpuChip" class="pcTempChip"><span>GPU</span><strong id="lyrionTempGpu">--</strong></span></div><div id="lyrionConnections" class="fullscreenConnectionStatus lyrionConnections" aria-label="Lyrion player and server" hidden></div></section></div>
       <div class="lyrionArtworkLane"><img id="lyrionCover" class="lyrionCover" alt="" hidden><p class="lyrionArtEmpty muted">Artwork will appear here</p><div id="lyrionPlayback" class="playbackStrip"><p id="lyrionChain">Lyrion</p><p id="lyrionHqplayer" class="playbackStripSignal" hidden></p></div><p id="lyrionStageQueue" class="muted"></p></div>
       <section id="lyrionStageFavorites" class="lyrionRail" aria-labelledby="lyrionStageFavoritesHeading"><h3 id="lyrionStageFavoritesHeading">Favorite channels</h3><div id="lyrionStageChannels" class="lyrionStageChannels"></div></section>
       <footer class="lyrionStageFooter"><div class="lyrionActions"><button data-lyrion-control="previous">Previous</button><button data-lyrion-control="play">Play</button><button data-lyrion-control="pause">Pause</button><button data-lyrion-control="next">Next</button></div><p id="lyrionStageMessage" role="status" aria-live="polite" hidden></p><input id="lyrionProgress" type="range" min="0" max="1" step="1" value="0" aria-label="Playback position" disabled><p id="lyrionTime" class="muted"></p></footer>
@@ -565,7 +565,8 @@
   }
   function renderLyrionSystem(snapshot){
     const cpu=snapshot?.cpu?.temperatureC,gpu=snapshot?.gpu?.temperatureC,known=v=>v!==null&&v!==undefined&&Number.isFinite(Number(v));
-    $("lyrionSystem").hidden=!snapshot||(!snapshot.connected&&!known(cpu)&&!known(gpu));
+    $("lyrionTemps").hidden=!snapshot||(!snapshot.connected&&!known(cpu)&&!known(gpu));
+    $("lyrionSystem").hidden=$("lyrionTemps").hidden&&$("lyrionConnections").hidden;
     $("lyrionTempCpu").textContent=pcMonitorTempText(cpu);$("lyrionTempGpu").textContent=pcMonitorTempText(gpu);
     setPcTempChipState($("lyrionTempCpuChip"),cpu);setPcTempChipState($("lyrionTempGpuChip"),gpu);
   }
@@ -584,6 +585,21 @@
     const next=(s.queue||[]).find(q=>q.index===s.queueIndex+1),remaining=Math.max(0,(Number(s.queueCount)||0)-(Number(s.queueIndex)||0)-1);
     if(next)return `Up next: ${[next.title,next.artist].filter(Boolean).join(" - ")} · ${remaining} remaining`;
     return remaining?`${remaining} remaining`:"Nothing queued after this";
+  }
+  function playerLines(s){
+    const p=s?.player;if(!p)return [];
+    return [
+      [s.connected?(p.server?`Connected to Lyrion ${p.server}`:"Connected to Lyrion"):"Lyrion player offline",s.connected?"":"statusOffline"],
+      [[p.model,p.firmware].filter(Boolean).join(" · "),""],[p.ip?`IP ${p.ip}`:"",""],
+      [s.connected&&!p.power?"Power off":"","statusUnknown"],
+      [p.repeat||p.shuffle?`Repeat ${p.repeat||"off"} · Shuffle ${p.shuffle||"off"}`:"",""],
+      [p.syncedWith?.length?`Synced with ${p.syncedWith.join(", ")}`:"",""]
+    ].filter(([text])=>text);
+  }
+  function renderLyrionPlayerInfo(s){
+    const lines=playerLines(s),box=$("lyrionConnections"),stack=document.createElement("div");stack.className="statusStack";
+    stack.replaceChildren?.(...lines.map(([text,state])=>{const line=document.createElement("p");line.className="statusPill"+(state?" "+state:"");line.textContent=text;return line;}));
+    box.replaceChildren(stack);box.hidden=!lines.length;$("lyrionSystem").hidden=$("lyrionTemps").hidden&&box.hidden;
   }
   async function refreshStatus() {
     if(!player)return; const version=epoch,requestedPlayer=player;
@@ -608,6 +624,7 @@
     void refreshFavoriteMetadata();
     setScrollingLabel("lyrionTitle",t?.title||"Nothing playing"); setScrollingLabel("lyrionArtist",[t?.artist,t?.album].filter(Boolean).join(" - "));
     renderLyrionDetails(t,s.duration,s);
+    renderLyrionPlayerInfo(s);
     lyrionVolume.update(s.connected?s.volume:null);
     $("lyrionCompactTitle").textContent=[t?.title,t?.artist].filter(Boolean).join(" - ");
     renderHqplayer(s.hqplayer);

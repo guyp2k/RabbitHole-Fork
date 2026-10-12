@@ -170,3 +170,30 @@ test("the rail rates the track with Roon's buttons and the shared feedback endpo
   assert.match(rail, /await request\('\/api\/feedback',\{track:feedbackTrack\(captured\),rating\}\);if\(capturedKey===key\)renderFeedback\(rating\);/);
   assert.match(rail, /b\.setAttribute\('aria-pressed',String\(b\.classList\.contains\('active'\)\)\)/);
 });
+
+test("status reports the player's model, firmware, IP, power, repeat, shuffle, sync group and the LMS version", async () => {
+  const lms = new LyrionClient({ baseUrl: "http://lms.example:9000" }); lms.hqplayerFor = async () => null;
+  lms.rpc = async (player, command) => command[0] === "serverstatus"
+    ? { version: "9.1.1", players_loop: [{ playerid: "p", name: "WiiM-Pro Pat's BR", modelname: "WiiM Player", firmware: "v1.9.9-1432", connected: 1, ip: "192.168.60.49:50336" }, { playerid: "q", name: "Den", modelname: "UPnPBridge", firmware: 0 }] }
+    : { mode: "play", player_connected: 1, playlist_tracks: 0, power: 1, "playlist repeat": 2, "playlist shuffle": 1, sync_master: "p", sync_slaves: "q", player_ip: "192.168.60.49:50712" };
+  assert.deepEqual((await lms.status("p")).player, { model: "WiiM Player", firmware: "v1.9.9-1432", ip: "192.168.60.49", power: true, repeat: "all", shuffle: "songs", syncedWith: ["Den"], server: "9.1.1" });
+});
+
+test("a firmware of 0 is unknown, not a version, and an unsynced player lists nobody", async () => {
+  const lms = new LyrionClient({ baseUrl: "http://lms.example:9000" }); lms.hqplayerFor = async () => null;
+  lms.rpc = async (player, command) => command[0] === "serverstatus"
+    ? { version: "9.1.1", players_loop: [{ playerid: "q", name: "Den", modelname: "UPnPBridge", firmware: 0 }] }
+    : { mode: "stop", player_connected: 1, playlist_tracks: 0, power: 0, "playlist repeat": 0, "playlist shuffle": 0, sync_master: null, sync_slaves: null };
+  const player = (await lms.status("q")).player;
+  assert.equal(player.firmware, ""); assert.deepEqual(player.syncedWith, []); assert.equal(player.power, false);
+});
+
+test("under System, Lyrion lists its server, player, address, power and play modes like Roon's connection list", () => {
+  const context = { document: { createElement: () => ({}) } };
+  vm.runInNewContext(section("  function playerLines(s){", "  function renderLyrionPlayerInfo(s){"), context);
+  const p = { model: "WiiM Player", firmware: "v1.9.9-1432", ip: "192.168.60.49", power: false, repeat: "all", shuffle: "off", syncedWith: ["Den"], server: "9.1.1" };
+  assert.deepEqual(JSON.parse(JSON.stringify(context.playerLines({ connected: true, player: p }))), [
+    ["Connected to Lyrion 9.1.1", ""], ["WiiM Player · v1.9.9-1432", ""], ["IP 192.168.60.49", ""], ["Power off", "statusUnknown"], ["Repeat all · Shuffle off", ""], ["Synced with Den", ""]]);
+  assert.deepEqual(JSON.parse(JSON.stringify(context.playerLines({ connected: false, player: { ...p, power: true, syncedWith: [], model: "", firmware: "", ip: "", repeat: "", shuffle: "" } }))), [["Lyrion player offline", "statusOffline"]]);
+  assert.match(source, /<div id="lyrionConnections" class="fullscreenConnectionStatus lyrionConnections" aria-label="Lyrion player and server" hidden><\/div>/);
+});
