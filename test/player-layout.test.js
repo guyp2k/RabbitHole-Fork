@@ -9,17 +9,14 @@ const memoryHtml = fs.readFileSync(path.join(root, 'public', 'memory.html'), 'ut
 const css = fs.readFileSync(path.join(root, 'public', 'styles.css'), 'utf8');
 const app = fs.readFileSync(path.join(root, 'public', 'app.js'), 'utf8');
 
-test('now playing artwork and discovery badge are direct player grid items', () => {
+test('now playing artwork and discovery tools are direct player grid items', () => {
   const nowIndex = html.indexOf('<div class="now">');
   const artIndex = html.indexOf('<div class="artStack">', nowIndex);
-  const badgeIndex = html.indexOf('<div id="nowDiscoveryBadge"', artIndex);
-  const toolsIndex = html.indexOf('<div id="nowDiscoveryTools"', badgeIndex);
+  const toolsIndex = html.indexOf('<div id="nowDiscoveryTools"', artIndex);
 
   assert.ok(nowIndex >= 0);
   assert.ok(artIndex > nowIndex);
-  assert.ok(badgeIndex > artIndex);
-  assert.ok(toolsIndex > badgeIndex);
-  assert.doesNotMatch(html.slice(toolsIndex, html.indexOf('</div>', toolsIndex)), /nowDiscoveryBadge/);
+  assert.ok(toolsIndex > artIndex);
 });
 
 test('regular, maximized, and fullscreen geometry have explicit scoped owners', () => {
@@ -189,9 +186,9 @@ test('tablet correction 2 leaves controls without full-width chrome and bounds t
   assert.match(correction, /\.secondaryNavShell \{[\s\S]*?width: max-content;[\s\S]*?max-width: 100%;/);
   assert.match(correction, /--rh-tablet-player-height: min\(760px, calc\(100dvh - 180px\)\);[\s\S]*?height: var\(--rh-tablet-player-height\);[\s\S]*?overflow: hidden;/);
   assert.match(correction, /grid-template-rows: 34px minmax\(320px, 1fr\) 52px 48px;/);
-  assert.match(correction, /grid-template-columns: minmax\(0, 1fr\) minmax\(280px, 0\.82fr\);[\s\S]*?grid-template-areas:[\s\S]*?"badge badge"[\s\S]*?"main tools"[\s\S]*?"controls controls"[\s\S]*?"seek seek"/);
+  assert.match(correction, /grid-template-columns: minmax\(0, 1fr\) minmax\(280px, 0\.82fr\);[\s\S]*?grid-template-areas:[\s\S]*?"\. \."[\s\S]*?"main tools"[\s\S]*?"controls controls"[\s\S]*?"seek seek"/);
   assert.match(correction, /grid-template-rows: 34px minmax\(360px, 1fr\) 52px 48px;/);
-  assert.match(correction, /grid-template-columns: minmax\(0, 1fr\) minmax\(300px, 0\.46fr\);[\s\S]*?grid-template-areas:[\s\S]*?"badge badge"[\s\S]*?"main tools"[\s\S]*?"controls controls"[\s\S]*?"seek seek"/);
+  assert.match(correction, /grid-template-columns: minmax\(0, 1fr\) minmax\(300px, 0\.46fr\);[\s\S]*?grid-template-areas:[\s\S]*?"\. \."[\s\S]*?"main tools"[\s\S]*?"controls controls"[\s\S]*?"seek seek"/);
   assert.doesNotMatch(correction, /@media \(max-width: 699px\)/);
   assert.doesNotMatch(correction, /body\.playerMaximized|body\.playerFullWindow|player--fullscreen/);
 });
@@ -203,7 +200,7 @@ test('tablet custom composition uses functional zones without nested scrolling',
 
   assert.match(custom, /--rh-tablet-meta-zone: clamp\(220px, 25%, 290px\);[\s\S]*?--rh-tablet-utility-zone: clamp\(280px, 28%, 340px\);/);
   assert.match(custom, /grid-template-columns: minmax\(0, var\(--rh-tablet-meta-zone\)\) minmax\(0, 1fr\) minmax\(0, var\(--rh-tablet-utility-zone\)\);/);
-  assert.match(custom, /grid-template-areas:[\s\S]*?"badge badge badge"[\s\S]*?"now art tools"[\s\S]*?"controls controls controls"[\s\S]*?"seek seek seek"/);
+  assert.match(custom, /grid-template-areas:[\s\S]*?"\. \. \."[\s\S]*?"now art tools"[\s\S]*?"controls controls controls"[\s\S]*?"seek seek seek"/);
   assert.match(custom, /> \.now \{[\s\S]*?grid-area: now;[\s\S]*?height: auto;[\s\S]*?overflow: visible;/);
   assert.match(custom, /> \.nowDiscoveryTools \{[\s\S]*?grid-area: tools;[\s\S]*?height: auto;[\s\S]*?overflow: visible;/);
   assert.match(custom, /\.nowFeedback \.feedbackRail \{[\s\S]*?grid-template-columns: repeat\(3, minmax\(0, 1fr\)\);/);
@@ -259,8 +256,7 @@ test('regular touch tablet sizing is owned by one explicit landscape media rule'
   assert.match(owner, /height: auto;[\s\S]*?max-height: none;[\s\S]*?overflow: visible;/);
   assert.match(owner, /grid-template-rows: 48px minmax\(360px, auto\) 94px 48px;/);
   assert.match(owner, /--rh-touch-tablet-tools: clamp\(300px, 24vw, 318px\);/);
-  assert.match(owner, /grid-template-areas:[\s\S]*?"\. badge viewControls"[\s\S]*?"now art tools"[\s\S]*?"controls controls controls"[\s\S]*?"seek seek seek"/);
-  assert.match(owner, /\.nowDiscoveryBadge \{[\s\S]*?justify-self: stretch;[\s\S]*?justify-content: center;/);
+  assert.match(owner, /grid-template-areas:[\s\S]*?"\. \. viewControls"[\s\S]*?"now art tools"[\s\S]*?"controls controls controls"[\s\S]*?"seek seek seek"/);
   assert.match(owner, /\.cover \{[\s\S]*?opacity: 0\.62 !important;/);
   assert.match(owner, /\.nowDiscoveryTools :is\([\s\S]*?\.nowFeedback,[\s\S]*?\.nowDiscoveryActions,[\s\S]*?\.nowTidalPlaylistGroup[\s\S]*?width: 100%;/);
   assert.match(owner, /\.nowFeedback \.feedbackRail \{[\s\S]*?width: calc\(100% - 32px\);/);
@@ -297,9 +293,8 @@ test('phone regular player reserves mode controls and keeps transport readable',
 
   assert.match(phone, /@media \(max-width: 699px\)/);
   assert.match(phone, /:is\(\.view, \.secondaryNav, :where\(#lyrionView \.lyrionTabPanel\)\) :is\([\s\S]*?button,[\s\S]*?select,[\s\S]*?min-height: 44px;/);
-  assert.match(phone, /grid-template-areas:[\s\S]*?"viewControls"[\s\S]*?"badge"[\s\S]*?"now"[\s\S]*?"art"[\s\S]*?"tools"[\s\S]*?"controls"[\s\S]*?"seek"/);
+  assert.match(phone, /grid-template-areas:[\s\S]*?"viewControls"\s*"now"[\s\S]*?"art"[\s\S]*?"tools"[\s\S]*?"controls"[\s\S]*?"seek"/);
   assert.match(phone, /> \.playerViewControls \{[\s\S]*?position: static;[\s\S]*?grid-area: viewControls;/);
-  assert.match(phone, /> \.nowDiscoveryBadge \{[\s\S]*?grid-area: badge;[\s\S]*?justify-content: center;/);
   assert.match(phone, /> \.nowDiscoveryTools \{[\s\S]*?display: grid;[\s\S]*?grid-template-areas:[\s\S]*?"feedback"[\s\S]*?"actions"[\s\S]*?"playlist"/);
   assert.match(phone, /> \.controls \{[\s\S]*?grid-template-columns: repeat\(2, minmax\(0, 1fr\)\);[\s\S]*?"prev next"[\s\S]*?"play stop"/);
   assert.match(phone, /button\[data-control="playpause"\] \{ grid-area: play; \}/);
@@ -321,7 +316,7 @@ test('phone completion shares the visual owner across surfaces and player modes'
   const completion = css.slice(completionStart);
 
   assert.match(completion, /body:not\(\.playerFullWindow\):not\(\.playerMaximized\) :is\(\.appHeader, \.topbar, \.secondaryNav\)/);
-  assert.match(completion, /body\.playerMaximized[\s\S]*?grid-template-areas:[\s\S]*?"viewControls"[\s\S]*?"badge"[\s\S]*?"now"[\s\S]*?"art"[\s\S]*?"tools"[\s\S]*?"controls"[\s\S]*?"seek"/);
+  assert.match(completion, /body\.playerMaximized[\s\S]*?grid-template-areas:[\s\S]*?"viewControls"\s*"now"[\s\S]*?"art"[\s\S]*?"tools"[\s\S]*?"controls"[\s\S]*?"seek"/);
   assert.match(completion, /body\.playerFullWindow[\s\S]*?\.player--fullscreen\.isFullWindow/);
   assert.match(completion, /\.player\.player--fullscreen:fullscreen[\s\S]*?grid-template-columns: minmax\(0, 1fr\);/);
   assert.match(completion, /\.player\.player--fullscreen:-webkit-full-screen[\s\S]*?grid-template-columns: repeat\(2, minmax\(0, 1fr\)\);/);
@@ -398,7 +393,6 @@ test('maximized and fullscreen keep their atmospheric artwork copies independent
   assert.match(css, /player--fullscreen[\s\S]*?> \.artStack[\s\S]*?transform: translateY\(var\(--rh-stage-shift\)\);/);
   assert.match(css, /player--fullscreen[\s\S]*?\.cover[\s\S]*?width: min\(calc\(98cqw - 8px\), calc\(98cqh - 8px\)\);[\s\S]*?background-image: none !important;[\s\S]*?opacity: 1;[\s\S]*?box-shadow: none;/);
   assert.match(css, /player--fullscreen[\s\S]*?\.cover::before[\s\S]*?background-image: var\(--now-artwork-backdrop\), url\("\/assets\/rabbit-hole-fallback\.jpg"\);[\s\S]*?filter: none;[\s\S]*?opacity: 0\.5;/);
-  assert.match(css, /player--fullscreen[\s\S]*?> \.nowDiscoveryBadge[\s\S]*?transform: translateY\(calc\(clamp\(8px, 1\.5vh, 12px\) \+ var\(--rh-stage-shift\)\)\);/);
 });
 
 test('regular player keeps its text hierarchy purple without changing fullscreen color ownership', () => {

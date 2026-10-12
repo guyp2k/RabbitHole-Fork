@@ -13,7 +13,7 @@ const navigationSource = source.slice(source.indexOf('$("#rabbitHolePanel").addE
 function fixture() {
   const elements = new Map();
   const document = { activeElement: null, querySelector: () => elements.get('.player'), getElementById: id => elements.get(`#${id}`) };
-  for (const id of ['#rabbitHolePanel', '#rabbitHoleContent', '#openRabbitHole', '#closeRabbitHole', '#nowDiscoveryTools', '#nowFeedback', '#nowDiscoveryBadge', '#request', '#track-0', '.player']) {
+  for (const id of ['#rabbitHolePanel', '#rabbitHoleContent', '#openRabbitHole', '#closeRabbitHole', '#nowDiscoveryTools', '#nowFeedback', '#nowRating', '#request', '#track-0', '.player']) {
     const element = {
       hidden: id === '#rabbitHolePanel', disabled: false, innerHTML: '', dataset: {},
       attributes: {}, listeners: {}, scrolls: 0,
@@ -112,6 +112,7 @@ test('loss of the now-playing track closes the region and resets disclosure stat
   assert.equal(e.get('#openRabbitHole').attributes['aria-expanded'], 'false');
   assert.equal(e.get('#openRabbitHole').disabled, true);
   assert.equal(e.get('#nowDiscoveryTools').hidden, true);
+  assert.equal(e.get('#nowRating').hidden, true, 'the rating line under the art goes away with the track');
   assert.notEqual(c.document.activeElement, e.get('#openRabbitHole'));
 });
 

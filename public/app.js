@@ -2232,16 +2232,9 @@ function normalizeFeedbackValue(value) {
   return "";
 }
 
-function feedbackBadgeLabel(value) {
-  const rating = normalizeFeedbackValue(value);
-  if (rating === "love") return "Loved now playing";
-  if (rating === "like") return "Rated Like";
-  if (rating === "ok") return "Rated Okay";
-  if (rating === "dislike") return "Disliked now playing";
+function feedbackBadgeLabel(rating) {
   if (rating === "wrong_genre") return "Marked Wrong Genre";
   if (rating === "reject_similar") return "Rejected similar";
-  if (rating === "skip") return "Skipped now playing";
-  if (rating === "never") return "Never Again";
   return "";
 }
 
@@ -2484,13 +2477,20 @@ function scrollToDiscoveryTrack(index) {
   setTimeout(() => target.classList.remove("trackFocus"), 1800);
 }
 
-function nowPlayingBadgeHtml(track = {}, source = "") {
-  const scoreBadge = compactScoreBadgeHtml(track);
-  if (scoreBadge) return scoreBadge;
-  const feedbackLabel = feedbackBadgeLabel(track.feedback || feedbackForTrack(track));
-  if (feedbackLabel) return `<span class="scoreBadge feedback">${escapeHtml(feedbackLabel)}</span>`;
-  const label = source === "memory" ? "Remembered track" : "Unscored now playing";
-  return `<span class="scoreBadge unscored">${escapeHtml(label)}</span>`;
+function nowRatingHtml(track = {}) {
+  const rating = normalizeFeedbackValue(track.feedback || feedbackForTrack(track));
+  const parts = [];
+  const stars = { love: [5, "Loved"], like: [4, "Liked"], ok: [3, "Okay"], dislike: [2, "Disliked"], never: [1, "Never Again"] }[rating];
+  if (stars) {
+    const [filled, label] = stars;
+    const empty = filled < 5 ? `<span class="nowRatingEmpty">${"★".repeat(5 - filled)}</span>` : "";
+    parts.push(`<span class="nowRatingStars" role="img" aria-label="${filled} of 5 stars">${"★".repeat(filled)}${empty}</span> ${label}`);
+  } else if (feedbackBadgeLabel(rating)) {
+    parts.push(feedbackBadgeLabel(rating));
+  }
+  const score = track.score || track.scoreBreakdown?.total || "";
+  if (score) parts.push(escapeHtml(`Discovery ${score} - ${scoreBandFor(score).label}${track.belowMinimum ? " - below minimum" : ""}`));
+  return parts.join(" · ");
 }
 
 function selectedTidalPlaylist() {
@@ -2905,10 +2905,10 @@ function renderNowSonicProfileEditor(track = null) {
 function updateNowDiscoveryTools(zone = activeZone()) {
   const tools = $("#nowDiscoveryTools");
   const feedback = $("#nowFeedback");
-  const badge = $("#nowDiscoveryBadge");
+  const rating = $("#nowRating");
   const openRabbitHole = $("#openRabbitHole");
   const rabbitHolePanel = $("#rabbitHolePanel");
-  if (!tools || !feedback || !badge || !openRabbitHole || !rabbitHolePanel) return;
+  if (!tools || !feedback || !rating || !openRabbitHole || !rabbitHolePanel) return;
 
   const match = findNowPlayingMatch(zone);
   state.nowMatchIndex = match.index;
@@ -2919,7 +2919,8 @@ function updateNowDiscoveryTools(zone = activeZone()) {
     tools.hidden = true;
     feedback.innerHTML = "";
     feedback.dataset.renderKey = "";
-    badge.innerHTML = "";
+    rating.innerHTML = "";
+    rating.hidden = true;
     renderNowTidalPlaylistControl(null);
     openRabbitHole.disabled = true;
     setRabbitHolePanelOpen(false);
@@ -2936,7 +2937,8 @@ function updateNowDiscoveryTools(zone = activeZone()) {
     `;
     feedback.dataset.renderKey = feedbackRenderKey;
   }
-  badge.innerHTML = nowPlayingBadgeHtml(match.track, match.source);
+  rating.innerHTML = nowRatingHtml(match.track);
+  rating.hidden = !rating.innerHTML;
   renderNowTidalPlaylistControl(match.track);
   if (!state.tidalPlaylistsLoaded && !state.tidalPlaylistsLoading && !state.tidalPlaylistsError) {
     loadTidalPlaylists().catch(() => {});

@@ -89,7 +89,7 @@ test("the Roon strip hides while Roon is disconnected or has no zone", async () 
 
 test("the Roon strip sits under the album art, the app reports the zone name, and the art shrinks to make room", () => {
   const html = read("public/index.html");
-  assert.match(html, /<div class="cover" id="cover"><\/div>\s*<div id="nowPlayback" class="playbackStrip" hidden><p id="nowPlaybackChain"><\/p><p id="nowPlaybackSignal" class="playbackStripSignal" hidden><\/p><\/div>\s*<\/div>/);
+  assert.match(html, /<div class="cover" id="cover"><\/div>\s*<div id="nowPlayback" class="playbackStrip" hidden><p id="nowPlaybackChain"><\/p><p id="nowPlaybackSignal" class="playbackStripSignal" hidden><\/p><p id="nowRating" class="nowRating" hidden><\/p><\/div>\s*<\/div>/);
   assert.ok(html.indexOf('src="/hqplayerSummary.js') < html.indexOf('src="/app.js') && html.indexOf('src="/app.js') < html.indexOf('src="/roonPlaybackStrip.js'), "script order");
   assert.match(read("public/app.js"), /const playback = \{ zoneId: state\.selectedZoneId, zoneName: zone\?\.display_name \|\| "",/);
   const css = read("public/styles.css");
@@ -104,6 +104,6 @@ test("the Roon strip sits under the album art, the app reports the zone name, an
 test("on a phone the art row grows by the strip's room so the cover keeps its phone size", () => {
   const css = read("public/styles.css");
   const phone = css.slice(css.lastIndexOf("@media (max-width: 699px) {"));
-  assert.match(phone, /:has\(> \.artStack > #nowPlayback:not\(\[hidden\]\)\) \{\s*grid-template-rows: auto auto auto minmax\(280px, calc\(72vw \+ 72px\)\) auto auto auto;/);
+  assert.match(phone, /:has\(> \.artStack > #nowPlayback:not\(\[hidden\]\)\) \{\s*grid-template-rows: auto auto minmax\(280px, calc\(72vw \+ 72px\)\) auto auto auto;/);
   assert.match(phone, /> \.artStack > \.cover:has\(\+ #nowPlayback:not\(\[hidden\]\)\) \{\s*width: min\(100cqw, calc\(100cqh - 72px\)\);/);
 });

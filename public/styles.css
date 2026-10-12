@@ -1437,7 +1437,7 @@ select:focus option,
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
   grid-template-areas:
-    "feedback badge"
+    "feedback feedback"
     "profile profile"
     "actions actions"
     "playlist playlist";
@@ -1528,13 +1528,6 @@ select:focus option,
   color: var(--muted);
   font-size: 12px;
   line-height: 1.25;
-}
-
-.nowDiscoveryBadge {
-  grid-area: badge;
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
 }
 
 .rabbitHolePanel {
@@ -4820,7 +4813,6 @@ button:disabled:hover {
     grid-template-columns: 1fr;
     grid-template-areas:
       "feedback"
-      "badge"
       "profile"
       "actions"
       "playlist";
@@ -5521,7 +5513,7 @@ a,
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto;
     grid-template-areas:
-      "feedback badge"
+      "feedback feedback"
       "profile profile"
       "actions actions"
       "playlist playlist";
@@ -5532,12 +5524,6 @@ a,
   .player > .nowDiscoveryTools .nowFeedback {
     grid-area: feedback;
     flex: none;
-  }
-
-  .player > .nowDiscoveryTools .nowDiscoveryBadge {
-    grid-area: badge;
-    justify-content: flex-end;
-    padding-top: 2px;
   }
 
   .player > .nowDiscoveryTools .nowDiscoveryActions {
@@ -5796,7 +5782,6 @@ body.playerMaximized {
   grid-template-columns: minmax(0, 1fr);
   grid-template-areas:
     "feedback"
-    "badge"
     "profile"
     "actions"
     "playlist";
@@ -5882,7 +5867,7 @@ body.playerMaximized {
   .player.isMaximized > .nowDiscoveryTools {
     grid-template-columns: minmax(0, 1fr) auto;
     grid-template-areas:
-      "feedback badge"
+      "feedback feedback"
       "profile profile"
       "actions actions"
       "playlist playlist";
@@ -5891,11 +5876,6 @@ body.playerMaximized {
 
   .player.isMaximized .nowFeedback {
     grid-area: feedback;
-  }
-
-  .player.isMaximized .nowDiscoveryBadge {
-    grid-area: badge;
-    justify-content: flex-end;
   }
 
   .player.isMaximized .nowDiscoveryActions {
@@ -6163,7 +6143,7 @@ body.playerMaximized {
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto;
     grid-template-areas:
-      "feedback badge"
+      "feedback feedback"
       "profile profile"
       "actions actions"
       "playlist playlist";
@@ -6177,11 +6157,6 @@ body.playerMaximized {
     grid-template-columns: repeat(6, minmax(0, 1fr));
     gap: 8px;
     width: 100%;
-  }
-
-  .nowDiscoveryBadge {
-    grid-area: badge;
-    justify-content: flex-end;
   }
 
   .nowDiscoveryActions {
@@ -6492,7 +6467,6 @@ body.playerFullWindow {
     display: grid;
     grid-template-columns: minmax(0, 1fr);
     grid-template-areas:
-      "badge"
       "feedback"
       "profile"
       "actions"
@@ -6500,29 +6474,6 @@ body.playerFullWindow {
     align-items: stretch;
     gap: clamp(8px, 1.3vh, 14px);
     width: 100%;
-  }
-
-  .player.isMaximized .nowDiscoveryBadge,
-  .player.isFullWindow .nowDiscoveryBadge,
-  .player:fullscreen .nowDiscoveryBadge,
-  .player:-webkit-full-screen .nowDiscoveryBadge {
-    grid-area: badge;
-    justify-content: flex-end;
-    padding: 0;
-  }
-
-  .player.isMaximized .nowDiscoveryBadge .scoreBadge,
-  .player.isFullWindow .nowDiscoveryBadge .scoreBadge,
-  .player:fullscreen .nowDiscoveryBadge .scoreBadge,
-  .player:-webkit-full-screen .nowDiscoveryBadge .scoreBadge {
-    min-height: clamp(32px, 5vh, 46px);
-    padding: 0 clamp(14px, 2.4vw, 24px);
-    border-width: 2px;
-    border-radius: 999px;
-    font-size: clamp(15px, 2.7vh, 22px);
-    font-weight: 900;
-    letter-spacing: 0;
-    box-shadow: var(--inner-light), 0 0 28px rgba(143, 240, 255, 0.12);
   }
 
   .player.isMaximized .nowFeedback,
@@ -6708,7 +6659,6 @@ body.playerFullWindow {
     grid-template-columns: 1fr;
     grid-template-areas:
       "feedback"
-      "badge"
       "profile"
       "actions"
       "playlist";
@@ -6739,21 +6689,6 @@ body.playerFullWindow {
   .player:fullscreen .feedbackButton.never,
   .player:-webkit-full-screen .feedbackButton.never {
     grid-column: auto;
-  }
-
-  .player.isFullWindow .nowDiscoveryBadge,
-  .player:fullscreen .nowDiscoveryBadge,
-  .player:-webkit-full-screen .nowDiscoveryBadge {
-    justify-content: flex-start;
-    margin-top: 2px;
-  }
-
-  .player.isFullWindow .nowDiscoveryBadge .scoreBadge,
-  .player:fullscreen .nowDiscoveryBadge .scoreBadge,
-  .player:-webkit-full-screen .nowDiscoveryBadge .scoreBadge {
-    min-height: 28px;
-    padding: 0 10px;
-    font-size: 13px;
   }
 
   .player.isFullWindow .nowDiscoveryActions,
@@ -7918,33 +7853,6 @@ textarea {
   box-shadow: 0 18px 48px rgba(0, 0, 0, 0.48), 0 0 34px rgba(184, 110, 244, 0.09);
 }
 
-.player:is(.player--regular, .player--maximized, .player--fullscreen) > .nowDiscoveryBadge {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  pointer-events: none;
-}
-
-.player:is(.player--regular, .player--maximized, .player--fullscreen) > .nowDiscoveryBadge:empty {
-  display: none;
-}
-
-.player:is(.player--regular, .player--maximized, .player--fullscreen) .nowDiscoveryBadge .scoreBadge {
-  min-width: min(100%, 210px);
-  min-height: 32px;
-  justify-content: center;
-  padding: 0 18px;
-  border: 1px solid rgba(217, 179, 255, 0.58);
-  border-radius: 999px;
-  background: rgba(24, 8, 38, 0.44);
-  color: #f0d5ff;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 0 14px rgba(186, 113, 244, 0.12);
-  font-size: 13px;
-  font-weight: 850;
-  white-space: nowrap;
-}
-
 .player:is(.player--regular, .player--maximized, .player--fullscreen) > .nowDiscoveryTools {
   display: flex;
   flex-direction: column;
@@ -8224,11 +8132,6 @@ textarea {
 .player.player--regular:not(.isMaximized):not(.isFullWindow) > .artStack {
   grid-column: 2;
   grid-row: 2;
-}
-
-.player.player--regular:not(.isMaximized):not(.isFullWindow) > .nowDiscoveryBadge {
-  grid-column: 2;
-  grid-row: 1;
 }
 
 .player.player--regular:not(.isMaximized):not(.isFullWindow) > .nowDiscoveryTools {
@@ -8717,11 +8620,6 @@ body.playerMaximized .player.player--maximized.isMaximized:not(.player--fullscre
   grid-row: 2;
 }
 
-body.playerMaximized .player.player--maximized.isMaximized:not(.player--fullscreen):not(.isFullWindow) > .nowDiscoveryBadge {
-  grid-column: 2;
-  grid-row: 1;
-}
-
 body.playerMaximized .player.player--maximized.isMaximized:not(.player--fullscreen):not(.isFullWindow) > .playerViewControls {
   position: relative;
   top: auto;
@@ -9141,13 +9039,6 @@ body.playerFullWindow .player.player--fullscreen.isFullWindow > .artStack,
   grid-row: 2;
 }
 
-body.playerFullWindow .player.player--fullscreen.isFullWindow > .nowDiscoveryBadge,
-.player.player--fullscreen:fullscreen > .nowDiscoveryBadge,
-.player.player--fullscreen:-webkit-full-screen > .nowDiscoveryBadge {
-  grid-column: 2;
-  grid-row: 1;
-}
-
 body.playerFullWindow .player.player--fullscreen.isFullWindow > .playerViewControls,
 .player.player--fullscreen:fullscreen > .playerViewControls,
 .player.player--fullscreen:-webkit-full-screen > .playerViewControls {
@@ -9298,12 +9189,6 @@ body.playerFullWindow .player.player--fullscreen.isFullWindow .cover::before,
   filter: none;
   opacity: 0.5;
   pointer-events: none;
-}
-
-body.playerFullWindow .player.player--fullscreen.isFullWindow > .nowDiscoveryBadge,
-.player.player--fullscreen:fullscreen > .nowDiscoveryBadge,
-.player.player--fullscreen:-webkit-full-screen > .nowDiscoveryBadge {
-  transform: translateY(calc(clamp(8px, 1.5vh, 12px) + var(--rh-stage-shift)));
 }
 
 body.playerFullWindow .player.player--fullscreen.isFullWindow > .nowDiscoveryTools,
@@ -9651,7 +9536,6 @@ body.playerFullWindow .player.player--fullscreen.isFullWindow ::placeholder,
   }
 
   .player.player--regular:not(.isMaximized):not(.isFullWindow) > .now { grid-column: 1; grid-row: 2; height: auto; }
-  .player.player--regular:not(.isMaximized):not(.isFullWindow) > .nowDiscoveryBadge { grid-column: 1; grid-row: 1; }
   .player.player--regular:not(.isMaximized):not(.isFullWindow) > .artStack { grid-column: 1; grid-row: 3; }
   .player.player--regular:not(.isMaximized):not(.isFullWindow) > .nowDiscoveryTools { grid-column: 1; grid-row: 4; height: auto; }
   .player.player--regular:not(.isMaximized):not(.isFullWindow) > .controls {
@@ -9687,11 +9571,6 @@ body.playerFullWindow .player.player--fullscreen.isFullWindow ::placeholder,
   body.playerFullWindow .player.player--fullscreen.isFullWindow > .now,
   .player.player--fullscreen:fullscreen > .now,
   .player.player--fullscreen:-webkit-full-screen > .now { grid-column: 1; grid-row: 2; height: auto; }
-
-  body.playerMaximized .player.player--maximized.isMaximized:not(.player--fullscreen):not(.isFullWindow) > .nowDiscoveryBadge,
-  body.playerFullWindow .player.player--fullscreen.isFullWindow > .nowDiscoveryBadge,
-  .player.player--fullscreen:fullscreen > .nowDiscoveryBadge,
-  .player.player--fullscreen:-webkit-full-screen > .nowDiscoveryBadge { grid-column: 1; grid-row: 1; }
 
   body.playerMaximized .player.player--maximized.isMaximized:not(.player--fullscreen):not(.isFullWindow) > .artStack,
   body.playerFullWindow .player.player--fullscreen.isFullWindow > .artStack,
@@ -10891,11 +10770,6 @@ body:not(.playerFullWindow):not(.playerMaximized) .settingsPanel > .topControls 
     min-height: 0;
   }
 
-  .player.player--regular:not(.isMaximized):not(.isFullWindow) > .nowDiscoveryBadge {
-    grid-column: 2;
-    grid-row: 1;
-  }
-
   .player.player--regular:not(.isMaximized):not(.isFullWindow) > .nowDiscoveryTools {
     grid-column: 1 / -1;
     grid-row: 3;
@@ -10956,11 +10830,6 @@ body:not(.playerFullWindow):not(.playerMaximized) .settingsPanel > .topControls 
 
   .player.player--regular:not(.isMaximized):not(.isFullWindow) > :is(.now, .artStack, .nowDiscoveryTools) {
     grid-row: 2;
-  }
-
-  .player.player--regular:not(.isMaximized):not(.isFullWindow) > .nowDiscoveryBadge {
-    grid-column: 2;
-    grid-row: 1;
   }
 
   .player.player--regular:not(.isMaximized):not(.isFullWindow) > .controls {
@@ -11209,7 +11078,7 @@ body:not(.playerFullWindow):not(.playerMaximized) .settingsPanel > .topControls 
     grid-template-columns: minmax(0, 1fr) minmax(280px, 0.82fr);
     grid-template-rows: 34px minmax(320px, 1fr) 52px 48px;
     grid-template-areas:
-      "badge badge"
+      ". ."
       "main tools"
       "controls controls"
       "seek seek";
@@ -11224,10 +11093,6 @@ body:not(.playerFullWindow):not(.playerMaximized) .settingsPanel > .topControls 
 
   .player.player--regular:not(.isMaximized):not(.isFullWindow) > .artStack {
     grid-area: art;
-  }
-
-  .player.player--regular:not(.isMaximized):not(.isFullWindow) > .nowDiscoveryBadge {
-    grid-area: badge;
   }
 
   .player.player--regular:not(.isMaximized):not(.isFullWindow) > .nowDiscoveryTools {
@@ -11272,7 +11137,7 @@ body:not(.playerFullWindow):not(.playerMaximized) .settingsPanel > .topControls 
     grid-template-columns: minmax(0, 1fr) minmax(300px, 0.46fr);
     grid-template-rows: 34px minmax(360px, 1fr) 52px 48px;
     grid-template-areas:
-      "badge badge"
+      ". ."
       "main tools"
       "controls controls"
       "seek seek";
@@ -11289,10 +11154,6 @@ body:not(.playerFullWindow):not(.playerMaximized) .settingsPanel > .topControls 
   .player.player--regular:not(.isMaximized):not(.isFullWindow) > .artStack {
     grid-area: art;
     min-height: 0;
-  }
-
-  .player.player--regular:not(.isMaximized):not(.isFullWindow) > .nowDiscoveryBadge {
-    grid-area: badge;
   }
 
   .player.player--regular:not(.isMaximized):not(.isFullWindow) > .nowDiscoveryTools {
@@ -11330,7 +11191,7 @@ body:not(.playerFullWindow):not(.playerMaximized) .settingsPanel > .topControls 
     grid-template-columns: minmax(0, var(--rh-tablet-meta-zone)) minmax(0, 1fr) minmax(0, var(--rh-tablet-utility-zone));
     grid-template-rows: 34px minmax(360px, 1fr) 52px 48px;
     grid-template-areas:
-      "badge badge badge"
+      ". . ."
       "now art tools"
       "controls controls controls"
       "seek seek seek";
@@ -11608,7 +11469,7 @@ body:not(.playerFullWindow):not(.playerMaximized) .settingsPanel > .topControls 
     grid-template-columns: minmax(0, var(--rh-touch-tablet-meta)) minmax(0, 1fr) minmax(0, var(--rh-touch-tablet-tools));
     grid-template-rows: 48px minmax(360px, auto) 94px 48px;
     grid-template-areas:
-      ". badge viewControls"
+      ". . viewControls"
       "now art tools"
       "controls controls controls"
       "seek seek seek";
@@ -11631,13 +11492,6 @@ body:not(.playerFullWindow):not(.playerMaximized) .settingsPanel > .topControls 
   body.hasTouchScreen:not(.playerFullWindow):not(.playerMaximized) .player.player--regular:not(.isMaximized):not(.isFullWindow) > .playerViewControls button {
     min-height: 44px;
     padding-inline: 12px;
-  }
-
-  body.hasTouchScreen:not(.playerFullWindow):not(.playerMaximized) .player.player--regular:not(.isMaximized):not(.isFullWindow) > .nowDiscoveryBadge {
-    grid-area: badge;
-    align-self: start;
-    justify-self: stretch;
-    justify-content: center;
   }
 
   body.hasTouchScreen:not(.playerFullWindow):not(.playerMaximized) .player.player--regular:not(.isMaximized):not(.isFullWindow) .cover {
@@ -11910,10 +11764,9 @@ body.playerFullWindow .player.player--fullscreen.isFullWindow .nowInfo .nowSourc
 
   body:not(.playerFullWindow):not(.playerMaximized) .player.player--regular:not(.isMaximized):not(.isFullWindow) {
     grid-template-columns: minmax(0, 1fr);
-    grid-template-rows: auto auto auto minmax(280px, 72vw) auto auto auto;
+    grid-template-rows: auto auto minmax(280px, 72vw) auto auto auto;
     grid-template-areas:
       "viewControls"
-      "badge"
       "now"
       "art"
       "tools"
@@ -11942,12 +11795,6 @@ body.playerFullWindow .player.player--fullscreen.isFullWindow .nowInfo .nowSourc
     min-height: 44px;
     padding-inline: 8px;
     font-size: 11px;
-  }
-
-  body:not(.playerFullWindow):not(.playerMaximized) .player.player--regular:not(.isMaximized):not(.isFullWindow) > .nowDiscoveryBadge {
-    grid-area: badge;
-    justify-content: center;
-    min-height: 28px;
   }
 
   body:not(.playerFullWindow):not(.playerMaximized) .player.player--regular:not(.isMaximized):not(.isFullWindow) > .now {
@@ -12176,10 +12023,9 @@ body.playerFullWindow .player.player--fullscreen.isFullWindow .nowInfo .nowSourc
   .player.player--fullscreen:fullscreen,
   .player.player--fullscreen:-webkit-full-screen {
     grid-template-columns: minmax(0, 1fr);
-    grid-template-rows: max-content max-content max-content minmax(280px, 72vw) max-content max-content max-content;
+    grid-template-rows: max-content max-content minmax(280px, 72vw) max-content max-content max-content;
     grid-template-areas:
       "viewControls"
-      "badge"
       "now"
       "art"
       "tools"
@@ -12217,15 +12063,6 @@ body.playerFullWindow .player.player--fullscreen.isFullWindow .nowInfo .nowSourc
     min-height: 44px;
     padding-inline: 8px;
     font-size: 11px;
-  }
-
-  body.playerMaximized .player.player--maximized.isMaximized:not(.player--fullscreen):not(.isFullWindow) > .nowDiscoveryBadge,
-  body.playerFullWindow .player.player--fullscreen.isFullWindow > .nowDiscoveryBadge,
-  .player.player--fullscreen:fullscreen > .nowDiscoveryBadge,
-  .player.player--fullscreen:-webkit-full-screen > .nowDiscoveryBadge {
-    grid-area: badge;
-    justify-content: center;
-    min-height: 28px;
   }
 
   body.playerMaximized .player.player--maximized.isMaximized:not(.player--fullscreen):not(.isFullWindow) > .now,
@@ -12404,13 +12241,6 @@ body.playerFullWindow .player.player--fullscreen.isFullWindow .nowInfo .nowSourc
     transform: none;
   }
 
-  body.playerMaximized .player.player--maximized.isMaximized:not(.player--fullscreen):not(.isFullWindow) > .nowDiscoveryBadge,
-  body.playerFullWindow .player.player--fullscreen.isFullWindow > .nowDiscoveryBadge,
-  .player.player--fullscreen:fullscreen > .nowDiscoveryBadge,
-  .player.player--fullscreen:-webkit-full-screen > .nowDiscoveryBadge {
-    transform: none;
-    margin: 0;
-  }
 }
 
 /* Rabbit Hole disclosure owns its placement independently of the player stage. */
@@ -12737,6 +12567,15 @@ body .nowVolume .volumeSlider,
   color: var(--text);
 }
 
+.nowRatingStars {
+  color: var(--accent);
+  letter-spacing: 0.08em;
+}
+
+.nowRatingEmpty {
+  opacity: 0.28;
+}
+
 .player:is(.player--regular, .player--maximized, .player--fullscreen) > .artStack:has(> #nowPlayback:not([hidden])) {
   flex-direction: column;
   gap: 8px;
@@ -12746,11 +12585,19 @@ body .nowVolume .volumeSlider,
   #playerView .player:is(.player--regular, .player--maximized, .player--fullscreen) > .artStack > .cover:has(+ #nowPlayback:not([hidden])) {
     width: min(100cqw, calc(100cqh - 52px));
   }
+
+  #playerView .player:is(.player--regular, .player--maximized, .player--fullscreen) > .artStack > .cover:has(+ #nowPlayback:not([hidden]) > #nowRating:not([hidden])) {
+    width: min(100cqw, calc(100cqh - 74px));
+  }
 }
 
 @container (min-height: 200px) and (max-width: 599.98px) {
   #playerView .player:is(.player--regular, .player--maximized, .player--fullscreen) > .artStack > .cover:has(+ #nowPlayback:not([hidden])) {
     width: min(100cqw, calc(100cqh - 72px));
+  }
+
+  #playerView .player:is(.player--regular, .player--maximized, .player--fullscreen) > .artStack > .cover:has(+ #nowPlayback:not([hidden]) > #nowRating:not([hidden])) {
+    width: min(100cqw, calc(100cqh - 94px));
   }
 }
 
@@ -12762,11 +12609,19 @@ body .nowVolume .volumeSlider,
 
 @media (max-width: 699px) {
   #playerView .player.player--regular:not(.isMaximized):not(.isFullWindow):has(> .artStack > #nowPlayback:not([hidden])) {
-    grid-template-rows: auto auto auto minmax(280px, calc(72vw + 72px)) auto auto auto;
+    grid-template-rows: auto auto minmax(280px, calc(72vw + 72px)) auto auto auto;
+  }
+
+  #playerView .player.player--regular:not(.isMaximized):not(.isFullWindow):has(> .artStack > #nowPlayback:not([hidden]) > #nowRating:not([hidden])) {
+    grid-template-rows: auto auto minmax(280px, calc(72vw + 94px)) auto auto auto;
   }
 
   #playerView .player.player--regular:not(.isMaximized):not(.isFullWindow) > .artStack > .cover:has(+ #nowPlayback:not([hidden])) {
     width: min(100cqw, calc(100cqh - 72px));
+  }
+
+  #playerView .player.player--regular:not(.isMaximized):not(.isFullWindow) > .artStack > .cover:has(+ #nowPlayback:not([hidden]) > #nowRating:not([hidden])) {
+    width: min(100cqw, calc(100cqh - 94px));
   }
 }
 

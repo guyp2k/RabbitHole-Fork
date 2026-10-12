@@ -51,7 +51,7 @@ body[data-playback-system="lyrion"] #jumpTop { display:none !important; }
 #lyrionView .lyrionNow::after {content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;background:linear-gradient(90deg,rgba(5,3,9,.8),rgba(5,3,9,.12) 40%,rgba(5,3,9,.12) 60%,rgba(5,3,9,.8));}
 .lyrionStageBar {grid-column:1/-1;display:flex;align-items:center;justify-content:flex-end;gap:16px;font-size:12px;}
 .lyrionRail {min-width:0;align-self:stretch;overflow-wrap:anywhere;}
-.lyrionArtworkLane {min-width:0;min-height:0;align-self:center;display:grid;justify-items:center;gap:12px;text-align:center;}
+.lyrionArtworkLane {min-width:0;min-height:0;align-self:start;display:grid;justify-items:center;gap:12px;text-align:center;}
 #lyrionView .lyrionCover {width:100%;max-height:62vh;aspect-ratio:1;object-fit:contain;border-radius:2px;background:transparent;opacity:.8;}
 .lyrionArtEmpty {display:none;min-height:240px;align-content:center;}
 .lyrionCover[hidden] + .lyrionArtEmpty {display:block;}
@@ -87,6 +87,7 @@ body.lyrionFullscreenOpen {overflow:hidden;}
 @media(max-width:700px){#lyrionDiscoveryRail{border-left:0;border-top:1px solid var(--lyrion-line);padding:16px 0 0;}}
 #lyrionView .lyrionNow--fullscreen {position:fixed;inset:0;z-index:10000;margin:0;width:100%;height:100dvh;max-width:none;box-sizing:border-box;overflow:auto;border:0;border-radius:0;box-shadow:none;padding:max(16px,env(safe-area-inset-top)) max(24px,env(safe-area-inset-right)) max(16px,env(safe-area-inset-bottom)) max(24px,env(safe-area-inset-left));grid-template-columns:minmax(190px,1fr) minmax(0,2.3fr) minmax(190px,1fr);grid-template-rows:auto minmax(0,1fr) auto;gap:24px;}
 .lyrionNow--fullscreen .lyrionRail {overflow:auto;min-height:0;}
+.lyrionNow--fullscreen .lyrionArtworkLane {align-self:center;}
 #lyrionView .lyrionNow--fullscreen .lyrionCover {max-height:calc(100dvh - 220px);}
 .lyrionNow--fullscreen .lyrionStageChannels {max-height:none;}
 .lyrionSxm {margin-block:24px;text-align:inherit;font-size:13px;line-height:1.6;color:var(--muted);}
