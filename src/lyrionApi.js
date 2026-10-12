@@ -141,7 +141,7 @@ function createLyrionApi({ roon, readJson, sendJson, catalogue=null, hqplayerLin
       playbackVersion++;
       return exclusive(async () => {
         await client.requirePlayer(player);
-        const starts = route === "queue" ? body.action === "play" : ["play", "next", "previous"].includes(body.action);
+        const starts = route === "queue" ? body.action === "play" : ["play", "next", "previous", "jump"].includes(body.action);
         if (route === "queue" && !body.referenceId && !body.soundcloudTrack) {
           const entry = client.getAction(body.token, player);
           if (entry.action.kind !== body.action || !["play", "add", "next"].includes(body.action)) throw new Error("Invalid queue action.");
@@ -151,7 +151,7 @@ function createLyrionApi({ roon, readJson, sendJson, catalogue=null, hqplayerLin
         if(route==="queue" && (body.referenceId || body.soundcloudTrack) && !["play","add","next"].includes(body.action))throw Error("Invalid queue action.");
         if(route==="queue" || body.action==="clear")client.artistStations?.stop(player,"Queue changed; automatic additions stopped.");
         if(route==="control" && ["next","previous"].includes(body.action))await client.artistStations?.skip(player,body.action);
-        const result = route === "queue" ? (body.referenceId || body.soundcloudTrack ? await client.executeExact(player,body,body.action) : await client.execute(player, body.token, body.action)) : await client.control(player, body.action);
+        const result = route === "queue" ? (body.referenceId || body.soundcloudTrack ? await client.executeExact(player,body,body.action) : await client.execute(player, body.token, body.action)) : await client.control(player, body.action, ...(body.action === "jump" ? [body.index] : []));
         return sendJson(res, 200, { ok: true, result });
       });
     }

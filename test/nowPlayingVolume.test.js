@@ -127,7 +127,7 @@ test("Roon Now Playing drives the zone's first output that has a volume, absolut
 
 test("Roon and Lyrion Now Playing each have a volume row in their rail", () => {
   assert.match(indexHtml, /<p id="nowSourceFormat" class="nowSourceFormat" hidden><\/p>\s*<div id="nowVolume" class="nowVolume" hidden><\/div>/);
-  assert.match(lyrionSource, /<p id="lyrionAlbum" class="muted"><\/p>(<dl id="lyrionDetails" class="lyrionDetails" hidden><\/dl>)?<div id="lyrionVolume" class="nowVolume" hidden><\/div>/);
+  assert.match(lyrionSource, /<p id="lyrionArtist"><\/p>(<dl id="lyrionDetails" class="lyrionDetails" hidden><\/dl>)?<div id="lyrionVolume" class="nowVolume" hidden><\/div>/);
   const refresh = section(lyrionSource, "  async function refreshStatus()", "  async function loadPlayer()");
   assert.match(refresh, /lyrionVolume\.update\(s\.connected\?s\.volume:null\);/);
   assert.match(appSource, /renderNowVolume\(zone\);/);

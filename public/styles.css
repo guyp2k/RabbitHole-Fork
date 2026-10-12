@@ -4219,7 +4219,9 @@ input {
 }
 
 .liveQueue li strong,
-.liveQueue li small {
+.liveQueue li small,
+.lyrionResultList li strong,
+.lyrionResultList li small {
   display: block;
   min-width: 0;
   max-width: 100%;
@@ -4227,13 +4229,15 @@ input {
   overflow-wrap: anywhere;
 }
 
-.liveQueue li strong {
+.liveQueue li strong,
+.lyrionResultList li strong {
   color: #fff;
   font-size: 14px;
   line-height: 1.18;
 }
 
-.liveQueue li small {
+.liveQueue li small,
+.lyrionResultList li small {
   color: rgba(224, 207, 255, 0.72);
   font-size: 12px;
   line-height: 1.22;
@@ -7248,7 +7252,8 @@ body.hasNowArtwork::after {
 .playlistButtons button,
 .quickActions button,
 .resultActions button,
-.resultActions .buttonLink {
+.resultActions .buttonLink,
+.lyrionTabPanel .lyrionToolbar > button:not(.resultsToggle) {
   min-height: 32px;
   border-color: rgba(217, 179, 255, 0.18);
   background:
@@ -8261,7 +8266,7 @@ body:has(#playerView.isActive > .layout > .player.player--regular:not(.isMaximiz
 }
 
 @media (min-width: 900px) {
-  body:has(#playerView.isActive > .layout > .player.player--regular:not(.isMaximized):not(.isFullWindow)) .topbar {
+  body:not(.playerFullWindow):not(.playerMaximized) .topbar {
     display: grid;
     grid-template-columns: minmax(0, 1fr);
     gap: 10px;
@@ -8271,7 +8276,7 @@ body:has(#playerView.isActive > .layout > .player.player--regular:not(.isMaximiz
     border-radius: 24px;
   }
 
-  body:has(#playerView.isActive > .layout > .player.player--regular:not(.isMaximized):not(.isFullWindow)) .viewTabs {
+  body:not(.playerFullWindow):not(.playerMaximized) .viewTabs {
     display: grid;
     grid-template-columns: minmax(150px, 1.25fr) repeat(7, minmax(0, 1fr));
     gap: 4px;
@@ -8279,7 +8284,7 @@ body:has(#playerView.isActive > .layout > .player.player--regular:not(.isMaximiz
     padding: 4px;
   }
 
-  body:has(#playerView.isActive > .layout > .player.player--regular:not(.isMaximized):not(.isFullWindow)) .viewTabs :is(a, button) {
+  body:not(.playerFullWindow):not(.playerMaximized) .viewTabs :is(a, button) {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -8440,7 +8445,7 @@ body:has(#playerView.isActive > .layout > .player.player--regular:not(.isMaximiz
     color: var(--rh-desktop-muted);
   }
 
-  :is(
+  :is(:where(#lyrionView .lyrionTabPanel:not(#lyrionPanel-now)), :is(
     #queueView,
     #discoverView,
     #standbyView,
@@ -8454,7 +8459,7 @@ body:has(#playerView.isActive > .layout > .player.player--regular:not(.isMaximiz
     #aiView,
     #diagnosticsView,
     #settingsView
-  ).isActive .panel {
+  ).isActive) .panel {
     border-color: var(--rh-desktop-line);
     border-radius: var(--rh-desktop-radius);
     background: var(--rh-desktop-surface);
@@ -8557,7 +8562,7 @@ body:has(#playerView.isActive > .layout > .player.player--regular:not(.isMaximiz
       0 0 24px rgba(217, 179, 255, 0.08);
   }
 
-  :is(
+  :is(:where(#lyrionView .lyrionTabPanel:not(#lyrionPanel-now)), :is(
     #queueView,
     #discoverView,
     #standbyView,
@@ -8571,11 +8576,11 @@ body:has(#playerView.isActive > .layout > .player.player--regular:not(.isMaximiz
     #aiView,
     #diagnosticsView,
     #settingsView
-  ).isActive :is(.formHead, .queueViewHeader, .systemViewHeader, .settingsHeader, .playlistBrowserHeader, .tidalSectionTitle) {
+  ).isActive) :is(.formHead, .queueViewHeader, .systemViewHeader, .settingsHeader, .playlistBrowserHeader, .tidalSectionTitle) {
     gap: 8px;
   }
 
-  :is(
+  :is(:where(#lyrionView .lyrionTabPanel:not(#lyrionPanel-now)), :is(
     #queueView,
     #discoverView,
     #standbyView,
@@ -8589,14 +8594,14 @@ body:has(#playerView.isActive > .layout > .player.player--regular:not(.isMaximiz
     #aiView,
     #diagnosticsView,
     #settingsView
-  ).isActive :is(.formHead h2, .queueViewHeader h2, .systemViewHeader h2, .settingsHeader h2, .playlistBrowserHeader h3, .tidalSectionTitle h3) {
+  ).isActive) :is(.formHead h2, .queueViewHeader h2, .systemViewHeader h2, .settingsHeader h2, .playlistBrowserHeader h3, .tidalSectionTitle h3) {
     color: #fff;
     letter-spacing: -0.025em;
     line-height: 1.06;
     text-shadow: 0 0 16px rgba(255, 255, 255, 0.08), 0 0 24px rgba(217, 179, 255, 0.08);
   }
 
-  :is(
+  :is(:where(#lyrionView .lyrionTabPanel:not(#lyrionPanel-now)), :is(
     #queueView,
     #discoverView,
     #standbyView,
@@ -8610,11 +8615,11 @@ body:has(#playerView.isActive > .layout > .player.player--regular:not(.isMaximiz
     #aiView,
     #diagnosticsView,
     #settingsView
-  ).isActive :is(.muted, .tasteNarrative, .musicMemoryMeta, .musicMemoryIds, .musicMemoryProvider, .radioStationText p, .playlistBrowserBody p, .playlistBrowserBody small, .tidalMixBody p, .tidalMixBody small, .beatportChartBody small, .systemScopeItem span) {
+  ).isActive) :is(.muted, .tasteNarrative, .musicMemoryMeta, .musicMemoryIds, .musicMemoryProvider, .radioStationText p, .playlistBrowserBody p, .playlistBrowserBody small, .tidalMixBody p, .tidalMixBody small, .beatportChartBody small, .systemScopeItem span) {
     color: var(--rh-desktop-muted);
   }
 
-  :is(
+  :is(:where(#lyrionView .lyrionTabPanel:not(#lyrionPanel-now)), :is(
     #queueView,
     #discoverView,
     #standbyView,
@@ -8628,7 +8633,7 @@ body:has(#playerView.isActive > .layout > .player.player--regular:not(.isMaximiz
     #aiView,
     #diagnosticsView,
     #settingsView
-  ).isActive :is(.resultActions button, .resultActions .buttonLink, .quickActions button, .playlistButtons button, .standbyActions button, .radioStationActions button, .tidalMixActions button, .playlistBrowserActions button, .playlistBrowserActions .buttonLink, .beatportChartPanel .resultActions button, .settingsPanel .topControls button):not(.scoringModeCard) {
+  ).isActive) :is(.resultActions button, .resultActions .buttonLink, .lyrionToolbar > button:not(.resultsToggle), .quickActions button, .playlistButtons button, .standbyActions button, .radioStationActions button, .tidalMixActions button, .playlistBrowserActions button, .playlistBrowserActions .buttonLink, .beatportChartPanel .resultActions button, .settingsPanel .topControls button):not(.scoringModeCard) {
     min-height: 38px;
     border-radius: 8px;
     border-color: rgba(255, 255, 255, 0.14);
@@ -10609,7 +10614,7 @@ body:not(.playerFullWindow):not(.playerMaximized) .settingsPanel > .topControls 
     color: rgba(231, 231, 238, 0.52);
   }
 
-  body:not(.playerFullWindow):not(.playerMaximized) :is(button, .buttonLink):not(.viewTabs button):not(.secondaryNavItems button) {
+  body:not(.playerFullWindow):not(.playerMaximized) :is(button, .buttonLink, .lyrionChoices a):not(.viewTabs button):not(.secondaryNavItems button) {
     min-height: 38px;
     border: 1px solid var(--rh-desktop-control-border);
     border-radius: 8px;
@@ -10622,7 +10627,7 @@ body:not(.playerFullWindow):not(.playerMaximized) .settingsPanel > .topControls 
       0 8px 20px rgba(0, 0, 0, 0.24);
   }
 
-  body:not(.playerFullWindow):not(.playerMaximized) :is(button, .buttonLink):not(.viewTabs button):not(.secondaryNavItems button):hover {
+  body:not(.playerFullWindow):not(.playerMaximized) :is(button, .buttonLink, .lyrionChoices a):not(.viewTabs button):not(.secondaryNavItems button):hover {
     border-color: rgba(217, 179, 255, 0.34);
     background:
       linear-gradient(145deg, rgba(31, 32, 39, 0.9), rgba(7, 8, 12, 0.96)) padding-box,
@@ -10633,7 +10638,7 @@ body:not(.playerFullWindow):not(.playerMaximized) .settingsPanel > .topControls 
       0 0 18px rgba(217, 179, 255, 0.08);
   }
 
-  body:not(.playerFullWindow):not(.playerMaximized) :is(button, .buttonLink):not(.viewTabs button):not(.secondaryNavItems button):is(.active, [aria-pressed="true"]) {
+  body:not(.playerFullWindow):not(.playerMaximized) :is(button, .buttonLink, .lyrionChoices a):not(.viewTabs button):not(.secondaryNavItems button):is(.active, [aria-pressed="true"]) {
     border-color: rgba(217, 179, 255, 0.3);
     background:
       linear-gradient(145deg, rgba(37, 30, 48, 0.78), rgba(8, 9, 13, 0.94)) padding-box,
@@ -11839,11 +11844,16 @@ body.playerFullWindow .player.player--fullscreen.isFullWindow .nowInfo .nowSourc
 /* Phase 8 phone owner: keep Regular Now Playing single-column, reserve a
    dedicated row for mode controls, and preserve readable touch targets. */
 @media (max-width: 699px) {
+  body:not(.playerFullWindow):not(.playerMaximized) .viewTabs.primaryNav {
+    flex-wrap: wrap;
+    width: 100%;
+  }
+
   body:not(.playerFullWindow):not(.playerMaximized) .viewTabs.primaryNav button {
     min-height: 44px;
-    flex: 1 1 0;
-    min-width: 0;
-    padding-inline: 4px;
+    flex: 1 1 auto;
+    min-width: max-content;
+    padding-inline: 10px;
     font-size: 10px;
     white-space: nowrap;
   }
@@ -11852,7 +11862,7 @@ body.playerFullWindow .player.player--fullscreen.isFullWindow .nowInfo .nowSourc
     min-height: 44px;
   }
 
-  body:not(.playerFullWindow):not(.playerMaximized) :is(.view, .secondaryNav) :is(
+  body:not(.playerFullWindow):not(.playerMaximized) :is(.view, .secondaryNav, :where(#lyrionView .lyrionTabPanel)) :is(
     button,
     .buttonLink,
     select,
@@ -12064,14 +12074,14 @@ body.playerFullWindow .player.player--fullscreen.isFullWindow .nowInfo .nowSourc
   }
 
   body:not(.playerFullWindow):not(.playerMaximized) :is(.appHeader, .topbar, .secondaryNav),
-  body:not(.playerFullWindow):not(.playerMaximized) .view.isActive:not(#playerView) .panel {
+  body:not(.playerFullWindow):not(.playerMaximized) :is(.view.isActive:not(#playerView), :where(#lyrionView .lyrionTabPanel:not(#lyrionPanel-now))) .panel {
     border-color: var(--rh-phone-line);
     background: var(--rh-phone-surface);
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.035), 0 18px 48px rgba(0, 0, 0, 0.42);
   }
 
   body:not(.playerFullWindow):not(.playerMaximized) .secondaryNavItems button,
-  body:not(.playerFullWindow):not(.playerMaximized) .view.isActive:not(#playerView) :is(
+  body:not(.playerFullWindow):not(.playerMaximized) :is(.view.isActive:not(#playerView), :where(#lyrionView .lyrionTabPanel:not(#lyrionPanel-now))) :is(
     button,
     .buttonLink,
     input,
@@ -12085,7 +12095,7 @@ body.playerFullWindow .player.player--fullscreen.isFullWindow .nowInfo .nowSourc
   }
 
   body:not(.playerFullWindow):not(.playerMaximized) .secondaryNavItems button.active,
-  body:not(.playerFullWindow):not(.playerMaximized) .view.isActive:not(#playerView) :is(
+  body:not(.playerFullWindow):not(.playerMaximized) :is(.view.isActive:not(#playerView), :where(#lyrionView .lyrionTabPanel:not(#lyrionPanel-now))) :is(
     button.active,
     button[aria-pressed="true"]
   ) {
@@ -12094,7 +12104,7 @@ body.playerFullWindow .player.player--fullscreen.isFullWindow .nowInfo .nowSourc
     color: #fff !important;
   }
 
-  body:not(.playerFullWindow):not(.playerMaximized) .view.isActive:not(#playerView) :is(
+  body:not(.playerFullWindow):not(.playerMaximized) :is(.view.isActive:not(#playerView), :where(#lyrionView .lyrionTabPanel:not(#lyrionPanel-now))) :is(
     h1,
     h2,
     h3,
@@ -12110,7 +12120,7 @@ body.playerFullWindow .player.player--fullscreen.isFullWindow .nowInfo .nowSourc
     color: #fff;
   }
 
-  body:not(.playerFullWindow):not(.playerMaximized) .view.isActive:not(#playerView) :is(
+  body:not(.playerFullWindow):not(.playerMaximized) :is(.view.isActive:not(#playerView), :where(#lyrionView .lyrionTabPanel:not(#lyrionPanel-now))) :is(
     .muted,
     .tasteNarrative,
     .musicMemoryMeta,
@@ -12127,7 +12137,7 @@ body.playerFullWindow .player.player--fullscreen.isFullWindow .nowInfo .nowSourc
     color: var(--rh-phone-muted);
   }
 
-  body:not(.playerFullWindow):not(.playerMaximized) .view.isActive:not(#playerView) :is(
+  body:not(.playerFullWindow):not(.playerMaximized) :is(.view.isActive:not(#playerView), :where(#lyrionView .lyrionTabPanel:not(#lyrionPanel-now))) :is(
     .track,
     .standbyTrack,
     .metricCard,
@@ -12150,7 +12160,7 @@ body.playerFullWindow .player.player--fullscreen.isFullWindow .nowInfo .nowSourc
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.025), 0 14px 34px rgba(0, 0, 0, 0.28);
   }
 
-  body:not(.playerFullWindow):not(.playerMaximized) .view.isActive:not(#playerView) :is(
+  body:not(.playerFullWindow):not(.playerMaximized) :is(.view.isActive:not(#playerView), :where(#lyrionView .lyrionTabPanel:not(#lyrionPanel-now))) :is(
     .musicMemoryArt,
     .beatportChartArt,
     .radioStationArt,

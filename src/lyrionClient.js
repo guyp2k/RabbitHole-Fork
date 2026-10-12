@@ -268,8 +268,12 @@ class LyrionClient {
     if (seconds === undefined || seconds === null || seconds === "" || !Number.isFinite(Number(seconds))) throw new Error("Send a position in seconds.");
     return this.rpc(player, ["time", String(Math.max(0, Number(seconds)))]);
   }
-  async control(player, action) {
+  async control(player, action, index) {
     const commands = { play: ["play"], pause: ["pause", 1], next: ["playlist", "index", "+1"], previous: ["playlist", "index", "-1"], clear: ["playlist", "clear"] };
+    if (action === "jump") {
+      if (!Number.isInteger(index) || index < 0) throw new Error("Choose a queue position.");
+      return this.rpc(player, ["playlist", "index", String(index)]);
+    }
     if (!commands[action]) throw new Error("Unsupported Lyrion control.");
     return this.rpc(player, commands[action]);
   }

@@ -85,15 +85,18 @@ test("the System block hides when there is no monitor reading", () => {
   assert.equal(h.nodes.lyrionSystem.hidden, true);
 });
 
-test("the System chips in the Lyrion rail are a compact size, not the fullscreen overlay's", () => {
+test("the System block in the Lyrion rail is the Roon player's: a caption over plain CPU and GPU readings", () => {
   const css = fs.readFileSync(require.resolve("../public/lyrion.css"), "utf8");
-  assert.match(css, /#lyrionView \.lyrionTemps \.pcTempChip \{[^}]*min-height:36px;[^}]*padding:0 14px;/);
-  assert.match(css, /#lyrionView \.lyrionTemps \.pcTempChip span \{[^}]*font-size:11px;/);
-  assert.match(css, /#lyrionView \.lyrionTemps \.pcTempChip strong \{[^}]*font-size:20px;/);
+  const styles = fs.readFileSync(require.resolve("../public/styles.css"), "utf8");
+  assert.match(css, /#lyrionView \.lyrionSystem \.pcTempChip \{display:inline-flex;justify-content:flex-start;gap:12px;min-height:0;padding:0;border:0;border-radius:0;background:transparent;box-shadow:none;\}/);
+  assert.match(css, /#lyrionView \.lyrionSystem \.pcTempChip :is\(span,strong\) \{font-size:14px;font-weight:850;line-height:1\.2;\}/);
+  assert.match(styles, /\.pcTempChip span,\n\.player:is\(\.player--regular, \.player--maximized, \.player--fullscreen\) \.pcTempChip strong \{\n  font-size: 14px;\n  font-weight: 850;\n  line-height: 1\.2;/);
+  assert.doesNotMatch(css, /\.lyrionTemps \.pcTempChip \{[^}]*min-height:36px/);
 });
 
-test("the Now playing caption and the Playback and System headings are one heading size, larger than the rows they head", () => {
-  const css = fs.readFileSync(require.resolve("../public/lyrion.css"), "utf8");
-  assert.match(css, /\.lyrionStageBar > span,\.lyrionConnection h3 \{font-size:14px;font-weight:600;\}/);
-  assert.match(css, /\.lyrionDetails \{[^}]*font-size:13px;/);
+test("the Now Playing caption is the Roon eyebrow above the title, and the stage bar holds only its controls", () => {
+  const source = fs.readFileSync(require.resolve("../public/lyrion.js"), "utf8");
+  assert.match(source, /<div class="lyrionStageBar"><button id="lyrionFullscreen"/);
+  assert.match(source, /<p class="eyebrow">Now Playing<\/p><h2 id="lyrionTitle">/);
+  assert.doesNotMatch(source, /Lyrion · Now playing/);
 });

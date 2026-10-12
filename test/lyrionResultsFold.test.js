@@ -11,7 +11,7 @@ test("the Lyrion source list has the shared fold button at the start of its brow
 });
 
 test("folding hides the items and Load more, while the browse bar stays visible", () => {
-  assert.match(lyrion, /<div id="lyrionResultsBody"><ul id="lyrionResults" class="lyrionList"><\/ul><button id="lyrionMore" type="button" hidden>Load more<\/button><\/div>/);
+  assert.match(lyrion, /<div id="lyrionResultsBody"><ul id="lyrionResults" class="lyrionResultList"><\/ul><button id="lyrionMore" type="button" hidden>Load more<\/button><\/div>/);
   assert.match(lyrion, /setPanelFolded\("#lyrionResultsToggle","#lyrionResultsBody",folded,"the source list"\)/);
 });
 

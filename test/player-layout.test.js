@@ -45,7 +45,7 @@ test('desktop visual-system follow-up shares regular-view surfaces without touch
   assert.match(css, /Pass 6 follow-up: regular desktop visual-system consistency/);
   assert.match(css, /@media \(min-width: 1100px\)/);
   assert.match(css, /--rh-desktop-surface:/);
-  assert.match(css, /#queueView[\s\S]*#settingsView[\s\S]*\.isActive \.panel/);
+  assert.match(css, /#queueView[\s\S]*#settingsView[\s\S]*\.isActive\) \.panel/);
   assert.match(css, /\.musicMemoryCard[\s\S]*\.tidalMixCard[\s\S]*background: var\(--rh-desktop-card\)/);
   assert.match(css, /\.musicMemoryArt[\s\S]*\.tidalMixArt/);
   assert.match(css, /:not\(\.scoringModeCard\)/);
@@ -120,8 +120,8 @@ test('regular desktop visual consistency cleanup keeps nav signature and control
   assert.match(cleanup, /--rh-desktop-control-surface: linear-gradient\(145deg, rgba\(22, 23, 28, 0\.86\), rgba\(5, 6, 9, 0\.95\)\);/);
   assert.match(cleanup, /body:not\(\.playerFullWindow\):not\(\.playerMaximized\) :is\([\s\S]*?input:not\(\[type="checkbox"\]\)[\s\S]*?select[\s\S]*?textarea[\s\S]*?background:[\s\S]*?var\(--rh-desktop-control-surface\)/);
   assert.match(cleanup, /:focus[\s\S]*?border-color: var\(--rh-desktop-control-focus\)[\s\S]*?0 0 20px rgba\(217, 179, 255, 0\.1\)/);
-  assert.match(cleanup, /:is\(button, \.buttonLink\):not\(\.viewTabs button\):not\(\.secondaryNavItems button\)[\s\S]*?min-height: 38px;[\s\S]*?var\(--rh-desktop-control-surface\)/);
-  assert.match(cleanup, /:is\(button, \.buttonLink\):not\(\.viewTabs button\):not\(\.secondaryNavItems button\):hover[\s\S]*?rgba\(217, 179, 255, 0\.34\)/);
+  assert.match(cleanup, /:is\(button, \.buttonLink, \.lyrionChoices a\):not\(\.viewTabs button\):not\(\.secondaryNavItems button\)[\s\S]*?min-height: 38px;[\s\S]*?var\(--rh-desktop-control-surface\)/);
+  assert.match(cleanup, /:is\(button, \.buttonLink, \.lyrionChoices a\):not\(\.viewTabs button\):not\(\.secondaryNavItems button\):hover[\s\S]*?rgba\(217, 179, 255, 0\.34\)/);
   assert.doesNotMatch(cleanup, /body\.playerMaximized|body\.playerFullWindow|player--fullscreen/);
 });
 
@@ -296,7 +296,7 @@ test('phone regular player reserves mode controls and keeps transport readable',
   const phone = css.slice(phoneStart, completionStart);
 
   assert.match(phone, /@media \(max-width: 699px\)/);
-  assert.match(phone, /:is\(\.view, \.secondaryNav\) :is\([\s\S]*?button,[\s\S]*?select,[\s\S]*?min-height: 44px;/);
+  assert.match(phone, /:is\(\.view, \.secondaryNav, :where\(#lyrionView \.lyrionTabPanel\)\) :is\([\s\S]*?button,[\s\S]*?select,[\s\S]*?min-height: 44px;/);
   assert.match(phone, /grid-template-areas:[\s\S]*?"viewControls"[\s\S]*?"badge"[\s\S]*?"now"[\s\S]*?"art"[\s\S]*?"tools"[\s\S]*?"controls"[\s\S]*?"seek"/);
   assert.match(phone, /> \.playerViewControls \{[\s\S]*?position: static;[\s\S]*?grid-area: viewControls;/);
   assert.match(phone, /> \.nowDiscoveryBadge \{[\s\S]*?grid-area: badge;[\s\S]*?justify-content: center;/);

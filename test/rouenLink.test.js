@@ -61,7 +61,7 @@ test("the Rouen link sits after the Roon and Lyrion choices, loads with the page
   assert.match(source, /fetch\("\/api\/lyrion\/playback-links",\{cache:"no-store"\}\)/);
   assert.match(source, /void loadPlaybackLinks\(\);/);
   const css = fs.readFileSync(require.resolve("../public/lyrion.css"), "utf8");
-  assert.match(css, /\n:is\(\.hqplayerLinksBar,#playbackSystemLinks\) a \{display:inline-flex;/);
+  assert.match(css, /\n:where\(\.hqplayerLinksBar,#playbackSystemLinks\) a \{display:inline-flex;/);
   assert.match(css, /\n:is\(\.hqplayerLinksBar,#playbackSystemLinks\) a:is\(:hover,:focus-visible\) \{/);
   assert.match(css, /\n#playbackSystemLinks\[hidden\] \{display:none;\}/);
 });

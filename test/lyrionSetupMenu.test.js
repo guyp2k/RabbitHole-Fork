@@ -9,7 +9,7 @@ const css = fs.readFileSync(require.resolve("../public/lyrion.css"), "utf8");
 const section = (from, to) => source.slice(source.indexOf(from), source.indexOf(to));
 
 test("the Sources panel is titled Sources & Discovery and the setup pages sit in its Setup menu, not under the heading", () => {
-  assert.match(source, /<div class="lyrionSourcesHead"><h2>Sources & Discovery<\/h2><details class="lyrionSetup" id="lyrionSetup"><summary>Setup<\/summary><ul>/);
+  assert.match(source, /<div class="lyrionSourcesHead"><div class="queueViewHeader"><div><p class="eyebrow">Lyrion<\/p><h2>Sources & Discovery<\/h2><p class="muted">Browse and search everything this Lyrion server can play\.<\/p><\/div><\/div><details class="lyrionSetup" id="lyrionSetup"><summary>Setup<\/summary><ul>/);
   const menu = source.slice(source.indexOf('<details class="lyrionSetup"'), source.indexOf("</details>"));
   assert.deepEqual([...menu.matchAll(/<a href="([^"]+)">([^<]+)<\/a>/g)].map(m => [m[1], m[2]]),
     [["/soundcloud-setup.html", "Connect SoundCloud playlists"], ["/siriusxm-setup.html", "SiriusXM metadata"]]);
@@ -49,7 +49,7 @@ test("the playback system hint is title-cased like the controls around it", () =
 
 test("the Playback System and Lyrion Player labels are title-cased, visibly and as their button groups' names", () => {
   assert.match(source, /<label for="playbackSystem">Playback System<\/label>/);
-  assert.match(source, /<label for="lyrionPlayer">Lyrion Player<\/label>/);
+  assert.match(source, /<label for="lyrionPlayer" class="roonZoneLabel">Lyrion Player<\/label>/);
   assert.match(source, /choices\('playbackSystem','Playback System'\)/);
   assert.match(source, /choices\('lyrionPlayer','Lyrion Player'\)/);
   assert.doesNotMatch(source, /Playback system|>Lyrion player<|'Lyrion player'/);

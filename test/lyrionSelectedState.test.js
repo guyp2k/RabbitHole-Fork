@@ -25,14 +25,12 @@ test("the selected pill in every group looks exactly like the primary nav's sele
   assert.equal((block(pillLayer(), `${GROUPS} button${SELECTED}`).match(/!important;/g) || []).length, 4);
 });
 
-test("Lyrion's section tabs sit in a rounded track like the primary nav, without the folder-tab underline", () => {
-  const track = block(lyrion, ".lyrionTabs");
-  assert.match(track, /padding:4px;/);
-  assert.match(track, /border-radius:999px;/);
-  assert.doesNotMatch(track, /border-bottom/);
-  const tab = block(lyrion, "#lyrionView .lyrionTabs button");
-  assert.match(tab, /border:1px solid transparent;background:transparent;box-shadow:none;/);
-  assert.doesNotMatch(tab, /border-bottom|border-radius:6px/);
+test("Lyrion's section tabs are the Roon secondary nav: a LYRION caption beside the same pill buttons", () => {
+  const source = fs.readFileSync(require.resolve("../public/lyrion.js"), "utf8");
+  assert.match(source, /tabs\.className='secondaryNav lyrionTabs'/);
+  assert.match(source, /<span class=\"secondaryNavLabel\">Lyrion<\/span><div class=\"secondaryNavItems\" role=\"tablist\" aria-label=\"Lyrion sections\"><\/div>/);
+  assert.match(source, /tabItems\.append\(b\);/);
+  assert.doesNotMatch(lyrion, /#lyrionView \.lyrionTabs button \{/);
 });
 
 test("no group keeps its own selected colours to fight the shared pill", () => {

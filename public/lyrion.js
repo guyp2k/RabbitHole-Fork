@@ -4,7 +4,7 @@
   const ui = document.createElement("section");
   ui.id = "lyrionView"; ui.hidden = true; ui.setAttribute("aria-label", "Lyrion playback");
   ui.innerHTML = `
-    <div class="panel lyrionToolbar"><label for="lyrionPlayer">Lyrion Player</label><select id="lyrionPlayer"><option value="">Choose a player</option></select><button id="lyrionRefresh" type="button">Refresh Players</button></div>
+    <div id="lyrionPlayerBar" class="roonZoneBar"><label for="lyrionPlayer" class="roonZoneLabel">Lyrion Player</label><select id="lyrionPlayer"><option value="">Choose a player</option></select><span class="lyrionChoices lyrionRefreshChoice"><button id="lyrionRefresh" type="button">Refresh Players</button></span></div>
     <p id="lyrionMessage" role="status" aria-live="polite"></p>
     <section class="panel lyrionHome" id="lyrionHomeView" aria-label="Lyrion home">
       <section class="lyrionShelf" aria-labelledby="lyrionNewMusicHeading"><div class="lyrionShelfHead"><h2 id="lyrionNewMusicHeading">New Music</h2><button id="lyrionNewMusicMore" type="button">More</button></div><p id="lyrionNewMusicStatus" class="muted" role="status" hidden></p><ul id="lyrionNewMusic" class="lyrionShelfRow"></ul></section>
@@ -13,8 +13,8 @@
     </section>
     <section class="panel lyrionNow" id="lyrionNow" aria-label="Lyrion now playing">
       <img id="lyrionBackdrop" class="lyrionBackdrop" alt="" aria-hidden="true" hidden>
-      <div class="lyrionStageBar"><span class="muted">Lyrion · Now playing</span><button id="lyrionFullscreen" type="button" aria-controls="lyrionNow" aria-pressed="false">Fullscreen</button></div>
-      <div class="lyrionNowDetails lyrionRail"><h2 id="lyrionTitle">Choose your Lyrion player</h2><p id="lyrionArtist"></p><p id="lyrionAlbum" class="muted"></p><dl id="lyrionDetails" class="lyrionDetails" hidden></dl><div id="lyrionVolume" class="nowVolume" hidden></div><section id="lyrionSxm" class="lyrionSxm" aria-label="SiriusXM program information" hidden></section><section id="lyrionSystem" class="lyrionConnection lyrionSystem" hidden><h3>System</h3><div class="lyrionTemps"><span id="lyrionTempCpuChip" class="pcTempChip"><span>CPU</span><strong id="lyrionTempCpu">--</strong></span><span id="lyrionTempGpuChip" class="pcTempChip"><span>GPU</span><strong id="lyrionTempGpu">--</strong></span></div></section></div>
+      <div class="lyrionStageBar"><button id="lyrionFullscreen" type="button" aria-controls="lyrionNow" aria-pressed="false">Fullscreen</button></div>
+      <div class="lyrionNowDetails lyrionRail"><p class="eyebrow">Now Playing</p><h2 id="lyrionTitle">Choose your Lyrion player</h2><p id="lyrionArtist"></p><dl id="lyrionDetails" class="lyrionDetails" hidden></dl><div id="lyrionVolume" class="nowVolume" hidden></div><section id="lyrionSxm" class="lyrionSxm" aria-label="SiriusXM program information" hidden></section><section id="lyrionSystem" class="lyrionSystem" hidden><h3>System</h3><div class="lyrionTemps"><span id="lyrionTempCpuChip" class="pcTempChip"><span>CPU</span><strong id="lyrionTempCpu">--</strong></span><span id="lyrionTempGpuChip" class="pcTempChip"><span>GPU</span><strong id="lyrionTempGpu">--</strong></span></div></section></div>
       <div class="lyrionArtworkLane"><img id="lyrionCover" class="lyrionCover" alt="" hidden><p class="lyrionArtEmpty muted">Artwork will appear here</p><div id="lyrionPlayback" class="playbackStrip"><p id="lyrionChain">Lyrion</p><p id="lyrionHqplayer" class="playbackStripSignal" hidden></p></div><p id="lyrionStageQueue" class="muted"></p></div>
       <section id="lyrionStageFavorites" class="lyrionRail" aria-labelledby="lyrionStageFavoritesHeading"><h3 id="lyrionStageFavoritesHeading">Favorite channels</h3><div id="lyrionStageChannels" class="lyrionStageChannels"></div></section>
       <footer class="lyrionStageFooter"><div class="lyrionActions"><button data-lyrion-control="previous">Previous</button><button data-lyrion-control="play">Play</button><button data-lyrion-control="pause">Pause</button><button data-lyrion-control="next">Next</button></div><p id="lyrionStageMessage" role="status" aria-live="polite" hidden></p><input id="lyrionProgress" type="range" min="0" max="1" step="1" value="0" aria-label="Playback position" disabled><p id="lyrionTime" class="muted"></p></footer>
@@ -53,12 +53,12 @@
       <ul id="lyrionXtraResults" class="lyrionFavoriteList"></ul>
     </section>
     <div class="lyrionColumns">
-      <section class="panel"><div class="lyrionSourcesHead"><h2>Sources & Discovery</h2><details class="lyrionSetup" id="lyrionSetup"><summary>Setup</summary><ul><li><a href="/soundcloud-setup.html">Connect SoundCloud playlists</a></li><li><a href="/siriusxm-setup.html">SiriusXM metadata</a></li></ul></details></div><div class="lyrionToolbar lyrionSourceRow"><button type="button" id="lyrionSourceToggle" class="resultsToggle" aria-expanded="true" aria-controls="lyrionSourceChoices" title="Hide the sources">&#9662;</button><select id="lyrionSource"><option value="local">Local Library / NAS</option></select></div>
+      <section class="panel"><div class="lyrionSourcesHead"><div class="queueViewHeader"><div><p class="eyebrow">Lyrion</p><h2>Sources & Discovery</h2><p class="muted">Browse and search everything this Lyrion server can play.</p></div></div><details class="lyrionSetup" id="lyrionSetup"><summary>Setup</summary><ul><li><a href="/soundcloud-setup.html">Connect SoundCloud playlists</a></li><li><a href="/siriusxm-setup.html">SiriusXM metadata</a></li></ul></details></div><div class="lyrionToolbar lyrionSourceRow"><button type="button" id="lyrionSourceToggle" class="resultsToggle" aria-expanded="true" aria-controls="lyrionSourceChoices" title="Hide the sources">&#9662;</button><select id="lyrionSource"><option value="local">Local Library / NAS</option></select></div>
       <form id="lyrionSearch" class="lyrionToolbar"><input id="lyrionQuery" type="search" aria-label="Search" placeholder="Artist, track or channel"><button type="submit">Search source</button><button id="lyrionSearchAll" type="button">Search all sources</button></form>
       <div class="lyrionToolbar"><button type="button" id="lyrionResultsToggle" class="resultsToggle" aria-expanded="true" aria-controls="lyrionResultsBody" title="Hide the source list">&#9662;</button><button id="lyrionBack" type="button" disabled>Back</button><button id="lyrionHome" type="button">Browse source</button><span id="lyrionBrowseTitle" class="muted"></span></div>
-      <div id="lyrionResultsBody"><ul id="lyrionResults" class="lyrionList"></ul><button id="lyrionMore" type="button" hidden>Load more</button></div>
+      <div id="lyrionResultsBody"><ul id="lyrionResults" class="lyrionResultList"></ul><button id="lyrionMore" type="button" hidden>Load more</button></div>
       </section>
-      <section class="panel"><div class="lyrionToolbar"><h2>Queue</h2><button data-lyrion-control="clear">Clear queue</button></div><p id="lyrionQueueCount" class="muted"></p><ol id="lyrionQueue" class="lyrionList"></ol><button id="lyrionQueueMore" type="button" hidden>Next queue page</button></section>
+      <section class="panel"><div class="lyrionToolbar lyrionQueueHead"><div class="queueViewHeader"><div><p class="eyebrow">Lyrion</p><h2>Queue</h2><p class="muted">Live Lyrion queue for the selected player.</p></div></div><button data-lyrion-control="clear">Clear queue</button></div><p class="queueGestureHint">Tap a track to play from there.</p><section class="liveQueue"><div class="liveQueueHead"><strong>Lyrion queue</strong><span id="lyrionQueueCount"></span></div><ol id="lyrionQueue"></ol></section><button id="lyrionQueueMore" type="button" hidden>Next queue page</button></section>
     </div>`;
   document.querySelector(".shell").append(ui);
   const bar = document.createElement("div"); bar.className = "playbackSystemBar";
@@ -84,7 +84,7 @@
   let player = "", sources = [], favorites = [], browseRequest = {}, history = [], queueOffset = 0, epoch = 0, busy = false, polling = false;
   // Keep the existing controls and state; navigation only changes visibility.
   const tabDefinitions=[['home','Home',$('lyrionHomeView')],['now','Now playing', $('lyrionNow')],['channels','Channels',ui.querySelector('.lyrionFavorites')],['shows','Shows',$('lyrionShowsHeading').closest('section')],['artists','Artist stations',$('lyrionArtists')],['xtra','Xtra channels',$('lyrionXtra')],['sources','Sources',ui.querySelector('.lyrionColumns > section')],['queue','Queue',ui.querySelector('.lyrionColumns > section:last-child')]];
-  const tabs=document.createElement('nav');tabs.className='lyrionTabs';tabs.setAttribute('role','tablist');tabs.setAttribute('aria-label','Lyrion sections');
+  const tabs=document.createElement('nav');tabs.className='secondaryNav lyrionTabs';tabs.setAttribute('aria-label','Lyrion sections');tabs.innerHTML='<div class="lyrionTabsShell"><span class="secondaryNavLabel">Lyrion</span><div class="secondaryNavItems" role="tablist" aria-label="Lyrion sections"></div></div>';const tabItems=tabs.querySelector('.secondaryNavItems');
   $('lyrionMessage').before(tabs);
   const compact=document.createElement('div');compact.className='lyrionCompact';compact.hidden=true;
   compact.innerHTML='<button type="button" id="lyrionReturnNow">Now playing</button><span id="lyrionCompactTitle"></span><button data-lyrion-control="play">Play</button><button data-lyrion-control="pause">Pause</button>';
@@ -100,7 +100,7 @@
     const wrapper=document.createElement('section');wrapper.id='lyrionPanel-'+id;wrapper.setAttribute('role','tabpanel');wrapper.setAttribute('aria-labelledby','lyrionTab-'+id);wrapper.className='lyrionTabPanel';
     panel.before(wrapper);wrapper.append(panel);
     // The wrapper owns panel semantics; existing sections retain their layout.
-    const b=document.createElement('button');b.type='button';b.id='lyrionTab-'+id;b.textContent=label;b.setAttribute('role','tab');b.setAttribute('aria-controls',wrapper.id);b.onclick=()=>{selectTab(id);if(id==='home'&&player)void loadHome();if(id==='now')void refreshLyrionSystem();};tabs.append(b);
+    const b=document.createElement('button');b.type='button';b.id='lyrionTab-'+id;b.textContent=label;b.setAttribute('role','tab');b.setAttribute('aria-controls',wrapper.id);b.onclick=()=>{selectTab(id);if(id==='home'&&player)void loadHome();if(id==='now')void refreshLyrionSystem();};tabItems.append(b);
     const def=tabDefinitions.find(t=>t[0]===id);def[2]=wrapper;
   }
   const columns=ui.querySelector('.lyrionColumns');for(const child of [...columns.children])columns.before(child);columns.remove();
@@ -117,7 +117,7 @@
   document.addEventListener("click",event=>{if(setupMenu.open&&!setupMenu.contains(event.target))setupMenu.open=false;});
   document.addEventListener("keydown",event=>{if(event.key==="Escape"&&setupMenu.open){setupMenu.open=false;setupMenu.querySelector("summary").focus();}});
   const renderSystemChoices=choices('playbackSystem','Playback System');
-  const renderPlayerChoices=choices('lyrionPlayer','Lyrion Player');
+  const renderPlayerChoices=choices('lyrionPlayer','Lyrion Player');$("lyrionPlayer").nextElementSibling.id="lyrionPlayerChoices";
   const renderSourceChoices=choices('lyrionSource','Music source');
   const sourceChoices=$("lyrionSource").nextElementSibling;sourceChoices.id="lyrionSourceChoices";
   const foldSources=folded=>{sourceChoices.classList.toggle("isFolded",folded);setPanelFolded("#lyrionSourceToggle",null,folded,"the sources");try{localStorage.setItem("rabbitHole.lyrionSourcesFolded",folded?"1":"0");}catch{}};
@@ -420,12 +420,27 @@
   }
   let resultsFolded=false;
   const foldResults=folded=>{resultsFolded=folded;setPanelFolded("#lyrionResultsToggle","#lyrionResultsBody",folded,"the source list");};
+  function artCell(url){
+    const cell=document.createElement("span");cell.className="queueArt"+(url?"":" queueArtEmpty");cell.setAttribute("aria-hidden","true");
+    if(url){const img=document.createElement("img");img.alt="";artworkImage(img,url);cell.append(img);}
+    return cell;
+  }
+  function queueRow(t,playing){
+    const row=document.createElement("li"),b=document.createElement("button"),pos=document.createElement("span"),text=document.createElement("span"),title=document.createElement("strong"),sub=document.createElement("small");
+    b.type="button";b.className="queueItemButton";b.title="Play from here";if(playing)b.setAttribute("aria-current","true");
+    pos.className="queueItemPosition";pos.setAttribute("aria-hidden","true");pos.textContent=String(t.index+1).padStart(2,"0");
+    const art=artCell(t.artwork);
+    text.className="queueText";title.className="queueItemTitle";title.textContent=t.title;sub.textContent=[playing?"Playing":"",[t.artist,t.album].filter(Boolean).join(" - ")].filter(Boolean).join(" · ");text.append(title,sub);
+    b.append(pos,art,text);b.onclick=run(async()=>{await api("control",{action:"jump",index:t.index});await refreshStatus();});row.append(b);return row;
+  }
   function renderItems(items, append=false) {
     if (!append) { $("lyrionResults").replaceChildren(); foldResults(false); }
     for (const item of items) {
-      const row=document.createElement("li"), text=document.createElement("div"); text.className="lyrionText"; text.textContent=item.title;
-      const sub=document.createElement("small"); sub.textContent=[item.artist,item.source].filter(Boolean).join(" · "); text.append(sub); row.append(text);
-      const actions=document.createElement("div"); actions.className="lyrionActions";
+      const row=document.createElement("li"); row.className="queueItemStatic lyrionResultRow";
+      const art=artCell(item.artwork);
+      const text=document.createElement("span"), title=document.createElement("strong"), sub=document.createElement("small"); text.className="queueText"; title.className="queueItemTitle"; title.textContent=item.title;
+      sub.textContent=[item.artist,item.source].filter(Boolean).join(" · "); text.append(title,sub); row.append(art,text);
+      const actions=document.createElement("div"); actions.className="lyrionActions playlistBrowserActions";
       if(item.actions?.favorite){
         const save=button("Favorite",async()=>{favorites=(await api("favorites",{action:"add",token:item.actions.favorite})).favorites;renderFavorites();});
         save.dataset.favoriteId=item.favoriteId;save.setAttribute("aria-label",`Favorite ${item.title}`);
@@ -527,7 +542,7 @@
   }
   function renderLyrionDetails(track,duration){
     const list=$("lyrionDetails"),rows=lyrionDetailRows(track,duration);
-    list.replaceChildren(...rows.flatMap(([label,value])=>{const dt=document.createElement("dt"),dd=document.createElement("dd");dt.textContent=label;dd.textContent=value;return [dt,dd];}));
+    list.replaceChildren(...rows.map(([label,value])=>{const row=document.createElement("div"),dt=document.createElement("dt"),dd=document.createElement("dd");row.className="sourceRow";dt.className="sourceLabel";dd.className="sourceValue";dt.textContent=label;dd.textContent=value;row.append(dt,dd);return row;}));
     list.hidden=!rows.length;
   }
   function renderLyrionSystem(snapshot){
@@ -568,10 +583,10 @@
       if(metadata.currentShowDescription){const details=document.createElement("details"),summary=document.createElement("summary"),description=document.createElement("p");details.open=!!aboutOpen;summary.textContent="About this show";description.textContent=metadata.currentShowDescription;details.append(summary,description);program.append(details);}
     }
     void refreshFavoriteMetadata();
-    setScrollingLabel("lyrionTitle",t?.title||"Nothing playing"); setScrollingLabel("lyrionArtist",t?.artist||""); $("lyrionAlbum").textContent=t?.album||"";
+    setScrollingLabel("lyrionTitle",t?.title||"Nothing playing"); setScrollingLabel("lyrionArtist",[t?.artist,t?.album].filter(Boolean).join(" - "));
     renderLyrionDetails(t,s.duration);
     lyrionVolume.update(s.connected?s.volume:null);
-    $("lyrionCompactTitle").textContent=[t?.title,t?.artist].filter(Boolean).join(" — ");
+    $("lyrionCompactTitle").textContent=[t?.title,t?.artist].filter(Boolean).join(" - ");
     renderHqplayer(s.hqplayer);
     $("lyrionChain").textContent=`Lyrion → ${s.playerName} · ${s.connected?s.state:"player offline"}${t?.source?` · ${t.source}`:""}`;
     const artworkIdentity=JSON.stringify([requestedPlayer,t?.url||'',t?.title||'',t?.artist||'']);
@@ -580,8 +595,8 @@
     $("lyrionStageQueue").textContent=s.queueCount+" items queued";
     ui.querySelectorAll("img[data-retry-at]").forEach(img=>artworkImage(img,img.dataset.artwork,img.dataset.artworkIdentity||'',img.dataset.artworkFallback||''));
     renderLyrionSeek(s);
-    $("lyrionQueueCount").textContent=`${s.queueCount} items${s.queueCount?` · showing ${queueOffset+1}–${queueOffset+s.queue.length}`:""}`;
-    $("lyrionQueue").replaceChildren(...s.queue.map(t=>{const row=document.createElement("li");row.textContent=`${t.index===s.queueIndex?"Playing · ":""}${t.title}${t.artist?` — ${t.artist}`:""}`;return row;}));
+    $("lyrionQueueCount").textContent=`${s.queueCount} items${s.queueCount?` · showing ${queueOffset+1}-${queueOffset+s.queue.length}`:""}`;
+    $("lyrionQueue").replaceChildren(...s.queue.map(t=>queueRow(t,t.index===s.queueIndex)));
     $("lyrionQueueMore").hidden=s.queueCount<=50;
     $("lyrionQueueMore").textContent=queueOffset+50>=s.queueCount?"Back to queue start":"Next queue page";
     $("lyrionQueueMore").onclick=run(async()=>{queueOffset=queueOffset+50>=s.queueCount?0:queueOffset+50;await refreshStatus();});
@@ -600,7 +615,7 @@
     if(version!==epoch||requestedPlayer!==player)return;
     $("lyrionArtistResults").replaceChildren();$("lyrionArtistStatus").textContent="Search an artist or choose a shortcut."; queueOffset=0; history=[]; $("lyrionResults").replaceChildren(); $("lyrionQueue").replaceChildren();
     ui.querySelectorAll("[data-lyrion-control]").forEach(b=>{b.disabled=!player;});
-    if(!player){ for(const id of ["lyrionNewMusic","lyrionRadios","lyrionExplore"])$(id).replaceChildren(); shelfStatus("lyrionNewMusicStatus","Choose a Lyrion player above to see its music."); shelfStatus("lyrionRadiosStatus",""); shelfStatus("lyrionExploreStatus",""); $("lyrionSxm").hidden=true; setScrollingLabel("lyrionTitle","Choose your Lyrion player"); setScrollingLabel("lyrionArtist",""); $("lyrionAlbum").textContent=""; renderLyrionDetails(null,0); lyrionVolume.update(null); artworkImage($("lyrionCover"), ""); artworkImage($("lyrionBackdrop"), ""); $("lyrionStageQueue").textContent=""; $("lyrionChain").textContent="Lyrion"; renderHqplayer(null); renderLyrionSeek(null); $("lyrionQueueCount").textContent=""; return; }
+    if(!player){ for(const id of ["lyrionNewMusic","lyrionRadios","lyrionExplore"])$(id).replaceChildren(); shelfStatus("lyrionNewMusicStatus","Choose a Lyrion player above to see its music."); shelfStatus("lyrionRadiosStatus",""); shelfStatus("lyrionExploreStatus",""); $("lyrionSxm").hidden=true; setScrollingLabel("lyrionTitle","Choose your Lyrion player"); setScrollingLabel("lyrionArtist",""); renderLyrionDetails(null,0); lyrionVolume.update(null); artworkImage($("lyrionCover"), ""); artworkImage($("lyrionBackdrop"), ""); $("lyrionStageQueue").textContent=""; $("lyrionChain").textContent="Lyrion"; renderHqplayer(null); renderLyrionSeek(null); $("lyrionQueueCount").textContent=""; return; }
     const availableSources=await api("sources",null,playerQuery());if(version!==epoch||requestedPlayer!==player)return;sources=availableSources.sources;
     $("lyrionSource").replaceChildren(...sources.map(s=>new Option(s.title,s.id)));
     void loadHome(); void refreshLyrionSystem(); await refreshStatus(); await home();

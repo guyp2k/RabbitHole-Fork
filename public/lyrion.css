@@ -4,14 +4,14 @@
 .lyrionChoices {display:flex;flex-wrap:wrap;gap:8px;flex:1;min-width:0;}
 .lyrionChoices button {min-height:44px;padding:8px 16px;color:var(--muted);background:rgba(0,0,0,.25);border:1px solid var(--line);border-radius:8px;}
 .playbackSystemBar select[hidden],#lyrionView select[hidden],#lyrionView .lyrionTabPanel[hidden],#lyrionView .lyrionCompact[hidden] {display:none!important;}
-.lyrionTabs {display:flex;gap:4px;padding:4px;border:1px solid rgba(191,136,255,.14);border-radius:999px;background:rgba(4,1,10,.52);box-shadow:inset 0 1px 0 rgba(255,235,255,.15),0 10px 26px rgba(2,0,8,.34);}
-#lyrionView .lyrionTabs button {min-height:44px;flex:1 1 0;min-width:0;padding:10px 16px;border:1px solid transparent;background:transparent;box-shadow:none;color:var(--muted);white-space:nowrap;}
+#lyrionView .lyrionTabs {margin:0;}
+.lyrionTabsShell {display:flex;align-items:center;gap:12px;width:100%;min-width:0;}
 .lyrionTabPanel {min-width:0;}
 .lyrionCompact {display:flex;align-items:center;gap:12px;min-width:0;}
 #lyrionCompactTitle {flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--muted);}
 #lyrionView .lyrionNow:not(.lyrionNow--fullscreen) .lyrionCover {max-height:clamp(180px,calc(100dvh - 550px),520px);}
 #lyrionView .lyrionNow:not(.lyrionNow--fullscreen) .lyrionStageChannels {max-height:clamp(180px,calc(100dvh - 550px),520px);}
-@media(max-width:600px){#lyrionView .lyrionTabs button{padding:8px 4px;font-size:14px;} .lyrionChoices{flex-basis:100%;} .lyrionChoices :is(button,a){white-space:nowrap;} .lyrionCompact{flex-wrap:wrap;} #lyrionCompactTitle{flex-basis:60%;}}
+@media(max-width:600px){.lyrionChoices{flex-basis:100%;} .lyrionChoices :is(button,a){white-space:nowrap;} .lyrionCompact{flex-wrap:wrap;} #lyrionCompactTitle{flex-basis:60%;}}
 body[data-playback-system="lyrion"] .shell > .view,
 body[data-playback-system="lyrion"] .shell > .topbar,
 body[data-playback-system="lyrion"] .shell > .secondaryNav,
@@ -21,23 +21,10 @@ body[data-playback-system="lyrion"] #jumpTop { display:none !important; }
 #lyrionView[hidden] { display:none; }
 #lyrionView {
   --lyrion-surface: rgba(5, 3, 9, .88);
-  --lyrion-control: rgba(0, 0, 0, .3);
   --lyrion-line: rgba(217, 179, 255, .14);
   display:grid; gap:16px;
 }
-#lyrionView .panel {
-  background:var(--lyrion-surface);
-  border:1px solid var(--lyrion-line);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.025), 0 16px 40px rgba(0,0,0,.25);
-}
-#lyrionView .panel::before,#lyrionView .panel::after { content:none; }
-#lyrionView :is(button,select,input) {
-  background:var(--lyrion-control); color:var(--accent);
-  border:1px solid var(--lyrion-line); box-shadow:none;
-}
-#lyrionView button:hover:not(:disabled) { background:rgba(217,179,255,.08); border-color:rgba(217,179,255,.35); }
 #lyrionView button:disabled { opacity:.55; cursor:default; }
-#lyrionView h2 { color:var(--accent); }
 #lyrionView .lyrionNow { background:rgba(0,0,0,.64); }
 #lyrionView .lyrionCover { background:rgba(0,0,0,.3); }
 #lyrionMessage:empty { display:none; }
@@ -50,7 +37,6 @@ body[data-playback-system="lyrion"] #jumpTop { display:none !important; }
 .lyrionFavorites .lyrionToolbar { justify-content:space-between; }
 .lyrionToolbar { display:flex; flex-wrap:wrap; gap:12px; align-items:center; }
 .lyrionToolbar select,.lyrionToolbar input { width:auto; min-width:160px; flex:1; }
-#lyrionView button,#lyrionView select,#lyrionView input { min-height:44px; }
 #lyrionView button:focus-visible,.playbackSystemBar select:focus-visible { outline:2px solid var(--accent); outline-offset:3px; }
 .lyrionColumns { display:grid; grid-template-columns:minmax(0,3fr) minmax(0,2fr); gap:16px; align-items:start; }
 .lyrionList { list-style:none; padding:0; margin:16px 0; }
@@ -63,14 +49,9 @@ body[data-playback-system="lyrion"] #jumpTop { display:none !important; }
 #lyrionView .lyrionNow {position:relative;isolation:isolate;overflow:hidden;display:grid;grid-template-columns:minmax(190px,1fr) minmax(0,2.3fr) minmax(190px,1fr);grid-template-rows:auto minmax(0,1fr) auto;gap:24px;padding:24px;background:#08060d;}
 .lyrionBackdrop {position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.26;filter:blur(12px);z-index:-2;pointer-events:none;}
 #lyrionView .lyrionNow::after {content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;background:linear-gradient(90deg,rgba(5,3,9,.8),rgba(5,3,9,.12) 40%,rgba(5,3,9,.12) 60%,rgba(5,3,9,.8));}
-.lyrionStageBar {grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;gap:16px;font-size:12px;}
+.lyrionStageBar {grid-column:1/-1;display:flex;align-items:center;justify-content:flex-end;gap:16px;font-size:12px;}
 .lyrionRail {min-width:0;align-self:stretch;overflow-wrap:anywhere;}
-.lyrionNowDetails p {margin:8px 0;}
-#lyrionView .lyrionNow h2 {font-size:clamp(22px,2.1vw,34px);line-height:1.15;letter-spacing:-.025em;margin:0 0 10px;overflow-wrap:anywhere;}
-#lyrionArtist {font-size:clamp(16px,1.5vw,22px);line-height:1.35;}
-#lyrionAlbum {font-size:13px;}
-.lyrionConnection {margin-top:28px;padding-top:18px;border-top:1px solid var(--lyrion-line);font-size:13px;line-height:1.6;}
-.lyrionConnection h3,#lyrionStageFavorites h3 {font-size:12px;font-weight:600;color:var(--muted);margin:0 0 12px;}
+#lyrionStageFavorites h3 {font-size:12px;font-weight:600;color:var(--muted);margin:0 0 12px;}
 .lyrionArtworkLane {min-width:0;min-height:0;align-self:center;display:grid;justify-items:center;gap:12px;text-align:center;}
 #lyrionView .lyrionCover {width:100%;max-height:62vh;aspect-ratio:1;object-fit:contain;border-radius:2px;background:transparent;opacity:.8;}
 .lyrionArtEmpty {display:none;min-height:240px;align-content:center;}
@@ -120,11 +101,9 @@ body.lyrionFullscreenOpen {overflow:hidden;}
 @media(max-width:1000px) {
 #lyrionView .lyrionNow,#lyrionView .lyrionNow--fullscreen {grid-template-columns:minmax(170px,1fr) minmax(0,1.7fr) minmax(170px,1fr);gap:16px;padding:16px;}
 .lyrionColumns {grid-template-columns:1fr;}
-#lyrionView .lyrionNow h2 {font-size:22px;}
 }
 @media(max-width:700px) {
 #lyrionView .lyrionNow,#lyrionView .lyrionNow--fullscreen {grid-template-columns:minmax(0,1fr);grid-template-rows:auto;gap:20px;}
-.lyrionArtworkLane {grid-row:2;}
 #lyrionView .lyrionCover,#lyrionView .lyrionNow--fullscreen .lyrionCover {width:min(100%,320px);max-height:36dvh;}
 .lyrionNow--fullscreen .lyrionRail {overflow:visible;}
 #lyrionStageFavorites {border-left:0;border-top:1px solid var(--lyrion-line);padding:16px 0 0;}
@@ -152,7 +131,7 @@ body.lyrionFullscreenOpen {overflow:hidden;}
 .lyrionHome {display:grid;gap:28px;}
 .lyrionShelf {min-width:0;}
 .lyrionShelfHead {display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px;}
-#lyrionView .lyrionShelfHead h2 {margin:0;font-size:18px;}
+#lyrionView .lyrionShelfHead h2 {margin:0;color:#fff;font-family:inherit;font-size:16px;font-weight:700;}
 #lyrionView .lyrionShelfHead button {min-height:36px;padding:6px 18px;border-radius:999px;}
 .lyrionShelf > p {margin:0 0 12px;}
 .lyrionShelfRow {display:grid;grid-auto-flow:column;grid-auto-columns:150px;gap:16px;overflow-x:auto;overscroll-behavior-x:contain;scroll-snap-type:x proximity;list-style:none;margin:0;padding:2px 2px 12px;}
@@ -183,15 +162,7 @@ body.lyrionFullscreenOpen {overflow:hidden;}
 .lyrionSetup ul {position:absolute;top:calc(100% + 6px);left:0;z-index:20;min-width:250px;margin:0;padding:6px;list-style:none;border:1px solid var(--lyrion-line);border-radius:12px;background:#0b0713;box-shadow:0 16px 40px rgba(0,0,0,.45);}
 .lyrionSetup a {display:flex;align-items:center;min-height:44px;padding:0 12px;border-radius:6px;color:var(--text);text-decoration:none;white-space:nowrap;}
 .lyrionSetup a:is(:hover,:focus-visible) {background:rgba(217,179,255,.1);color:var(--accent);outline:none;}
-/* Now playing details from LMS and the PC monitor's temperatures, laid out like the Roon player rail. */
-.lyrionDetails {display:grid;grid-template-columns:minmax(96px,auto) minmax(0,1fr);gap:12px 24px;margin:24px 0 0;font-size:13px;line-height:1.4;}
 .lyrionDetails[hidden],#lyrionView .lyrionSystem[hidden] {display:none;}
-.lyrionDetails dt {font-weight:600;color:var(--muted);}
-.lyrionDetails dd {margin:0;overflow-wrap:anywhere;}
-.lyrionTemps {display:flex;flex-wrap:wrap;gap:8px 24px;}
-#lyrionView .lyrionTemps .pcTempChip {min-height:36px;gap:8px;padding:0 14px;}
-#lyrionView .lyrionTemps .pcTempChip span {font-size:11px;}
-#lyrionView .lyrionTemps .pcTempChip strong {font-size:20px;line-height:1;}
 /* HQPlayer web interface and HQPTuner links under the Playback System bar. */
 .hqplayerLinksBar {display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin:-4px 0 12px;}
 .hqplayerLinksBar[hidden] {display:none;}
@@ -200,13 +171,14 @@ body.lyrionFullscreenOpen {overflow:hidden;}
 #playbackSystemHint {margin-left:auto;}
 @media(max-width:600px){#playbackSystemHint{margin-left:0;}}
 .hqplayerLinksLabel {color:var(--muted);}
-.playbackSystemBar label,.hqplayerLinksLabel,#lyrionView label[for="lyrionPlayer"] {font-size:16px;}
-:is(.hqplayerLinksBar,#playbackSystemLinks) a {display:inline-flex;align-items:center;min-height:44px;padding:8px 16px;box-sizing:border-box;color:var(--muted);background:rgba(0,0,0,.25);border:1px solid rgba(217,179,255,.14);border-radius:8px;text-decoration:none;}
+.playbackSystemBar label,.hqplayerLinksLabel {font-size:16px;}
+:where(.hqplayerLinksBar,#playbackSystemLinks) a {display:inline-flex;align-items:center;min-height:44px;padding:8px 16px;box-sizing:border-box;color:var(--muted);background:rgba(0,0,0,.25);border:1px solid rgba(217,179,255,.14);border-radius:8px;text-decoration:none;}
 :is(.hqplayerLinksBar,#playbackSystemLinks) a:is(:hover,:focus-visible) {color:var(--accent);border-color:rgba(217,179,255,.3);}
 :is(.hqplayerLinksBar,#playbackSystemLinks) a:focus-visible {outline:2px solid var(--accent);outline-offset:3px;}
-.lyrionStageBar > span,.lyrionConnection h3 {font-size:14px;font-weight:600;}
 /* Roon zones as pills under the Playback System bar, laid out like the Playback System and HQPlayer rows. */
 .roonZoneBar {display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin:-4px 0 12px;}
+#lyrionPlayerBar {margin:0;}
+.lyrionRefreshChoice {flex:0 0 auto;}
 body[data-playback-system="lyrion"] #roonZoneBar,#roonZoneBar[hidden] {display:none;}
 .roonZoneLabel {color:var(--muted);font-size:16px;}
 #lyrionSourceChoices.isFolded button:not([aria-pressed="true"]) {display:none;}
@@ -217,3 +189,53 @@ body[data-playback-system="lyrion"] #roonZoneBar,#roonZoneBar[hidden] {display:n
 .lyrionSourceRow {align-items:flex-start;flex-wrap:nowrap;}
 #lyrionSourceToggle {margin-top:5px;}
 @media(max-width:600px){#lyrionSearch {padding-left:0;} #lyrionSearch #lyrionQuery {flex-basis:100%;max-width:none;} .lyrionSourceRow #lyrionSourceChoices {flex:1 1 0;}}
+/* Lyrion's Now Playing rail uses the Roon player's type scale, row grid and System block. */
+#lyrionView .lyrionNow {--rh-rail-surface:linear-gradient(180deg,rgba(8,3,16,.72),rgba(3,1,8,.82));--rh-rail-border:rgba(217,179,255,.11);--rh-control-surface:rgba(4,1,10,.28);--rh-control-border:rgba(217,179,255,.13);--rh-section-rule:rgba(217,179,255,.1);}
+#lyrionView .lyrionNowDetails .eyebrow {margin:0;color:rgba(217,179,255,.68);font-size:10px;font-weight:900;letter-spacing:.04em;line-height:1;text-transform:uppercase;}
+#lyrionView .lyrionNow #lyrionTitle {margin:5px 0 0;color:var(--accent);font-size:clamp(24px,2.1vw,32px);letter-spacing:0;line-height:1.02;}
+#lyrionView #lyrionArtist {margin:8px 0 0;color:var(--accent);font-size:clamp(15px,1.45vw,20px);font-weight:650;line-height:1.18;}
+#lyrionView .lyrionDetails {display:grid;grid-template-columns:minmax(0,1fr);gap:5px;margin:24px 0 0;color:var(--accent);font-size:13px;line-height:1.15;}
+.lyrionDetails .sourceRow {display:grid;grid-template-columns:118px minmax(0,1fr);gap:12px;align-items:start;}
+.lyrionDetails .sourceLabel {overflow:hidden;color:var(--accent);font-size:12px;font-weight:750;line-height:1.2;text-overflow:ellipsis;white-space:nowrap;}
+.lyrionDetails .sourceValue {margin:0;color:var(--accent);font-weight:750;line-height:1.2;overflow-wrap:anywhere;}
+#lyrionView .lyrionSystem {display:grid;grid-template-columns:repeat(2,minmax(0,max-content));gap:7px 16px;align-items:center;margin-top:24px;padding-top:14px;border-top:1px solid var(--rh-section-rule);}
+#lyrionView .lyrionSystem h3 {grid-column:1/-1;margin:0;color:var(--accent);font-size:10px;font-weight:900;letter-spacing:.04em;line-height:1;text-transform:uppercase;}
+.lyrionTemps {display:contents;}
+#lyrionView .lyrionSystem .pcTempChip {display:inline-flex;justify-content:flex-start;gap:12px;min-height:0;padding:0;border:0;border-radius:0;background:transparent;box-shadow:none;}
+#lyrionView .lyrionSystem .pcTempChip :is(span,strong) {font-size:14px;font-weight:850;line-height:1.2;}
+#lyrionView .lyrionSystem .pcTempChip span {color:var(--accent);}
+@media(min-width:700px){
+#lyrionView .lyrionNow #lyrionTitle {font-size:clamp(18px,1.55vw,22px);line-height:1.06;}
+#lyrionView #lyrionArtist {margin-top:7px;font-size:clamp(13px,1.15vw,16px);line-height:1.2;}
+#lyrionView .lyrionDetails {gap:12px;}
+.lyrionDetails .sourceRow {grid-template-columns:124px minmax(0,1fr);gap:8px;}
+.lyrionDetails .sourceLabel {font-size:11.5px;}
+.lyrionDetails .sourceValue {font-size:12px;overflow-wrap:normal;}
+}
+@media(min-width:900px){#lyrionView .lyrionDetails {margin-top:18px;}}
+@media(min-width:1440px){
+#lyrionView .lyrionDetails {margin-top:22px;font-size:14px;line-height:1.3;}
+.lyrionDetails :is(.sourceLabel,.sourceValue) {line-height:1.3;}
+}
+#lyrionView .lyrionNow .lyrionStageFooter .lyrionActions button {width:100%;min-width:0;min-height:28px;padding:0 10px;border-color:var(--rh-control-border);border-radius:4px;background:var(--rh-control-surface);color:rgba(248,239,255,.86);box-shadow:inset 0 1px 0 rgba(255,255,255,.025);font-size:13px;font-weight:780;line-height:1.05;}
+#lyrionView .lyrionNow #lyrionFullscreen {min-height:32px;padding:0 12px;font-size:12px;font-weight:820;white-space:nowrap;}
+@media(min-width:700px){#lyrionView .lyrionNow:not(.lyrionNow--fullscreen) .lyrionStageFooter .lyrionActions button {background:rgba(6,7,10,.36);border-color:rgba(255,255,255,.12);color:var(--accent);box-shadow:inset 0 1px 0 rgba(255,255,255,.05);}}
+@media(min-width:1100px){#lyrionView .lyrionNow .lyrionStageFooter .lyrionActions button {min-height:38px;border-radius:8px;} #lyrionView .lyrionNow #lyrionFullscreen {min-height:38px;padding:0 14px;}}
+@media(min-width:1440px){#lyrionView .lyrionNow:not(.lyrionNow--fullscreen) .lyrionStageFooter .lyrionActions button {padding:0 12px;font-size:14px;}}
+@media(max-width:699px){#lyrionView .lyrionNow .lyrionStageFooter .lyrionActions button {min-height:44px;font-size:13px;}}
+@media(max-width:1099px){#lyrionView .lyrionNow #lyrionFullscreen {min-height:34px;padding:0 14px;border-color:var(--rh-control-border);border-radius:999px;background:rgba(4,1,10,.38);color:rgba(248,239,255,.86);box-shadow:inset 0 1px 0 rgba(255,255,255,.035),0 8px 18px rgba(0,0,0,.2);}}
+@media(min-width:701px) and (max-width:1099px){#lyrionView .lyrionNow #lyrionFullscreen {min-height:44px;padding:4px;border-color:rgba(255,255,255,.14);font-size:11px;line-height:1.2;white-space:normal;}}
+@media(max-width:699px){#lyrionView .lyrionNow #lyrionFullscreen {min-height:44px;padding-inline:8px;font-size:11px;}}
+@media (min-width:700px) and (max-width:899px) and (orientation:landscape),(min-width:700px) and (max-width:1099px) and (orientation:portrait),(min-width:700px) and (max-width:1099px) and (pointer:coarse) and (hover:none) and (orientation:landscape),(min-width:700px) and (pointer:coarse) and (hover:none) and (orientation:portrait){#lyrionView .lyrionNow .lyrionStageFooter .lyrionActions button {min-height:44px;}}
+/* Lyrion lists use the Roon queue's rows: art, title and subtitle, with their actions alongside. */
+.lyrionResultList {display:grid;gap:8px;margin:16px 0;padding:0;list-style:none;}
+#lyrionView .lyrionResultRow {display:grid;grid-template-columns:38px minmax(0,1fr) auto;border:1px solid rgba(217,179,255,.12);border-radius:8px;background:rgba(10,4,20,.46);box-shadow:inset 0 1px 0 rgba(255,235,255,.06),0 7px 18px rgba(4,0,14,.18);}
+#lyrionView .lyrionResultRow .lyrionActions {grid-area:auto;justify-content:flex-end;}
+#lyrionView .lyrionResultRow .lyrionActions button {flex:0 0 auto;font-size:12px;padding:0 8px;}
+#lyrionView .lyrionTabPanel .lyrionToolbar > button:not(.resultsToggle) {padding:0 10px;}
+#lyrionView :is(.lyrionResultRow,.liveQueue) .queueArt {display:block;overflow:hidden;}
+#lyrionView .queueArt img {display:block;width:100%;height:100%;object-fit:cover;}
+#lyrionView .queueArt img[hidden] {display:none;}
+#lyrionView #lyrionQueue .queueItemButton[aria-current="true"] {border-color:var(--accent);}
+.lyrionQueueHead {justify-content:space-between;align-items:flex-start;}
+@media(max-width:600px){#lyrionView .lyrionResultRow {grid-template-columns:38px minmax(0,1fr);} #lyrionView .lyrionResultRow .lyrionActions {grid-column:1/-1;justify-content:flex-start;}}
