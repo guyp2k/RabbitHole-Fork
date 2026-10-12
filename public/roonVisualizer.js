@@ -3,7 +3,9 @@
   const stage = document.querySelector("#playerView .player"), view = document.getElementById("playerView");
   const target = document.getElementById("zoneSelect");
   if (!stage || !view || !target || !window.createSoundSpectrumStage) return;
-  window.createSoundSpectrumStage({
+  const support = window.soundSpectrumSupport;
+  const controller = window.createSoundSpectrumStage({
+    supportPending: !!support,
     stage, lane: stage.querySelector(".artStack"), bar: stage.querySelector(".playerViewControls"),
     prefix: "roon", artworkId: "cover", immersiveClass: "roonVisualFullscreen", stopOnTargetChange: true, restoreNativeFullscreen: true, resetImmersiveScroll: true,
     sourceVisible: () => view.classList.contains("isActive") && document.body.dataset.playbackSystem !== "lyrion",
@@ -20,4 +22,5 @@
     observe: [{ target: view, attributes: ["class", "hidden"] },
       { target: document.body, attributes: ["data-playback-system"] }]
   });
+  if (controller && support) support().then(controller.setSupported);
 })();

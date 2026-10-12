@@ -52,7 +52,7 @@ function createPcMonitorStatus({ config, fetchJsonWithTimeout }) {
   async function pcMonitorSnapshot() {
     const updatedAt = new Date().toISOString();
     if (!config.pcMonitor.enabled) {
-      return { connected: false, updatedAt, cpu: null, gpu: null, error: "PC monitor disabled" };
+      return { enabled: false, connected: false, updatedAt, cpu: null, gpu: null, error: "PC monitor disabled" };
     }
 
     const [cpuResult, gpuResult] = await Promise.allSettled([
@@ -68,6 +68,7 @@ function createPcMonitorStatus({ config, fetchJsonWithTimeout }) {
     ].filter(Boolean);
 
     return {
+      enabled: true,
       connected: Boolean(cpu || gpu),
       updatedAt,
       cpu,

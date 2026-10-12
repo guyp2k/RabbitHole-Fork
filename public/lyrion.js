@@ -564,8 +564,8 @@
     list.hidden=!rows.length;
   }
   function renderLyrionSystem(snapshot){
-    const cpu=snapshot?.cpu?.temperatureC,gpu=snapshot?.gpu?.temperatureC,known=v=>v!==null&&v!==undefined&&Number.isFinite(Number(v));
-    $("lyrionTemps").hidden=!snapshot||(!snapshot.connected&&!known(cpu)&&!known(gpu));
+    const cpu=snapshot?.cpu?.temperatureC,gpu=snapshot?.gpu?.temperatureC;
+    $("lyrionTemps").hidden=!pcMonitorShowsTemps(snapshot);
     $("lyrionSystem").hidden=$("lyrionTemps").hidden&&$("lyrionConnections").hidden;
     $("lyrionTempCpu").textContent=pcMonitorTempText(cpu);$("lyrionTempGpu").textContent=pcMonitorTempText(gpu);
     setPcTempChipState($("lyrionTempCpuChip"),cpu);setPcTempChipState($("lyrionTempGpuChip"),gpu);

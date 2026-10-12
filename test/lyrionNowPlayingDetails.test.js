@@ -66,24 +66,28 @@ function systemHarness() {
   nodes.lyrionConnections.hidden = true;
   const context = { $: id => nodes[id], pcMonitorTempText: v => v == null ? "--" : `${Math.round(v)}C`,
     setPcTempChipState: (chip, v) => chip.classList.toggle("isHot", v >= 80) };
-  vm.runInNewContext(section("  function renderLyrionSystem(", "  async function refreshLyrionSystem("), context);
+  const app = fs.readFileSync(require.resolve("../public/app.js"), "utf8"), start = app.indexOf("function pcMonitorShowsTemps(");
+  vm.runInNewContext(app.slice(start, app.indexOf("\n}\n", start) + 3) + section("  function renderLyrionSystem(", "  async function refreshLyrionSystem("), context);
   return { nodes, render: context.renderLyrionSystem };
 }
 
 test("the System block shows the monitor's CPU and GPU temperatures with Roon's formatting and heat colours", () => {
   const h = systemHarness();
-  h.render({ connected: true, cpu: { temperatureC: 66.4 }, gpu: { temperatureC: 85 } });
+  h.render({ enabled: true, connected: true, cpu: { temperatureC: 66.4 }, gpu: { temperatureC: 85 } });
   assert.equal(h.nodes.lyrionSystem.hidden, false);
   assert.deepEqual([h.nodes.lyrionTempCpu.textContent, h.nodes.lyrionTempGpu.textContent], ["66C", "85C"]);
   assert.deepEqual([h.nodes.lyrionTempCpuChip.classList.set.has("isHot"), h.nodes.lyrionTempGpuChip.classList.set.has("isHot")], [false, true]);
 });
 
-test("the System block hides when there is no monitor reading", () => {
+test("the System block hides when the PC monitor is off, and shows a configured monitor that stopped answering", () => {
   const h = systemHarness();
-  h.render({ connected: false, error: "PC monitor is not configured" });
+  h.render({ enabled: false, connected: false, cpu: null, gpu: null, error: "PC monitor disabled" });
   assert.equal(h.nodes.lyrionSystem.hidden, true);
   h.render(null);
-  assert.equal(h.nodes.lyrionSystem.hidden, true);
+  assert.equal(h.nodes.lyrionSystem.hidden, true, "an unanswered request is not a reading");
+  h.render({ enabled: true, connected: false, cpu: null, gpu: null, error: "CPU HTTP 503; GPU HTTP 503" });
+  assert.equal(h.nodes.lyrionSystem.hidden, false);
+  assert.deepEqual([h.nodes.lyrionTempCpu.textContent, h.nodes.lyrionTempGpu.textContent], ["--", "--"]);
 });
 
 test("the System block in the Lyrion rail is the Roon player's: a caption over plain CPU and GPU readings", () => {

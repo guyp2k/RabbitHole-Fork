@@ -6862,6 +6862,10 @@ function pcMonitorTempText(value) {
   return value !== null && value !== undefined && Number.isFinite(number) ? `${Math.round(number)}C` : "--";
 }
 
+function pcMonitorShowsTemps(snapshot) {
+  return snapshot?.enabled === true;
+}
+
 function setPcTempChipState(chip, value) {
   if (!chip) return;
   const number = Number(value);
@@ -6895,6 +6899,8 @@ function renderPcMonitorOverlay(snapshot = state.pcMonitor, error = state.pcMoni
   }
   overlay.hidden = !theaterPlayer;
   if (!theaterPlayer) return;
+  const showTemps = pcMonitorShowsTemps(snapshot);
+  overlay.querySelectorAll(".pcTempChip").forEach((chip) => { chip.hidden = !showTemps; });
 
   const cpuTemp = snapshot?.cpu?.temperatureC;
   const gpuTemp = snapshot?.gpu?.temperatureC;

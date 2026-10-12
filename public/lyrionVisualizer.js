@@ -2,7 +2,9 @@
 (() => {
   const $ = id => document.getElementById(id), stage = $("lyrionNow");
   if (!stage || !window.createSoundSpectrumStage) return;
+  const support = window.soundSpectrumSupport;
   const controller = window.createSoundSpectrumStage({
+    supportPending: !!support,
     stage, lane: stage.querySelector(".lyrionArtworkLane"), bar: stage.querySelector(".lyrionStageBar"),
     beforeChoices: $("lyrionFullscreen"), prefix: "lyrion", immersiveClass: "lyrionNow--visualFullscreen",
     presentationVisible: () => stage.classList.contains("lyrionNow--fullscreen"),
@@ -11,6 +13,7 @@
     observe: [{ target: $("lyrionView"), attributes: ["hidden"] },
       { target: stage.closest(".lyrionTabPanel"), attributes: ["hidden"] }]
   });
+  if (controller && support) support().then(controller.setSupported);
   // Shared links select the view; starting visuals always takes an explicit tap.
   const linkedView = new URLSearchParams(location.search).get("lyrion-stage");
   if (controller && ["artwork", "visualizer"].includes(linkedView)) {

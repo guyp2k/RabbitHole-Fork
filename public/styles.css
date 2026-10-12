@@ -6282,6 +6282,11 @@ body.playerFullWindow {
   display: flex;
 }
 
+.pcTempChip[hidden],
+.soundSpectrumStage .lyrionCenterViews[hidden] {
+  display: none !important;
+}
+
 .pcTempChip {
   display: inline-flex;
   min-height: clamp(40px, 5.4vh, 56px);

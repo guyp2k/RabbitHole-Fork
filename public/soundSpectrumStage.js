@@ -42,7 +42,7 @@ window.createSoundSpectrumStage = function createSoundSpectrumStage(config = {})
   const surface = $("lyrionVisualSurface"), overlay = $("lyrionVisualOverlay"), expand = $("lyrionVisualExpand");
   const names = { aeon: "Aeon", "g-force": "G-Force", whitecap: "WhiteCap" };
   const musicFeedId = config.musicFeedId || "feed:pre-hqplayer";
-  let mode = "artwork", preferred = "aeon", paused = false, viewerId = "", revision = 0;
+  let mode = "artwork", preferred = "aeon", paused = false, viewerId = "", revision = 0, unsupported = false;
   let feedPlayer = "", startedTarget = "";
   let timer = null, controller = null, loading = false, available = true, inputsKnown = false, inputAvailable = false, captureAvailable = true, currentError = "", streamKey = "";
   let remote = { state: "idle", visualizers: [], inputs: [], noMicInputs: {}, musicInputs: [] }, audioInputs = [];
@@ -348,6 +348,13 @@ window.createSoundSpectrumStage = function createSoundSpectrumStage(config = {})
     if (!visible()) cancelPoll();
     render(); if (visible() && !timer && !controller && !loading) schedule(0);
   }
+  choices.hidden = config.supportPending === true;
+  function setSupported(value) {
+    unsupported = value === false;
+    choices.hidden = unsupported;
+    if (unsupported) mode = "artwork";
+    sync();
+  }
   for (const button of choices.querySelectorAll("button")) button.onclick = () => {
     mode = button.dataset.lyrionView; try { localStorage.setItem(storagePrefix + ".centerView", mode); } catch {} sync();
   };
@@ -376,5 +383,5 @@ window.createSoundSpectrumStage = function createSoundSpectrumStage(config = {})
   }
   document.addEventListener("visibilitychange", sync); window.addEventListener("pageshow", sync); window.addEventListener("online", sync);
   window.addEventListener("pagehide", () => { stop(); cancelPoll(); }); sync();
-  return { sync, stop, setView(value) { if (["artwork", "visualizer"].includes(value)) { mode = value; sync(); } } };
+  return { sync, stop, setSupported, setView(value) { if (value === "artwork" || (value === "visualizer" && !unsupported)) { mode = value; sync(); } } };
 };

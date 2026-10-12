@@ -19,7 +19,7 @@ const noMicStatus = (overrides = {}) => status({ inputs: [], noMicInputs, inputI
 const musicInputs = [{ id: "feed:pre-hqplayer", label: "Music feed (experimental)", kind: "music-feed", available: true }];
 const musicStatus = (overrides = {}) => noMicStatus({ musicInputs, ...overrides });
 const feedStatus = (overrides = {}) => musicStatus({ state: "running", visualizer: "whitecap", inputId: "feed:pre-hqplayer", inputKind: "music-feed", audioFeed: { state: "waiting", playerId: "exact-player", reason: "Waiting for supported Lyrion audio." }, ...overrides });
-function harness({ withMedia = false, provider = "lyrion", viewerPrefix = "viewer-" } = {}) {
+function harness({ withMedia = false, provider = "lyrion", viewerPrefix = "viewer-", withSupport = false } = {}) {
   const prefix = provider === "roon" ? "roon" : "lyrion";
   const nodes = new Map(), observers = [], timers = new Map(), requests = [], releases = [], windowEvents = new Map(), mediaCalls = [];
   let timerId = 0, viewerNumber = 0, setMediaReady;
@@ -107,8 +107,11 @@ function harness({ withMedia = false, provider = "lyrion", viewerPrefix = "viewe
   };
   context.window = context;
   vm.runInNewContext(fs.readFileSync(require.resolve("../public/soundSpectrumStage.js"), "utf8"), context);
+  if (withSupport) vm.runInNewContext(fs.readFileSync(require.resolve("../public/soundSpectrumSupport.js"), "utf8"), context);
   vm.runInNewContext(fs.readFileSync(require.resolve("../public/" + provider + "Visualizer.js"), "utf8"), context);
   return { get, prefix, stage, view, tabPanel, document, storage, requests, releases, timers, mediaCalls,
+    choices: () => bar.children.find(child => child.className === "lyrionCenterViews"),
+    panel: () => lane.children.find(child => child.className === "soundSpectrumPanel"),
     mediaReady: value => setMediaReady?.(value),
     body: index => JSON.parse(requests[index].options.body),
     async answer(index, data, ok = true) { requests[index].resolve({ ok, json: async () => data }); await flush(); },
@@ -826,3 +829,39 @@ test("Refresh inputs rejects obsolete heartbeat completions without releasing or
     assert.equal(h.requests.filter(request => request.options?.body && JSON.parse(request.options.body).action === "start").length, 1);
   }
 });
+
+for (const provider of ["lyrion", "roon"]) {
+  test(`${provider}: a server without SoundSpectrum hides the Artwork and Visualizer toggle and never polls for visuals`, async () => {
+    const h = harness({ provider, withSupport: true });
+    assert.equal(h.requests.length, 1);
+    assert.equal(h.requests[0].url, "/api/soundspectrum/status");
+    assert.equal(h.choices().hidden, true, "hidden until the server answers, so it never flashes on Linux");
+    await h.answer(0, { ...status(), supported: false, captureAvailable: false });
+    assert.equal(h.choices().hidden, true);
+    assert.equal(h.stage.dataset.centerView, "artwork", "a saved Visualizer view falls back to the artwork");
+    assert.equal(h.panel().hidden, true);
+    assert.equal([...h.timers.values()].some(timer => timer.delay === 0), false, "no visualizer status poll is scheduled");
+    assert.equal(h.requests.length, 1);
+  });
+
+  test(`${provider}: the toggle shows when SoundSpectrum is supported, or when support could not be checked`, async () => {
+    const supported = harness({ provider, withSupport: true });
+    await supported.answer(0, { ...status(), supported: true });
+    assert.equal(supported.choices().hidden, false);
+    const failed = harness({ provider, withSupport: true });
+    await failed.answer(0, { error: "boom" }, false);
+    assert.equal(failed.choices().hidden, false, "an unanswered check is unknown, not unsupported");
+    const offline = harness({ provider, withSupport: true });
+    offline.requests[0].reject(new TypeError("Failed to fetch")); await flush();
+    assert.equal(offline.choices().hidden, false, "a network error is unknown, not unsupported");
+    const older = harness({ provider, withSupport: true });
+    await older.answer(0, status());
+    assert.equal(older.choices().hidden, false, "a status without the supported field is unknown");
+  });
+
+  test(`${provider}: without the support check loaded the toggle behaves as upstream`, () => {
+    const h = harness({ provider });
+    assert.equal(h.choices().hidden, false);
+    assert.equal(h.requests.length, 0);
+  });
+}
