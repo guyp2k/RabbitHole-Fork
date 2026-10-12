@@ -42,19 +42,6 @@ test("the Setup menu closes on a click outside it or on Escape, and stays open f
   h.summary.focused = false; h.listeners.keydown({ key: "Escape" }); assert.equal(h.summary.focused, false);
 });
 
-test("the Rabbit Hole logo replaces the playback system hint at the top right, on Roon and Lyrion alike", () => {
-  assert.match(source, /<span id="playbackSystemLinks" class="lyrionChoices" hidden><\/span><img id="playbackSystemLogo" class="playbackSystemLogo" src="\/assets\/rabbit-hole-logo\.webp" alt="The Rabbit Hole: Discover Beyond the Playlist" width="346" height="336">`;/);
-  assert.doesNotMatch(source, /playbackSystemHint|Independent [Pp]layers and [Qq]ueues/);
-  const logo = fs.readFileSync(require.resolve("../public/assets/rabbit-hole-logo.webp"));
-  assert.equal(logo.toString("ascii", 0, 4) + logo.toString("ascii", 8, 12), "RIFFWEBP");
-});
-
-test("the logo fills the Playback System and HQPlayer rows when both show, without making either row taller", () => {
-  const css = fs.readFileSync(require.resolve("../public/lyrion.css"), "utf8");
-  assert.match(css, /\n\.playbackSystemBar:has\(\+ \.hqplayerLinksBar:not\(\[hidden\]\)\) \.playbackSystemLogo \{height:84px;margin-bottom:-46px;align-self:flex-start;\}/);
-  assert.match(css, /@media\(max-width:600px\)\{\.playbackSystemBar \.playbackSystemLogo,\.playbackSystemBar:has\(\+ \.hqplayerLinksBar:not\(\[hidden\]\)\) \.playbackSystemLogo\{height:64px;margin-bottom:0;align-self:center;\}\}/);
-});
-
 test("the Playback System and Lyrion Player labels are title-cased, visibly and as their button groups' names", () => {
   assert.match(source, /<label for="playbackSystem">Playback System<\/label>/);
   assert.match(source, /<label for="lyrionPlayer" class="roonZoneLabel">Lyrion Player<\/label>/);

@@ -9622,18 +9622,53 @@ body.playerFullWindow .player.player--fullscreen.isFullWindow ::placeholder,
 
 .appIdentity {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   gap: 12px;
   min-width: 0;
 }
 
+.appIdentityMark {
+  flex: 0 0 auto;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: url("/assets/rabbit-hole-fallback.jpg") 50% 9.55% / 152.4% no-repeat;
+}
+
+.appIdentityText {
+  display: grid;
+  gap: 2px;
+  flex: 0 0 auto;
+}
+
 .appIdentityName {
   flex: 0 0 auto;
-  color: #fff;
+  color: #9b5cff;
   font-size: clamp(18px, 2vw, 24px);
   font-weight: 850;
   letter-spacing: -0.03em;
   text-shadow: 0 0 18px rgba(217, 179, 255, 0.22);
+}
+
+.appIdentityTagline {
+  color: #9b5cff;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  opacity: 0.78;
+}
+
+@media (max-width: 699px) {
+  .appIdentityMark {
+    width: 40px;
+    height: 40px;
+  }
+
+  .appIdentityTagline {
+    font-size: 9px;
+    letter-spacing: 0.14em;
+  }
 }
 
 .appIdentity .systemTag {

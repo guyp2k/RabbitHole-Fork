@@ -57,7 +57,7 @@ test("Rouen opens in a new tab from the Playback System row, and the link hides 
 });
 
 test("the Rouen link sits after the Roon and Lyrion choices, loads with the page and looks like the HQPlayer links", () => {
-  assert.match(source, /<\/select><span id="playbackSystemLinks" class="lyrionChoices" hidden><\/span><img id="playbackSystemLogo"/);
+  assert.match(source, /<\/select><span id="playbackSystemLinks" class="lyrionChoices" hidden><\/span>`;/);
   assert.match(source, /fetch\("\/api\/lyrion\/playback-links",\{cache:"no-store"\}\)/);
   assert.match(source, /void loadPlaybackLinks\(\);/);
   const css = fs.readFileSync(require.resolve("../public/lyrion.css"), "utf8");
@@ -66,8 +66,7 @@ test("the Rouen link sits after the Roon and Lyrion choices, loads with the page
   assert.match(css, /\n#playbackSystemLinks\[hidden\] \{display:none;\}/);
 });
 
-test("Rouen sits right after Lyrion, and the logo sits at the far right of the row", () => {
+test("Rouen sits right after Lyrion", () => {
   const css = fs.readFileSync(require.resolve("../public/lyrion.css"), "utf8");
   assert.match(css, /\n\.playbackSystemBar \.lyrionChoices \{flex:0 1 auto;\}/);
-  assert.match(css, /\n\.playbackSystemLogo \{display:block;height:38px;width:auto;margin-left:auto;border-radius:8px;\}/);
 });
