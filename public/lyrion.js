@@ -62,7 +62,7 @@
     </div>`;
   document.querySelector(".shell").append(ui);
   const bar = document.createElement("div"); bar.className = "playbackSystemBar";
-  bar.innerHTML = `<label for="playbackSystem">Playback System</label><select id="playbackSystem"><option value="roon">Roon</option><option value="lyrion">Lyrion</option></select><span id="playbackSystemLinks" class="lyrionChoices" hidden></span><span id="playbackSystemHint" class="muted">Independent Players and Queues</span>`;
+  bar.innerHTML = `<label for="playbackSystem">Playback System</label><select id="playbackSystem"><option value="roon">Roon</option><option value="lyrion">Lyrion</option></select><span id="playbackSystemLinks" class="lyrionChoices" hidden></span><img id="playbackSystemLogo" class="playbackSystemLogo" src="/assets/rabbit-hole-logo.webp" alt="The Rabbit Hole: Discover Beyond the Playlist" width="346" height="336">`;
   document.querySelector(".appHeader").after(bar);
   const hqplayerRow = document.createElement("div"); hqplayerRow.id = "hqplayerLinks"; hqplayerRow.className = "hqplayerLinksBar"; hqplayerRow.hidden = true;
   hqplayerRow.innerHTML = `<span class="hqplayerLinksLabel">HQPlayer</span><span id="hqplayerLinkList" class="lyrionChoices"></span>`;
