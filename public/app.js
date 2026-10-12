@@ -2478,6 +2478,7 @@ function scrollToDiscoveryTrack(index) {
 }
 
 function ratingStarsHtml(rating) {
+  if (!rating) return '<span class="nowRatingStars" role="img" aria-label="Not rated yet"><span class="nowRatingEmpty">★★★★★</span></span>';
   const stars = { love: [5, "Loved"], like: [4, "Liked"], ok: [3, "Okay"], dislike: [2, "Disliked"], never: [1, "Never Again"] }[rating];
   if (!stars) return feedbackBadgeLabel(rating);
   const [filled, label] = stars;

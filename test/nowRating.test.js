@@ -25,11 +25,11 @@ test("a rated Roon track shows its rating as stars out of five with the rating's
   assert.equal(stars("wrong_genre"), "Marked Wrong Genre", "a judgement that is not a score stays in words");
 });
 
-test("the rating line adds a Discovery score, and an unrated, unscored track has no line at all", () => {
+test("an unrated track shows five blank stars as a placeholder, and the line adds a Discovery score", () => {
   const { nowRatingHtml } = ratingContext();
   assert.equal(nowRatingHtml({ feedback: "love", score: 84 }), '<span class="nowRatingStars" role="img" aria-label="5 of 5 stars">★★★★★</span> Loved · Discovery 84 - Strong');
-  assert.equal(nowRatingHtml({ score: 64, belowMinimum: true }), "Discovery 64 - Experimental - below minimum");
-  assert.equal(nowRatingHtml({}), "");
+  assert.equal(nowRatingHtml({ score: 64, belowMinimum: true }), '<span class="nowRatingStars" role="img" aria-label="Not rated yet"><span class="nowRatingEmpty">★★★★★</span></span> · Discovery 64 - Experimental - below minimum');
+  assert.equal(nowRatingHtml({}), '<span class="nowRatingStars" role="img" aria-label="Not rated yet"><span class="nowRatingEmpty">★★★★★</span></span>');
   assert.doesNotMatch(app, /Unscored now playing|Loved now playing/);
 });
 
@@ -60,5 +60,5 @@ test("Lyrion shows the same stars under its album art, and updates them with the
   assert.match(rail, /function renderFeedback\(rating\)\{\n  const canRate=typeof feedbackButtonsHtml==='function'&&!!track\?\.title&&!!track\?\.artist;\n  const line=\$\('lyrionRating'\);line\.innerHTML=canRate\?ratingStarsHtml\(normalizeFeedbackValue\(rating\)\):'';line\.hidden=!line\.innerHTML;/);
   const { ratingStarsHtml } = ratingContext();
   assert.equal(ratingStarsHtml("never"), '<span class="nowRatingStars" role="img" aria-label="1 of 5 stars">★<span class="nowRatingEmpty">★★★★</span></span> Never Again');
-  assert.equal(ratingStarsHtml(""), "");
+  assert.equal(ratingStarsHtml(""), '<span class="nowRatingStars" role="img" aria-label="Not rated yet"><span class="nowRatingEmpty">★★★★★</span></span>');
 });
