@@ -10,6 +10,18 @@
 Discussion: [Roon Community thread](https://community.roonlabs.com/t/326019).
 The original project's thread is [here](https://community.roonlabs.com/t/321144).
 
+## Screenshots
+
+Roon Now Playing (Obsidian & Copper theme):
+
+![Roon Now Playing: track details on the left, album art in the centre with Up next, transport buttons and a waveform seek bar below it, rating and playlist tools on the right](docs/screenshots/roon-now-playing.png)
+
+Lyrion Now Playing, with the same layout:
+
+![Lyrion Now Playing: player pills at the top, track details and volume on the left, album art in the centre with Up next, transport buttons and the seek bar, rating and TIDAL playlist tools on the right](docs/screenshots/lyrion-now-playing.png)
+
+The screenshots use made-up tracks, rooms and addresses.
+
 ## What this fork changes
 
 Built on upstream commit `f0b1e81` (0.2.2). Most of these changes are also
@@ -22,7 +34,8 @@ offered upstream as pull requests.
 - **Now Playing:** source format and playback chain under the album art,
   HQPlayer's output rate under the art for HQPlayer zones, a volume control,
   rating stars, system temperatures, and a waveform seek bar on both players
-  (drawn from the LMS library file with FFmpeg).
+  (drawn from the LMS library file with FFmpeg). Under the art, an Up next line
+  sits above round back, play/pause, stop and next buttons and a short seek bar.
 - **Playback System row:** Roon zones as pills, plus optional links to the
   HQPlayer web interface, HQPTuner and Rouen.
 - **Themes:** Original, Obsidian & Copper, Roon Dark, Roon Light, Dark Orange,
