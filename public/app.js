@@ -855,6 +855,16 @@ function formatQueueInfo(zone) {
   return "";
 }
 
+function formatUpNext(zone) {
+  const info = formatQueueInfo(zone);
+  if (!zone || isLiveRadioZone(zone)) return info;
+  const next = displayQueueItems(zone)[0];
+  if (!next?.title) return info || (summarizeNowPlaying(zone)?.title ? "Nothing queued after this" : "");
+  const artist = String(next.subtitle || "").split(/\s+-\s+/)[0].trim();
+  const label = artist && !next.title.includes(artist) ? `${next.title} - ${artist}` : next.title;
+  return [`Up next: ${label}`, info].filter(Boolean).join(" · ");
+}
+
 function formatDateTime(value) {
   const date = new Date(Number(value || 0));
   if (Number.isNaN(date.getTime())) return "";
@@ -4799,6 +4809,11 @@ function renderState(payload) {
   const slider = $("#seekSlider");
   $("#playState").textContent = zone?.state || "stopped";
   $("#queueInfo").textContent = formatQueueInfo(zone);
+  const upNext = $("#nowUpNext");
+  if (upNext) {
+    upNext.textContent = formatUpNext(zone);
+    upNext.hidden = !upNext.textContent;
+  }
   $("#seekPosition").textContent = formatSeconds(position) || "0:00";
   $("#seekLength").textContent = liveRadio ? "Live radio" : (formatSeconds(length) || "0:00");
   slider.max = String(liveRadio ? 1 : (length || 0));

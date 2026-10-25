@@ -345,11 +345,12 @@
               </div>
               <div id="rabbitHoleContent" class="rabbitHoleContent"></div>
             </div>
+            <p id="nowUpNext" class="nowUpNext" aria-live="polite" hidden></p>
             <div class="controls">
-              <button data-control="previous" title="Previous">Prev</button>
-              <button data-control="playpause" title="Play or pause">Play/Pause</button>
-              <button data-control="stop" title="Stop">Stop</button>
-              <button data-control="next" title="Next">Next</button>
+              <button class="transportButton" data-control="previous" title="Previous" aria-label="Previous"><svg class="transportIcon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 5h2v14H6zM20 5v14L9 12z"/></svg></button>
+              <button class="transportButton transportButton--main" data-control="playpause" title="Play or pause" aria-label="Play or pause"><svg class="transportIcon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 5v14l9-7zM14 5h3v14h-3zM19 5h3v14h-3z"/></svg></button>
+              <button class="transportButton transportButton--minor" data-control="stop" title="Stop" aria-label="Stop"><svg class="transportIcon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6h12v12H6z"/></svg></button>
+              <button class="transportButton" data-control="next" title="Next" aria-label="Next"><svg class="transportIcon" viewBox="0 0 24 24" aria-hidden="true"><path d="M16 5h2v14h-2zM4 5v14l11-7z"/></svg></button>
             </div>
             <div class="seekBlock">
               <div class="playerMeta">

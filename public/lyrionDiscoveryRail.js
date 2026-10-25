@@ -4,7 +4,7 @@
  const rail=document.createElement('aside');rail.id='lyrionDiscoveryRail';rail.className='lyrionRail';rail.setAttribute('aria-label','Track details and playlists');
  rail.innerHTML=`<section class="lyrionFeedbackSection" hidden><h3>Rating</h3><div id="lyrionFeedback" class="feedbackButtons lyrionFeedback" role="group" aria-label="Rate this track"></div></section><section id="lyrionBeatportSection" hidden><h3>Beatport metadata</h3><p id="lyrionBeatportStatus" class="muted" role="status">Play a track to find its details.</p><dl id="lyrionBeatportFields"></dl><a id="lyrionBeatportLink" target="_blank" rel="noopener noreferrer" hidden>View on Beatport</a><button id="lyrionBeatportRetry" type="button" hidden>Retry lookup</button></section>
  <section class="lyrionPlaylistSection"><h3>Add to playlist</h3><p class="muted lyrionPlaylistHint">Save this track to TIDAL.</p><div id="lyrionPlaylistTargets"></div><button id="lyrionAddPlaylist" type="button" disabled>Add to TIDAL</button><button id="lyrionRefreshPlaylists" type="button">Refresh playlists</button><form id="lyrionCreatePlaylist"><label for="lyrionPlaylistName">New TIDAL playlist</label><input id="lyrionPlaylistName" required maxlength="200" placeholder="Playlist name"><button type="submit">Create playlist</button></form><p id="lyrionPlaylistStatus" role="status" aria-live="polite"></p></section>`;
- stage.querySelector('.lyrionStageFooter').before(rail);
+ stage.querySelector('.lyrionArtworkLane').after(rail);
  const stageFavorites=document.getElementById('lyrionStageFavorites');if(stageFavorites)rail.append(stageFavorites);
  const visible=()=>!stage.closest?.('.lyrionTabPanel')?.hidden;
  const feedbackSection=rail.querySelector('.lyrionFeedbackSection');let feedbackKey='',feedbackSaving=false;

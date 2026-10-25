@@ -301,8 +301,12 @@ class LyrionClient {
     if (seconds === undefined || seconds === null || seconds === "" || !Number.isFinite(Number(seconds))) throw new Error("Send a position in seconds.");
     return this.rpc(player, ["time", String(Math.max(0, Number(seconds)))]);
   }
+  async playPauseAction(player) {
+    const result = await this.rpc(player, ["mode", "?"]);
+    return result._mode === "play" ? "pause" : "play";
+  }
   async control(player, action, index) {
-    const commands = { play: ["play"], pause: ["pause", 1], next: ["playlist", "index", "+1"], previous: ["playlist", "index", "-1"], clear: ["playlist", "clear"] };
+    const commands = { play: ["play"], pause: ["pause", 1], stop: ["stop"], next: ["playlist", "index", "+1"], previous: ["playlist", "index", "-1"], clear: ["playlist", "clear"] };
     if (action === "jump") {
       if (!Number.isInteger(index) || index < 0) throw new Error("Choose a queue position.");
       return this.rpc(player, ["playlist", "index", String(index)]);

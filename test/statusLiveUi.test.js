@@ -198,7 +198,7 @@ function playerHarness() {
     zonePlaybackPlaying: zone => zone.state === "playing", currentZoneNowPlaying: zone => zone?.now_playing,
     summarizeNowPlaying: zone => zone?.now_playing, nowPlayingTrack: zone => zone?.now_playing,
     zoneDisplayLabel: zone => zone.zone_id, escapeHtml: value => String(value), isLiveRadioZone: () => false,
-    formatQueueInfo: () => "", formatSeconds: value => String(value), liveQueueHtml: () => "",
+    formatQueueInfo: () => "", formatUpNext: () => "", formatSeconds: value => String(value), liveQueueHtml: () => "",
     artworkMetadataMatchesRoon: () => false, trustedRadioArtworkUrl: () => "", setCoverImage() {},
     updateNowDiscoveryTools() {}, updateNowFormat() {}, updateNowSourceQuality() {}, renderNowVolume() {}, updateJumpTopVisibility() {}, renderSystemHealth() {},
     scheduleRabbitRecoveryRefresh() {}, renderStandbyPool() {}, renderMemoryStatus() {}, renderLlmStatus() {}, renderModelStatus() {},

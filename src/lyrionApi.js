@@ -141,6 +141,7 @@ function createLyrionApi({ roon, readJson, sendJson, catalogue=null, hqplayerLin
       playbackVersion++;
       return exclusive(async () => {
         await client.requirePlayer(player);
+        if (route === "control" && body.action === "playpause") body.action = await client.playPauseAction(player);
         const starts = route === "queue" ? body.action === "play" : ["play", "next", "previous", "jump"].includes(body.action);
         if (route === "queue" && !body.referenceId && !body.soundcloudTrack) {
           const entry = client.getAction(body.token, player);

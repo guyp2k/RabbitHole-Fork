@@ -41,7 +41,7 @@ test('late exact catalogue identity bypasses a cached radio miss without trustin
 
 function harness({manual=false}={}){
  let now=0,id=0;const timers=new Map(),nodes=new Map(),events={},requests=[],replies=[];
- function node(){return {value:'',textContent:'',hidden:false,children:[],classList:{contains:()=>true},setAttribute(){},append(...items){this.children.push(...items);},before(){},replaceChildren(...items){this.children=items;},querySelector:()=>node(),querySelectorAll:()=>[],addEventListener:(name,fn)=>events[name]=fn};}
+ function node(){return {value:'',textContent:'',hidden:false,children:[],classList:{contains:()=>true},setAttribute(){},append(...items){this.children.push(...items);},before(){},after(){},replaceChildren(...items){this.children=items;},querySelector:()=>node(),querySelectorAll:()=>[],addEventListener:(name,fn)=>events[name]=fn};}
  const get=id=>{if(!nodes.has(id))nodes.set(id,node());return nodes.get(id);};
  const context={AbortSignal,document:{getElementById:get,createElement:node},localStorage:{getItem:()=>null,setItem(){}},Option:function(){},MutationObserver:class{observe(){}},
   setTimeout:(fn,delay)=>{timers.set(++id,{fn,at:now+delay});return id;},clearTimeout:id=>timers.delete(id),
