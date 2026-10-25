@@ -20,6 +20,13 @@ Lyrion Now Playing, with the same layout:
 
 ![Lyrion Now Playing: player pills at the top, track details and volume on the left, album art in the centre with Up next, transport buttons and the seek bar, rating and TIDAL playlist tools on the right](docs/screenshots/lyrion-now-playing.png)
 
+The player card, opened from the ▸ on a room's pill or by tapping the album art, on a desktop and on a phone:
+
+<p>
+  <img src="docs/screenshots/player-card-desktop.png" alt="Player card on a desktop: a centred card over the blurred page with album art, the room, track, seek bar, transport buttons and close button" width="560">
+  <img src="docs/screenshots/player-card-phone.png" alt="Player card on a phone: full screen with album art, the room, track, seek bar, transport buttons and a volume row with mute" width="220">
+</p>
+
 The screenshots use made-up tracks, rooms and addresses.
 
 ## What this fork changes
@@ -38,6 +45,9 @@ offered upstream as pull requests.
   sits above round back, play/pause, stop and next buttons and a short seek bar.
 - **Playback System row:** Roon zones as pills, plus optional links to the
   HQPlayer web interface, HQPTuner and Rouen.
+- **Player card:** a ▸ on every Roon zone and Lyrion player pill (or a tap on
+  the album art) opens that room's card: art, track, seek, back / play-pause /
+  stop / next, and volume with mute, without switching the page to that room.
 - **Themes:** Original, Obsidian & Copper, Roon Dark, Roon Light, Dark Orange,
   Graphite & Brass and Miyara, picked in Settings (`UI_THEME` sets the default).
 - **Discovery fixes:** artist-led searches are checked against the planned
