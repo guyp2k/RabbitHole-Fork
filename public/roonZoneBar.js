@@ -20,21 +20,33 @@
     const key = JSON.stringify([zones, select.value]);
     if (key === drawn) return;
     drawn = key;
-    const focused = group.contains(document.activeElement) ? document.activeElement.dataset.zoneId : null;
+    const focused = group.contains(document.activeElement) ? document.activeElement.dataset.focusKey : null;
     group.replaceChildren(...zones.map(([id, name]) => {
       const button = document.createElement("button");
       button.type = "button";
       button.textContent = name;
       button.dataset.zoneId = id;
+      button.dataset.focusKey = `zone:${id}`;
       button.setAttribute("aria-pressed", String(id === select.value));
       button.onclick = () => {
         select.value = id;
         select.dispatchEvent(new Event("change"));
         render();
       };
-      return button;
+      const opener = document.createElement("button");
+      opener.type = "button";
+      opener.className = "playerCardOpen";
+      opener.textContent = "▸";
+      opener.title = `${name} controls`;
+      opener.setAttribute("aria-label", `Open ${name} controls`);
+      opener.dataset.focusKey = `card:${id}`;
+      opener.onclick = () => window.openRoonPlayerCard?.(id);
+      const pair = document.createElement("span");
+      pair.className = "choiceWithCard";
+      pair.append(button, opener);
+      return pair;
     }));
-    if (focused) [...group.children].find((button) => button.dataset.zoneId === focused)?.focus();
+    if (focused) [...group.children].flatMap((pair) => [...pair.children]).find((button) => button.dataset.focusKey === focused)?.focus();
     row.hidden = !zones.length;
   }
   select.addEventListener("change", render);

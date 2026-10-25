@@ -106,17 +106,24 @@
   tabs.addEventListener('keydown',e=>{const keys=['ArrowLeft','ArrowRight','Home','End'];if(!keys.includes(e.key))return;e.preventDefault();const i=tabDefinitions.findIndex(t=>t[0]===activeTab);const next=e.key==='Home'?0:e.key==='End'?tabDefinitions.length-1:(i+(e.key==='ArrowRight'?1:-1)+tabDefinitions.length)%tabDefinitions.length;selectTab(tabDefinitions[next][0],true);});
   $('lyrionReturnNow').onclick=()=>selectTab('now',true);
   try{selectTab(localStorage.getItem('rabbitHole.lyrionTab')||'now');}catch{selectTab('now');}
-  function choices(selectId,label){
+  function choices(selectId,label,openCard){
     const select=$(selectId),group=document.createElement('div');group.className='lyrionChoices';group.setAttribute('role','group');group.setAttribute('aria-label',label);select.after(group);select.hidden=true;
     const oldLabel=document.querySelector('label[for="'+selectId+'"]');if(oldLabel)oldLabel.hidden=true;
-    const render=()=>{group.replaceChildren();for(const option of select.options){if(!option.value)continue;const b=document.createElement('button');b.type='button';b.textContent=option.textContent;b.setAttribute('aria-pressed',String(select.value===option.value));b.onclick=()=>{select.value=option.value;select.dispatchEvent(new Event('change'));render();};group.append(b);}};
+    const render=()=>{group.replaceChildren();for(const option of select.options){if(!option.value)continue;const b=document.createElement('button');b.type='button';b.textContent=option.textContent;b.setAttribute('aria-pressed',String(select.value===option.value));b.onclick=()=>{select.value=option.value;select.dispatchEvent(new Event('change'));render();};if(!openCard){group.append(b);continue;}const opener=document.createElement('button');opener.type='button';opener.className='playerCardOpen';opener.textContent='▸';opener.title=`${option.textContent} controls`;opener.setAttribute('aria-label',`Open ${option.textContent} controls`);const id=option.value;opener.onclick=()=>openCard(id);const pair=document.createElement('span');pair.className='choiceWithCard';pair.append(b,opener);group.append(pair);}};
     select.addEventListener('change',render);new MutationObserver(render).observe(select,{childList:true,subtree:true});render();return render;
   }
   const setupMenu=$("lyrionSetup");
   document.addEventListener("click",event=>{if(setupMenu.open&&!setupMenu.contains(event.target))setupMenu.open=false;});
   document.addEventListener("keydown",event=>{if(event.key==="Escape"&&setupMenu.open){setupMenu.open=false;setupMenu.querySelector("summary").focus();}});
   const renderSystemChoices=choices('playbackSystem','Playback System');
-  const renderPlayerChoices=choices('lyrionPlayer','Lyrion Player');$("lyrionPlayer").nextElementSibling.id="lyrionPlayerChoices";
+  const lyrionPlayerCard={system:"Lyrion",refreshMs:2000,
+    name:id=>[...$("lyrionPlayer").options].find(o=>o.value===id)?.textContent||"",
+    load:async id=>{const response=await fetch(`/api/lyrion/status?playerId=${encodeURIComponent(id)}`,{cache:"no-store"});const result=await response.json();if(!response.ok)throw new Error(result.error||"Lyrion request failed");return window.playerCardFromLyrion(result);},
+    control:(id,action)=>cardPost("control",{playerId:id,action}),seek:(id,seconds)=>cardPost("seek",{playerId:id,seconds}),
+    volume:(id,value)=>cardPost("volume",{playerId:id,value}),mute:(id,mute)=>cardPost("volume",{playerId:id,mute})};
+  async function cardPost(route,body){const response=await fetch(`/api/lyrion/${route}`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});const result=await response.json();if(!response.ok)throw new Error(result.error||"Lyrion request failed");return result;}
+  const renderPlayerChoices=choices('lyrionPlayer','Lyrion Player',id=>window.openPlayerCard?.(lyrionPlayerCard,id));
+  window.makePlayerCardTrigger?.($("lyrionCover"),()=>{if(player)window.openPlayerCard?.(lyrionPlayerCard,player);});$("lyrionPlayer").nextElementSibling.id="lyrionPlayerChoices";
   const renderSourceChoices=choices('lyrionSource','Music source');
   const sourceChoices=$("lyrionSource").nextElementSibling;sourceChoices.id="lyrionSourceChoices";
   const foldSources=folded=>{sourceChoices.classList.toggle("isFolded",folded);setPanelFolded("#lyrionSourceToggle",null,folded,"the sources");try{localStorage.setItem("rabbitHole.lyrionSourcesFolded",folded?"1":"0");}catch{}};

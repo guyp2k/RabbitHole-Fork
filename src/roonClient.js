@@ -1934,6 +1934,15 @@ class RoonClient extends EventEmitter {
     return callRoon((cb) => this.transport.change_settings(this.getZone(zoneId), settings, cb));
   }
 
+  async mute(outputId, muted) {
+    this.requireTransport();
+    for (const zone of this.zones.values()) {
+      const output = (zone.outputs || []).find((candidate) => candidate.output_id === outputId);
+      if (output) return callRoon((cb) => this.transport.mute(output, muted ? "mute" : "unmute", cb));
+    }
+    throw new Error(`Unknown output: ${outputId}`);
+  }
+
   async changeVolume(outputId, how, value) {
     this.requireTransport();
     for (const zone of this.zones.values()) {

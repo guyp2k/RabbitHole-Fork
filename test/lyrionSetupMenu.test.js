@@ -46,7 +46,7 @@ test("the Playback System and Lyrion Player labels are title-cased, visibly and 
   assert.match(source, /<label for="playbackSystem">Playback System<\/label>/);
   assert.match(source, /<label for="lyrionPlayer" class="roonZoneLabel">Lyrion Player<\/label>/);
   assert.match(source, /choices\('playbackSystem','Playback System'\)/);
-  assert.match(source, /choices\('lyrionPlayer','Lyrion Player'\)/);
+  assert.match(source, /choices\('lyrionPlayer','Lyrion Player'[,)]/);
   assert.doesNotMatch(source, /Playback system|>Lyrion player<|'Lyrion player'/);
 });
 

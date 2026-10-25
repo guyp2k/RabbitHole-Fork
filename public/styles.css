@@ -12818,3 +12818,227 @@ body .nowVolume .volumeSlider,
   grid-column: 2;
   margin: 0;
 }
+
+/* Player card: a dialog with one player's art, track, seek, transport and volume, opened from the ▸ on a Roon zone or Lyrion player pill. */
+.choiceWithCard {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.lyrionChoices .choiceWithCard > button:first-child {
+  padding-right: 46px;
+}
+
+.lyrionChoices .choiceWithCard > .playerCardOpen {
+  position: absolute;
+  top: 50%;
+  right: 8px;
+  display: grid;
+  place-items: center;
+  width: 28px !important;
+  height: 28px !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  padding: 0 !important;
+  border-radius: 50% !important;
+  font-size: 12px;
+  line-height: 1;
+  transform: translateY(-50%);
+}
+
+.playerCardTrigger {
+  cursor: pointer;
+}
+
+.playerCardTrigger:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
+}
+
+dialog.playerCard {
+  width: min(420px, calc(100vw - 32px));
+  max-width: none;
+  max-height: calc(100dvh - 32px);
+  padding: 0;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 22px;
+  background: linear-gradient(180deg, rgba(38, 28, 22, 0.97), rgba(14, 10, 8, 0.98));
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6);
+  color: var(--text);
+  overflow: auto;
+}
+
+dialog.playerCard::backdrop {
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+
+.playerCardBox {
+  position: relative;
+  padding: 28px 26px 24px;
+  text-align: center;
+}
+
+.playerCardArt {
+  display: block;
+  width: min(300px, 100%);
+  aspect-ratio: 1;
+  margin: 0 auto 18px;
+  border-radius: 14px;
+  object-fit: cover;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.5);
+}
+
+.playerCardArt[hidden] {
+  display: none;
+}
+
+.playerCardState {
+  margin: 0 0 10px;
+  color: var(--accent);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.playerCardRoom {
+  margin: 0 0 8px;
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  opacity: 0.7;
+  text-transform: uppercase;
+}
+
+.playerCardTitle {
+  margin: 0 0 4px;
+  font-size: 24px;
+  line-height: 1.15;
+  overflow-wrap: anywhere;
+}
+
+.playerCardArtist {
+  margin: 0 0 4px;
+  font-size: 16px;
+}
+
+.playerCardAlbum {
+  margin: 0 0 18px;
+  font-size: 14px;
+  opacity: 0.65;
+}
+
+dialog.playerCard input[type="range"] {
+  width: 100%;
+  min-height: 0 !important;
+  margin: 0;
+  padding: 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  accent-color: var(--accent);
+}
+
+.playerCardTimes {
+  display: flex;
+  justify-content: space-between;
+  margin: 4px 0 14px;
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  opacity: 0.75;
+}
+
+.playerCardControls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  margin: 0 0 18px;
+}
+
+dialog.playerCard :is(.playerCardControls .transportButton, .playerCardClose, .playerCardMute) {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  padding: 0 !important;
+  border-radius: 50% !important;
+}
+
+dialog.playerCard .playerCardControls .transportButton--main {
+  width: 66px;
+  height: 66px;
+  border-color: transparent !important;
+  background: var(--accent) !important;
+  color: #140c08 !important;
+}
+
+dialog.playerCard .playerCardControls .transportButton--minor {
+  width: 40px;
+  height: 40px;
+  opacity: 0.8;
+}
+
+dialog.playerCard .playerCardClose {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 40px;
+  height: 40px;
+  font-size: 18px;
+}
+
+.playerCardVolume {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 999px;
+}
+
+.playerCardVolume[hidden],
+.playerCardVolume [hidden] {
+  display: none !important;
+}
+
+dialog.playerCard .playerCardMute {
+  width: 36px;
+  height: 36px;
+}
+
+.playerCardLevel {
+  min-width: 28px;
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}
+
+.playerCardError {
+  margin: 14px 0 0;
+  color: var(--accent);
+  font-size: 13px;
+}
+
+@media (max-width: 699px) {
+  dialog.playerCard {
+    width: 100vw;
+    height: 100dvh;
+    max-height: none;
+    margin: 0;
+    border: 0;
+    border-radius: 0;
+  }
+
+  .playerCardBox {
+    padding: 56px 22px 28px;
+  }
+
+  .playerCardArt {
+    width: min(340px, 86vw);
+  }
+}

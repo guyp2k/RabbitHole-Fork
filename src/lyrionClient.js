@@ -289,7 +289,8 @@ class LyrionClient {
   async executeExact(player,input,kind){
     return this.rpc(player,this.exactCommand(input,kind,player));
   }
-  async setVolume(player, { value, step } = {}) {
+  async setVolume(player, { value, step, mute } = {}) {
+    if (typeof mute === "boolean") return this.rpc(player, ["mixer", "muting", mute ? "1" : "0"]);
     const number = v => v !== undefined && v !== null && v !== "" && Number.isFinite(Number(v));
     let level;
     if (number(step) && Number(step) !== 0) { const n = Math.max(-100, Math.min(100, Math.round(Number(step)))); level = (n > 0 ? "+" : "") + n; }

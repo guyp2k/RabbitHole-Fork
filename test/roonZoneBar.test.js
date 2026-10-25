@@ -31,12 +31,17 @@ function harness(zones, selected) {
     createElement: element
   });
   class MutationObserver { constructor(fn) { this.fn = fn; observers.push(this); } observe(target, options) { this.target = target; this.options = options; } }
-  vm.runInNewContext(source, { document, MutationObserver, Event: class { constructor(type) { this.type = type; } }, JSON });
+  const context = { document, MutationObserver, Event: class { constructor(type) { this.type = type; } }, JSON, opened: [] };
+  context.window = context;
+  context.openRoonPlayerCard = id => context.opened.push(id);
+  vm.runInNewContext(source, context);
   const row = topbar.placedBefore;
   const group = row.children.find(child => child.className === "lyrionChoices");
-  const pills = () => group.children.map(b => [b.textContent, b.getAttribute("aria-pressed")]);
+  const pill = index => group.children[index].children[0];
+  const opener = index => group.children[index].children[1];
+  const pills = () => group.children.map(pair => [pair.children[0].textContent, pair.children[0].getAttribute("aria-pressed")]);
   const roonUpdate = () => observers.forEach(o => o.fn([]));
-  return { document, select, topbar, row, group, pills, events, observers, roonUpdate };
+  return { document, select, topbar, row, group, pill, opener, pills, events, observers, roonUpdate, context };
 }
 
 test("the Roon Zone row lists every Roon zone as a pill, marks the selected one, and sits above the navigation", () => {
@@ -53,7 +58,7 @@ test("the Roon Zone row lists every Roon zone as a pill, marks the selected one,
 
 test("picking a zone pill selects that zone in the app's zone select and tells the app it changed", () => {
   const h = harness([["z1", "HQPlayer"], ["z2", "WiiM Amp Pro"]], "z2");
-  h.group.children[0].onclick();
+  h.pill(0).onclick();
   assert.equal(h.select.value, "z1");
   assert.deepEqual(h.events, [["change", "z1"]]);
   assert.deepEqual(h.pills(), [["HQPlayer", "true"], ["WiiM Amp Pro", "false"]]);
@@ -61,16 +66,16 @@ test("picking a zone pill selects that zone in the app's zone select and tells t
 
 test("a Roon update that changes nothing keeps the same pills and keyboard focus; a new selection redraws them and keeps focus on that zone", () => {
   const h = harness([["z1", "HQPlayer"], ["z2", "WiiM Amp Pro"]], "z1");
-  const before = h.group.children.slice();
-  before[1].focus();
+  const before = h.pill(1);
+  before.focus();
   h.roonUpdate();
-  assert.equal(h.group.children[1], before[1]);
-  assert.equal(h.document.activeElement, before[1]);
+  assert.equal(h.pill(1), before);
+  assert.equal(h.document.activeElement, before);
   h.select.value = "z2";
   h.roonUpdate();
-  assert.notEqual(h.group.children[1], before[1]);
+  assert.notEqual(h.pill(1), before);
   assert.deepEqual(h.pills(), [["HQPlayer", "false"], ["WiiM Amp Pro", "true"]]);
-  assert.equal(h.document.activeElement, h.group.children[1]);
+  assert.equal(h.document.activeElement, h.pill(1));
 });
 
 test("the row is hidden while Roon reports no zones, and appears once it does", () => {
@@ -90,4 +95,22 @@ test("the Roon Zone row is hidden while Lyrion is the playback system and is a p
   assert.match(css, /\.roonZoneLabel \{color:var\(--muted\);font-size:16px;\}/);
   const html = fs.readFileSync(require.resolve("../public/index.html"), "utf8");
   assert.ok(html.indexOf('src="/roonZoneBar.js') > html.indexOf('src="/lyrion.js'), "loads after lyrion.js");
+});
+
+test("each Roon zone pill has a button that opens that zone's player card without switching the page's zone", () => {
+  const h = harness([["z1", "Living Room"], ["z2", "Studio"]], "z1");
+  assert.equal(h.opener(1).textContent, "▸");
+  assert.equal(h.opener(1).getAttribute("aria-label"), "Open Studio controls");
+  h.opener(1).onclick();
+  assert.deepEqual(h.context.opened, ["z2"]);
+  assert.equal(h.select.value, "z1");
+  assert.deepEqual(h.events, []);
+});
+
+test("keyboard focus on a zone's card button survives a zone redraw", () => {
+  const h = harness([["z1", "Living Room"], ["z2", "Studio"]], "z1");
+  h.opener(1).focus();
+  h.select.value = "z2";
+  h.roonUpdate();
+  assert.equal(h.document.activeElement, h.opener(1));
 });

@@ -103,7 +103,9 @@ test("the Roon strip sits under the album art, the app reports the zone name, an
 
 test("on a phone the art row grows by the strip's room so the cover keeps its phone size", () => {
   const css = read("public/styles.css");
-  const phone = css.slice(css.lastIndexOf("@media (max-width: 699px) {"));
+  const rule = css.indexOf("grid-template-rows: auto auto minmax(280px, calc(72vw + 72px))");
+  assert.notEqual(rule, -1);
+  const phone = css.slice(css.lastIndexOf("@media (max-width: 699px) {", rule));
   assert.match(phone, /:has\(> \.artStack > #nowPlayback:not\(\[hidden\]\)\) \{\s*grid-template-rows: auto auto minmax\(280px, calc\(72vw \+ 72px\)\) auto auto auto;/);
   assert.match(phone, /> \.artStack > \.cover:has\(\+ #nowPlayback:not\(\[hidden\]\)\) \{\s*width: min\(100cqw, calc\(100cqh - 72px\)\);/);
 });

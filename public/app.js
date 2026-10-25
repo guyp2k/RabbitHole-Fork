@@ -865,6 +865,41 @@ function formatUpNext(zone) {
   return [`Up next: ${label}`, info].filter(Boolean).join(" · ");
 }
 
+function roonPlayerCardState(zone) {
+  if (!zone) throw new Error("That Roon zone is no longer available.");
+  const now = summarizeNowPlaying(zone);
+  const raw = zone.now_playing || null;
+  const output = (zone.outputs || []).find((candidate) => candidate.volume) || null;
+  const volume = output?.volume || null;
+  const length = Math.max(0, Number(raw?.length || 0));
+  return {
+    system: "Roon",
+    room: zone.display_name || "",
+    state: zone.state || "stopped",
+    title: now?.title || "",
+    artist: now?.artist || "",
+    album: now?.album || "",
+    art: raw?.image_key ? `/api/roon/image/${encodeURIComponent(raw.image_key)}?width=600&height=600` : "",
+    position: Number(raw?.seek_position || 0),
+    duration: length,
+    canSeek: !!zone.is_seek_allowed && length > 0,
+    volume: volume ? { value: volume.value, min: volume.min, max: volume.max, step: volume.step, type: volume.type, muted: !!volume.is_muted, canMute: true, outputId: output.output_id } : null
+  };
+}
+
+const roonPlayerCard = {
+  system: "Roon",
+  refreshMs: 1000,
+  name: (zoneId) => state.zones.find((zone) => zone.zone_id === zoneId)?.display_name || "",
+  load: async (zoneId) => roonPlayerCardState(state.zones.find((zone) => zone.zone_id === zoneId)),
+  control: (zoneId, control) => api("/api/control", { zoneId, control }),
+  seek: (zoneId, seconds) => api("/api/seek", { zoneId, seconds }),
+  volume: (zoneId, value) => api("/api/volume", { outputId: roonPlayerCardState(state.zones.find((zone) => zone.zone_id === zoneId)).volume?.outputId, how: "absolute", value }),
+  mute: (zoneId, muted) => api("/api/mute", { outputId: roonPlayerCardState(state.zones.find((zone) => zone.zone_id === zoneId)).volume?.outputId, mute: muted })
+};
+window.openRoonPlayerCard = (zoneId) => window.openPlayerCard?.(roonPlayerCard, zoneId);
+window.makePlayerCardTrigger?.($("#cover"), () => { const zone = activeZone(); if (zone) window.openRoonPlayerCard(zone.zone_id); });
+
 function formatDateTime(value) {
   const date = new Date(Number(value || 0));
   if (Number.isNaN(date.getTime())) return "";

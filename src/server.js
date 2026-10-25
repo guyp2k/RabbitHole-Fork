@@ -2388,6 +2388,11 @@ async function handleApi(req, res, url) {
   if (pathname === "/api/volume") {
     return sendJson(res, 200, await roon.changeVolume(body.outputId, body.how || "relative_step", Number(body.value || 0)));
   }
+  if (pathname === "/api/mute") {
+    const result = await roon.mute(body.outputId, body.mute === true);
+    scheduleBroadcast();
+    return sendJson(res, 200, { ok: true, result: result || null });
+  }
   if (pathname === "/api/ai/playlist") {
     const intent = exactIntent(body);
     if (intent) return sendJson(res, 200, await runExactVerification({ ...body, tracks: intent.tracks }));
