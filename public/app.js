@@ -8449,13 +8449,14 @@ document.addEventListener("click", (event) => {
 });
 
 document.addEventListener("click", async (event) => {
-  const control = event.target.dataset.control;
-  const volume = event.target.dataset.volume;
+  const button = event.target.closest?.("button[data-control], button[data-volume]");
+  if (!button) return;
+  const { control, volume } = button.dataset;
   const zone = activeZone();
 
   try {
     if (control && zone) await api("/api/control", { zoneId: zone.zone_id, control });
-    if (volume) await api("/api/volume", { outputId: event.target.dataset.output, how: "relative_step", value: Number(volume) });
+    if (volume) await api("/api/volume", { outputId: button.dataset.output, how: "relative_step", value: Number(volume) });
   } catch (error) {
     alert(error.message);
   }
