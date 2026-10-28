@@ -584,7 +584,7 @@
   }
   function renderHqplayer(h){
     const line=$("lyrionHqplayer"),text=hqplayerSummary(h);
-    line.textContent=text;line.hidden=!text;
+    line.textContent=text;line.hidden=!text;renderHqpHost(line,h);
   }
   let statusRequest=0,lastAppliedStatus=0;
   function upNext(s){

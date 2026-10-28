@@ -12,8 +12,8 @@ const DSD = '<?xml version="1.0" encoding="utf-8"?><Status active_bits="1" activ
 const PCM = '<?xml version="1.0" encoding="utf-8"?><Status active_bits="32" active_filter="sinc-L" active_mode="PCM" active_rate="352800" active_shaper="" process_speed="3.2" state="2"/>';
 
 test("an HQPlayer status reply gives its output mode, rate, depth, filter, shaper, speed and source", () => {
-  assert.deepEqual(parseHqplayerStatus(DSD), { state: 2, mode: "SDM (DSD)", rate: 22579200, bits: 1, filter: "poly-sinc-gauss-xla", shaper: "ASDM7ECv3", speed: 1.40585626139028941, source: { rate: 44100, bits: 16, mime: "audio/x-flac" } });
-  assert.deepEqual(parseHqplayerStatus(PCM), { state: 2, mode: "PCM", rate: 352800, bits: 32, filter: "sinc-L", shaper: "", speed: 3.2, source: null });
+  assert.deepEqual(parseHqplayerStatus(DSD), { state: 2, mode: "SDM (DSD)", rate: 22579200, bits: 1, filter: "poly-sinc-gauss-xla", shaper: "ASDM7ECv3", speed: 1.40585626139028941, clips: null, source: { rate: 44100, bits: 16, mime: "audio/x-flac" } });
+  assert.deepEqual(parseHqplayerStatus(PCM), { state: 2, mode: "PCM", rate: 352800, bits: 32, filter: "sinc-L", shaper: "", speed: 3.2, clips: null, source: null });
   assert.equal(parseHqplayerStatus("<Error/>"), null);
 });
 
@@ -126,8 +126,9 @@ test("Lyrion's playback chain and HQPlayer output sit in one strip under the alb
 });
 
 test("the Lyrion HQPlayer line shows the one-line summary and hides when HQPlayer reports nothing", () => {
-  const line = { textContent: "", hidden: true };
-  const context = { $: id => ({ lyrionHqplayer: line })[id] };
+  const line = { textContent: "", hidden: true, nextElementSibling: null, after(node) { this.nextElementSibling = node; } };
+  const make = () => ({ className: "", hidden: false, textContent: "", dataset: {}, children: [], replaceChildren(...nodes) { this.children = nodes; } });
+  const context = { $: id => ({ lyrionHqplayer: line })[id], document: { createElement: make } };
   vm.runInNewContext(summary + section("  function renderHqplayer(", "  let statusRequest="), context);
   context.renderHqplayer(parseHqplayerStatus(DSD));
   assert.deepEqual([line.textContent, line.hidden], ["DSD512 · 22.5792 MHz / 1-bit SDM · poly-sinc-gauss-xla · ASDM7ECv3 · 1.4x realtime", false]);

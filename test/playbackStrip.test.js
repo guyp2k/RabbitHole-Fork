@@ -42,11 +42,12 @@ test("Roon and Lyrion share one HQPlayer summary line", () => {
 
 function roonHarness(reply) {
   const listeners = {}, fetched = [], timers = [];
-  const el = () => ({ textContent: "", hidden: true });
+  const el = () => ({ textContent: "", hidden: true, className: "", dataset: {}, children: [], nextElementSibling: null,
+    after(node) { this.nextElementSibling = node; }, replaceChildren(...nodes) { this.children = nodes; } });
   const nodes = { nowPlayback: el(), nowPlaybackChain: el(), nowPlaybackSignal: el() };
   const stage = { addEventListener: (type, fn) => { listeners[type] = fn; } };
   const context = {
-    document: { hidden: false, querySelector: s => s === "#playerView .player" ? stage : null, getElementById: id => nodes[id] },
+    document: { hidden: false, querySelector: s => s === "#playerView .player" ? stage : null, getElementById: id => nodes[id], createElement: el },
     fetch: async (url, options) => { fetched.push([url, options.cache]); return { ok: true, json: async () => ({ hqplayer: reply(url) }) }; },
     setInterval: (fn, ms) => timers.push([fn, ms]), encodeURIComponent
   };

@@ -13042,3 +13042,51 @@ dialog.playerCard .playerCardMute {
     width: min(340px, 86vw);
   }
 }
+
+/* HQP host line: the HQPlayer host's realtime factor, GPU and clips, under the HQPlayer line on Roon and Lyrion. */
+.hqpHostLine {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.5;
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+
+.hqpHostLine[hidden] {
+  display: none;
+}
+
+.hqpHostTag {
+  display: inline-block;
+  margin-right: 6px;
+  padding: 0 7px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 999px;
+  color: var(--accent);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.hqpHostLine [data-level] {
+  font-weight: 800;
+}
+
+.hqpHostLine [data-level="ok"] {
+  color: #49ee91;
+}
+
+.hqpHostLine [data-level="warn"] {
+  color: #ffca6f;
+}
+
+.hqpHostLine [data-level="bad"] {
+  color: #ff5b8a;
+}
+
+.hqpHostLine [data-level="muted"] {
+  color: rgba(246, 234, 255, 0.42);
+  font-weight: 600;
+}
