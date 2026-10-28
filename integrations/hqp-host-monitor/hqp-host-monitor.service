@@ -1,0 +1,12 @@
+[Unit]
+Description=HQP host monitor (read-only GPU and HQPlayer process stats)
+
+[Service]
+ExecStart=/usr/bin/python3 %h/.local/share/hqp-host-monitor/hqp_host_monitor.py --config %h/.config/hqp-host-monitor/config.json
+Nice=19
+Restart=on-failure
+RestartSec=30
+NoNewPrivileges=yes
+
+[Install]
+WantedBy=default.target

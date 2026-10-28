@@ -24,3 +24,5 @@
 **/*.log
 **/*.pyc
 **/__pycache__/**
+integrations/hqp-host-monitor
+integrations/hqp-host-monitor/**
