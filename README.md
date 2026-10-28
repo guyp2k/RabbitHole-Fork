@@ -27,7 +27,8 @@ The player card, opened from the ▸ on a room's pill or by tapping the album ar
   <img src="docs/screenshots/player-card-phone.png" alt="Player card on a phone: full screen with album art, the room, track, seek bar, transport buttons and a volume row with mute" width="220">
 </p>
 
-The screenshots use made-up tracks, rooms and addresses.
+The screenshots use made-up tracks, rooms and addresses. For a section-by-section
+walk through the changes, with more screenshots, see the [feature tour](docs/FEATURES.md).
 
 ## What this fork changes
 
@@ -43,6 +44,10 @@ offered upstream as pull requests.
   rating stars, system temperatures, and a waveform seek bar on both players
   (drawn from the LMS library file with FFmpeg). Under the art, an Up next line
   sits above round back, play/pause, stop and next buttons and a short seek bar.
+- **HQP host line:** for an HQPlayer machine that runs the optional
+  [HQP host monitor](integrations/hqp-host-monitor/README.md), a line under the
+  HQPlayer line with realtime factor, GPU temperature, load, power and memory,
+  and clips, coloured by limits (`HQP_HOST_MONITORS`).
 - **Playback System row:** Roon zones as pills, plus optional links to the
   HQPlayer web interface, HQPTuner and Rouen.
 - **Player card:** a ▸ on every Roon zone and Lyrion player pill (or a tap on
@@ -250,6 +255,8 @@ Recoloured artwork lives in `public/themes/<id>/`; after adding a theme or chang
 
 ## Guides
 
+- [Feature tour of this fork](docs/FEATURES.md)
+- [HQP host monitor](integrations/hqp-host-monitor/README.md)
 - [Lyrion players, plugin playback and HQPlayerBridge](docs/lyrion.md)
 - [Linux, Docker and Unraid](docs/linux-docker.md)
 - [SoundCloud playlist connection](LYRION_SOUNDCLOUD.md)
