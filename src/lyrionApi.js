@@ -57,7 +57,9 @@ function createLyrionApi({ roon, readJson, sendJson, catalogue=null, hqplayerLin
     let web = webLink(hqplayerLinks.webUrl);
     if (!web) { const host = await client.hqplayerWebHost?.().catch(() => ""); if (host) web = webLink(`http://${host.includes(":") ? `[${host}]` : host}:8088`); }
     const tuner = webLink(hqplayerLinks.tunerUrl);
-    return [web && { id: "hqplayer", label: "Web Interface", url: web }, tuner && { id: "hqptuner", label: "HQPTuner", url: tuner }].filter(Boolean);
+    const hqpweb = webLink(hqplayerLinks.hqpwebUrl);
+    return [web && { id: "hqplayer", label: "Web Interface", url: web }, tuner && { id: "hqptuner", label: "HQPTuner", url: tuner },
+      hqpweb && { id: "hqpweb", label: "HQPweb", url: hqpweb }].filter(Boolean);
   }
   async function handle(req, res, url) {
     const route = url.pathname.slice("/api/lyrion/".length);

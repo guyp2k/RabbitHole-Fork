@@ -22,8 +22,8 @@ commits after upstream `f0b1e81`.
 
 - **Roon / Lyrion** switches the whole page between the two players. The choice
   is kept in the browser.
-- **Rouen**, **Web Interface** and **HQPTuner** are links, shown only when
-  `ROUEN_URL`, `HQPLAYER_WEB_URL` or `HQPTUNER_URL` is set (the HQPlayer web
+- **Rouen**, **Web Interface**, **HQPTuner** and **HQPweb** are links, shown only when
+  `ROUEN_URL`, `HQPLAYER_WEB_URL`, `HQPTUNER_URL` or `HQPWEB_URL` is set (the HQPlayer web
   interface is also found from the HQPlayerBridge plugin when Lyrion is in use).
 - **Roon Zone** lists every zone as a pill instead of a drop-down. The ▸ on a
   pill opens that zone's [player card](#player-card).

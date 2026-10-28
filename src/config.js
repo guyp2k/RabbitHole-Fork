@@ -374,6 +374,7 @@ module.exports = {
   hqplayer: {
     webUrl: process.env.HQPLAYER_WEB_URL || "",
     tunerUrl: process.env.HQPTUNER_URL || "",
+    hqpwebUrl: process.env.HQPWEB_URL || "",
     signalPathPrefix: process.env.HQPLAYER_SIGNAL_PATH_PREFIX || "poly-sinc-gauss-hires-mp, TPDF, PCM",
     signalPathStatic: process.env.HQPLAYER_SIGNAL_PATH_STATIC || "",
     rateCommand: process.env.HQPLAYER_RATE_COMMAND || "",

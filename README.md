@@ -49,7 +49,7 @@ offered upstream as pull requests.
   HQPlayer line with realtime factor, GPU temperature, load, power and memory,
   and clips, coloured by limits (`HQP_HOST_MONITORS`).
 - **Playback System row:** Roon zones as pills, plus optional links to the
-  HQPlayer web interface, HQPTuner and Rouen.
+  HQPlayer web interface, HQPTuner, HQPweb and Rouen.
 - **Player card:** a ▸ on every Roon zone and Lyrion player pill (or a tap on
   the album art) opens that room's card: art, track, seek, back / play-pause /
   stop / next, and volume with mute, without switching the page to that room.

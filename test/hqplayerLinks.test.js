@@ -49,13 +49,26 @@ test("two bridges on different HQPlayers are ambiguous, so no web link is guesse
   assert.deepEqual((await links(lms({ players, addresses: "" })))[1].links, []);
 });
 
-test("the settings are read from HQPLAYER_WEB_URL and HQPTUNER_URL and documented", () => {
+test("HQPweb comes from its setting and sits after HQPTuner, and a non-http value is dropped", async () => {
+  assert.deepEqual((await links(lms(), { tunerUrl: "http://192.0.2.77:8090", hqpwebUrl: "http://192.0.2.21:4380" }))[1].links, [
+    { id: "hqplayer", label: "Web Interface", url: "http://192.168.60.76:8088/" },
+    { id: "hqptuner", label: "HQPTuner", url: "http://192.0.2.77:8090/" },
+    { id: "hqpweb", label: "HQPweb", url: "http://192.0.2.21:4380/" }]);
+  assert.deepEqual((await links(lms({ down: true }), { hqpwebUrl: "file:///etc/passwd" }))[1].links, []);
+  assert.deepEqual((await links(lms({ down: true }), { hqpwebUrl: "http://192.0.2.21:4380" }))[1].links, [{ id: "hqpweb", label: "HQPweb", url: "http://192.0.2.21:4380/" }]);
+});
+
+test("the settings are read from HQPLAYER_WEB_URL, HQPTUNER_URL and HQPWEB_URL and documented", () => {
   const config = fs.readFileSync(require.resolve("../src/config.js"), "utf8");
   assert.match(config, /webUrl: process\.env\.HQPLAYER_WEB_URL \|\| ""/);
   assert.match(config, /tunerUrl: process\.env\.HQPTUNER_URL \|\| ""/);
   const example = fs.readFileSync(require.resolve("../.env.example"), "utf8");
   assert.match(example, /^HQPLAYER_WEB_URL=$/m);
   assert.match(example, /^HQPTUNER_URL=$/m);
+  assert.match(config, /hqpwebUrl: process\.env\.HQPWEB_URL \|\| ""/);
+  assert.match(example, /^# HQPWEB_URL adds an HQPweb link/m);
+  assert.match(example, /^HQPWEB_URL=$/m);
+  assert.match(fs.readFileSync(require.resolve("../unraid/RabbitHole-Fork.xml"), "utf8"), /<Config Name="HQPweb URL" Target="HQPWEB_URL" Default="" [^>]*Display="advanced" Required="false" Mask="false"><\/Config>/);
   assert.match(fs.readFileSync(require.resolve("../src/server.js"), "utf8"), /createLyrionApi\(\{[^}]*hqplayerLinks: config\.hqplayer/);
 });
 
