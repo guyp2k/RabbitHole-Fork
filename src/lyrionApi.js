@@ -67,7 +67,7 @@ function createLyrionApi({ roon, readJson, sendJson, catalogue=null, hqplayerLin
       const imagePath = url.searchParams.get("path") || "";
       const imageUrl = new URL(imagePath, client.baseUrl);
       if (imageUrl.origin !== client.baseUrl || !/^\/(imageproxy|music|plugins|html|contributor)\//.test(imageUrl.pathname)) return sendJson(res, 400, { error: "Invalid artwork path" });
-      const headers = {};
+      const headers = { "User-Agent": "TheRabbitHole/0.1.0 (local Roon discovery app)" };
       if (process.env.LYRION_USERNAME) headers.Authorization = `Basic ${Buffer.from(`${process.env.LYRION_USERNAME}:${process.env.LYRION_PASSWORD || ""}`).toString("base64")}`;
       const image = await fetch(imageUrl, { headers, signal: AbortSignal.timeout(10000) });
       const type = image.headers.get("content-type") || "";
