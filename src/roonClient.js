@@ -1648,10 +1648,10 @@ class RoonClient extends EventEmitter {
           }
           seekChanged = true;
         }
-        for (const zone of data.zones_removed || []) {
-          this.zones.delete(zone.zone_id);
-          this.queues.delete(zone.zone_id);
-          this.queueSignatures.delete(zone.zone_id);
+        for (const zoneId of data.zones_removed || []) {
+          this.zones.delete(zoneId);
+          this.queues.delete(zoneId);
+          this.queueSignatures.delete(zoneId);
           contentChanged = true;
         }
       }
