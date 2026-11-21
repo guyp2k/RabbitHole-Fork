@@ -2285,6 +2285,47 @@ class RoonClient extends EventEmitter {
     };
   }
 
+  async playLibraryAlbum({ title = "", artists = [] } = {}, zoneId, action = "play") {
+    const wanted = { play: /^play now$/i, next: /^add next$/i, queue: /^(?:queue|add to queue)$/i, radio: /^start radio$/i }[action];
+    if (!wanted) throw new Error(`Unknown album action: ${action}`);
+    let zoneOrOutputId;
+    try { zoneOrOutputId = this.zoneOrOutputId(zoneId); } catch { throw new Error("Pick a Roon zone first."); }
+    this.requireBrowse();
+    const norm = (value) => String(value || "").normalize("NFKC").replace(/\s+/g, " ").trim().toLowerCase();
+    const wantedTitle = norm(title);
+    const names = new Set((Array.isArray(artists) ? artists : [artists]).map(norm).filter(Boolean));
+    if (!wantedTitle) throw new Error("Album title is required.");
+    const session = `library-album-${require("node:crypto").randomUUID()}`;
+    const browse = (options) => callRoon((cb) => this.browse.browse({ hierarchy: "albums", multi_session_key: session, ...options }, cb));
+    const load = (offset, count) => callRoon((cb) => this.browse.load({ hierarchy: "albums", multi_session_key: session, offset, count }, cb));
+    const root = await browse({ pop_all: true });
+    if (isErrorMessage(root)) throw new Error(root.message || "Roon refused to open the album library.");
+    const matches = [];
+    let total = Number(root.list?.count || 0);
+    for (let offset = 0; offset < total || offset === 0; ) {
+      const page = await load(offset, 100);
+      const items = page.items || [];
+      total = Number(page.list?.count ?? total);
+      for (const item of items) {
+        if (norm(item.title) === wantedTitle && (!names.size || names.has(norm(item.subtitle)))) matches.push(item);
+      }
+      if (!items.length) break;
+      offset += items.length;
+    }
+    if (!matches.length) return { success: false, reason: `"${title}" is not in your Roon library under that title and artist.` };
+    if (matches.length > 1) return { success: false, reason: `${matches.length} albums in your Roon library are called "${title}" by the same artist; open it in Roon to pick one.` };
+    const opened = await browse({ item_key: matches[0].item_key });
+    if (isErrorMessage(opened) || opened.action === "message") return { success: false, reason: opened.message || "Roon would not open that album." };
+    const menu = ((await load(0, 20)).items || []).find((item) => item.hint === "action_list" && /^play album$/i.test(item.title || ""));
+    if (!menu) return { success: false, reason: "Roon showed no Play Album menu for that album." };
+    await browse({ item_key: menu.item_key, zone_or_output_id: zoneOrOutputId });
+    const choice = ((await load(0, 20)).items || []).find((item) => wanted.test(item.title || ""));
+    if (!choice) return { success: false, reason: "Roon did not offer that action for this album." };
+    const done = await browse({ item_key: choice.item_key, zone_or_output_id: zoneOrOutputId });
+    if (isErrorMessage(done)) return { success: false, reason: done.message || "Roon refused the action." };
+    return { success: true, action: choice.title, match: { title: matches[0].title, subtitle: matches[0].subtitle || "" } };
+  }
+
   async playRadioStation(itemKey, zoneId, options = {}) {
     this.requireBrowse();
     const key = String(itemKey || "").trim();

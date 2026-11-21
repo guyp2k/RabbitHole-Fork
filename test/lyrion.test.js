@@ -69,3 +69,12 @@ test("queue and transport produce documented JSON-RPC commands without live play
  assert.deepEqual(calls,[["p",["play"]],["p",["pause",1]],["p",["playlist","index","+1"]],["p",["playlist","index","-1"]],["p",["playlist","clear"]]]);
  for(const [kind,command] of [["play","play"],["add","add"],["next","insert"]]){const token=c.remember({kind,cmd:["siriusxm","playlist",command],params:{item_id:"2.0"}},"p","SiriusXM");await c.execute("p",token,kind);assert.deepEqual(calls.at(-1),["p",["siriusxm","playlist",command,"item_id:2.0"]]);}
 });
+test("playing or starting radio from the Roon library pauses Lyrion first, while queueing onto a playing zone does not", async () => {
+  const calls=[];
+  const client={players:async()=>[{id:"l",playing:true,connected:true}],control:async(id,cmd)=>{calls.push(`lyrion:${cmd}`);}};
+  const roon={getState:()=>({zones:[{zone_id:"busy",state:"playing"},{zone_id:"idle",state:"stopped"}]}),playLibraryAlbum:async(album,zoneId,action)=>{calls.push(`roon:${action}:${zoneId}`);return {success:true};}};
+  const api=createLyrionApi({roon,client,file:"does-not-exist"});api.installPlaybackHandoffs();
+  for(const action of ["play","radio"]){calls.length=0;await roon.playLibraryAlbum({},"busy",action);assert.deepEqual(calls,["lyrion:pause",`roon:${action}:busy`]);}
+  calls.length=0;await roon.playLibraryAlbum({},"busy","queue");assert.deepEqual(calls,["roon:queue:busy"]);
+  calls.length=0;await roon.playLibraryAlbum({},"idle","next");assert.deepEqual(calls,["lyrion:pause","roon:next:idle"]);
+});

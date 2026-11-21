@@ -1,0 +1,18 @@
+.rlFilters { display: flex; flex-wrap: wrap; gap: var(--db-space-3) var(--db-space-4); align-items: end; padding-bottom: var(--db-space-6); }
+.rlFilters label { display: grid; gap: var(--db-space-1); color: var(--muted); font-size: 12px; }
+.rlFilters .dbSearch { flex: 1 1 260px; }
+.rlFilters select { min-width: 150px; }
+.rlToggles { display: flex; flex-wrap: wrap; gap: var(--db-space-2); flex-basis: 100%; }
+#roonLibraryView .rlToggles button[aria-pressed="true"] { border-color: var(--accent); color: var(--text); background: color-mix(in srgb, var(--accent) 22%, transparent); }
+.rlGrid { grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); }
+.rlCard { display: flex; flex-direction: column; min-width: 0; }
+.rlCard .dbCollectionMeta { overflow-wrap: anywhere; }
+.rlActions { display: grid; grid-template-columns: 1fr 1fr; gap: var(--db-space-1); margin-top: var(--db-space-3); }
+.roonLibraryView .rlActions button { min-height: 34px; padding: 0 var(--db-space-2); font-size: 12px; }
+#roonLibraryView .rlActions button.rlPrimary { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 78%, #000); color: #fff; font-weight: 600; }
+.rlMore { display: flex; justify-content: center; padding: var(--db-space-6) 0; }
+@media (max-width: 640px) {
+  .rlFilters select { min-width: 0; width: 100%; }
+  .rlFilters label { flex: 1 1 45%; }
+  .rlGrid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}

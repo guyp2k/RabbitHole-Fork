@@ -11,6 +11,7 @@ commits after upstream `f0b1e81`.
 - [Transport, Up next and the seek bar](#transport-up-next-and-the-seek-bar)
 - [HQPlayer and the HQP host line](#hqplayer-and-the-hqp-host-line)
 - [Player card](#player-card)
+- [Roon Library](#roon-library)
 - [Lyrion](#lyrion)
 - [On a phone](#on-a-phone)
 - [Themes](#themes)
@@ -99,6 +100,25 @@ volume with mute. It controls that room without switching the page to it.
   <img src="screenshots/player-card-desktop.png" alt="Player card on a desktop: a centred card over the blurred page with album art, the room, track, seek bar, transport buttons and close button" width="560">
   <img src="screenshots/player-card-phone.png" alt="Player card on a phone: full screen with album art, the room, track, seek bar, transport buttons and a volume row with mute" width="220">
 </p>
+
+## Roon Library
+
+![Playback > Library: a search box, Genre, Decade, Stars and Sort drop-downs, Hi-Res Only, Favorites, Unplayed 90 Days, Added Last 30 Days and Unidentified toggles, and album cards with Play, Play Next, Queue and Start Radio buttons](screenshots/roon-library.png)
+
+**Playback > Library** browses the albums in your Roon library with Roon's own
+Focus filters: genre and decade (with Roon's counts), star rating, sort order,
+Hi-Res only, favorites, albums not played in 90 days, albums added in the last
+30 days and albums Roon could not identify.
+
+- **Play**, **Play Next**, **Queue** and **Start Radio** act on the selected
+  Roon zone through Rabbit Hole's own Roon extension. The album is found in
+  Roon's library by its exact title and artist; when two library albums share
+  both, Rabbit Hole says so instead of guessing.
+- Starting an album or radio pauses a playing Lyrion player first.
+- Browsing needs a [Deep Roon MCP](https://github.com/renebouwmeester/deep-roon-mcp)
+  server, set with `DEEP_ROON_URL`. Rabbit Hole only calls its read tools; any
+  other tool is refused before a request is sent. Covers are served through
+  Rabbit Hole.
 
 ## Lyrion
 

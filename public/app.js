@@ -7695,6 +7695,7 @@ const LEGACY_NAV_TARGETS = {
   radio: { group: "discover", item: "radio" },
   playlists: { group: "playback", item: "playlists" },
   database: { group: "playback", item: "database" },
+  roonLibrary: { group: "playback", item: "roon-library" },
   tidal: { group: "discover", item: "tidal" },
   tidalLibrary: { group: "tidalLibrary", item: "collections" },
   connections: { group: "system", item: "connections" },
@@ -7753,7 +7754,7 @@ function setNavigationState(group = activeNavGroup, item = null) {
 function setActiveView(view, navigation = null) {
   const target = view === "memory"
     ? "memory"
-    : (["history", "musicMemory", "database", "sonicReview", "beatportCharts", "radio", "playlists", "tidal", "tidalLibrary", "settings", "connections", "ai", "diagnostics", "queue", "discover", "standby"].includes(view) ? view : "player");
+    : (["history", "musicMemory", "database", "roonLibrary", "sonicReview", "beatportCharts", "radio", "playlists", "tidal", "tidalLibrary", "settings", "connections", "ai", "diagnostics", "queue", "discover", "standby"].includes(view) ? view : "player");
   const navigationTarget = navigation?.group
     ? navigation
     : (LEGACY_NAV_TARGETS[target] || LEGACY_NAV_TARGETS.player);
@@ -7772,6 +7773,8 @@ function setActiveView(view, navigation = null) {
   $("#historyView").classList.toggle("isActive", target === "history");
   $("#musicMemoryView")?.classList.toggle("isActive", target === "musicMemory");
   $("#databaseView")?.classList.toggle("isActive", target === "database");
+  $("#roonLibraryView")?.classList.toggle("isActive", target === "roonLibrary");
+  if (target === "roonLibrary") window.RoonLibraryUi?.show();
   $("#sonicReviewView")?.classList.toggle("isActive", target === "sonicReview");
   if (target === "sonicReview") renderSonicReview();
   else window.SonicBlindReviewUi?.pauseAudio();
