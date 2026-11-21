@@ -10,7 +10,7 @@ function filtersFrom(params) {
   const text = (name) => { const value = String(params.get(name) || "").trim(); if (value) args[name] = value.slice(0, 120); };
   const bool = (name) => { const value = params.get(name); if (value === "true" || value === "false") args[name] = value === "true"; };
   const int = (name, min, max) => { const value = Number(params.get(name)); if (params.has(name) && Number.isInteger(value) && value >= min && value <= max) args[name] = value; };
-  text("genre"); text("artist"); text("label"); text("text");
+  text("genre"); text("storage"); text("artist"); text("label"); text("text");
   const decade = Number(params.get("decade"));
   if (params.has("decade") && Number.isInteger(decade) && decade % 10 === 0 && decade >= 1900 && decade <= 2090) { args.year_from = decade; args.year_to = decade + 9; }
   const stars = Number(params.get("min_stars"));
@@ -67,7 +67,8 @@ function createRoonLibraryApi({ deepRoon, roon, readJson, sendJson, fetchImpl = 
       }
       if (req.method === "GET" && route === "focus") {
         const result = await deepRoon.call("roon_focus", filtersFrom(url.searchParams));
-        return sendJson(res, 200, { totalAlbums: result.total_albums ?? 0, genres: result.genres || [], decades: result.decades || [], stars: result.stars || [] });
+        return sendJson(res, 200, { totalAlbums: result.total_albums ?? 0, genres: result.genres || [], decades: result.decades || [], stars: result.stars || [],
+          libraries: (result.storage || []).filter((item) => item?.name).map((item) => ({ name: String(item.name), albums: item.albums ?? 0 })) });
       }
       if (req.method === "GET" && /^album\/\d+$/.test(route)) {
         const result = await deepRoon.call("roon_album", { key: route.slice(6) });

@@ -26,9 +26,9 @@ const row = { key: "1287727", title: "Silk Degrees", artist: "Boz Scaggs", forma
 
 test("only the known Focus filters reach Deep Roon, typed, and a decade becomes a year range", async () => {
   const h = harness({ deepRoon: { roon_library: () => ({ total: 1, rows: [row] }) } });
-  await h.get("/api/roon-library/albums?genre=Jazz&decade=1970&min_stars=4.5&hires=true&identified=false&not_played_within_days=90&sort=added&offset=50&evil=1&confirm=true");
+  await h.get("/api/roon-library/albums?storage=Hi-Res&genre=Jazz&decade=1970&min_stars=4.5&hires=true&identified=false&not_played_within_days=90&sort=added&offset=50&evil=1&confirm=true");
   assert.deepEqual(h.calls[0], { name: "roon_library", args: {
-    genre: "Jazz", year_from: 1970, year_to: 1979, min_stars: 4.5, hires: true, identified: false,
+    genre: "Jazz", storage: "Hi-Res", year_from: 1970, year_to: 1979, min_stars: 4.5, hires: true, identified: false,
     not_played_within_days: 90, sort: "added", offset: 50, limit: 60 } });
 });
 
@@ -105,4 +105,11 @@ test("a cover the Core sends without a Content-Type is served when its bytes are
   }
   assert.deepEqual(served, { aaaa: [200, "image/jpeg"], bbbb: [200, "image/png"] });
   assert.equal(h.replies.at(-1).status, 404);
+});
+
+test("the Focus answer carries every Roon storage location by name with its album count, for the Library drop-down", async () => {
+  const storage = [{ name: "Lossless", albums: 2224 }, { name: "Hi-Res", albums: 179 }, { name: "TIDAL Library", albums: 82 }];
+  const h = harness({ deepRoon: { roon_focus: () => ({ total_albums: 3279, genres: [], decades: [], stars: [], storage }) } });
+  await h.get("/api/roon-library/focus");
+  assert.deepEqual(h.replies[0].payload.libraries, storage);
 });
