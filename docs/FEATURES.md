@@ -19,7 +19,7 @@ commits after upstream `f0b1e81`.
 
 ## Playback System row
 
-![Playback System row: Roon and Lyrion pills with a Rouen link, an HQPlayer row with Web Interface and HQPTuner links, and a Roon Zone row with one pill per zone, each with a small play button](screenshots/playback-system-row.png)
+![Playback System row: Roon and Lyrion pills with a Rouen link, an HQPlayer row with Web Interface, HQPTuner and HQPweb links, and a Roon Zone row with one pill per zone, each with a small play button](screenshots/playback-system-row.png)
 
 - **Roon / Lyrion** switches the whole page between the two players. The choice
   is kept in the browser.
@@ -97,7 +97,7 @@ that room's card: art, track, seek bar, back / play-pause / stop / next, and
 volume with mute. It controls that room without switching the page to it.
 
 <p>
-  <img src="screenshots/player-card-desktop.png" alt="Player card on a desktop: a centred card over the blurred page with album art, the room, track, seek bar, transport buttons and close button" width="560">
+  <img src="screenshots/player-card-desktop.png" alt="Player card on a desktop: a centred card over the blurred page with album art, the room, track, seek bar, transport buttons, a volume row with mute and a close button" width="560">
   <img src="screenshots/player-card-phone.png" alt="Player card on a phone: full screen with album art, the room, track, seek bar, transport buttons and a volume row with mute" width="220">
 </p>
 
@@ -147,22 +147,20 @@ The columns stack: details and System first, then the art and everything under
 it.
 
 <p>
-  <img src="screenshots/phone-roon.png" alt="Roon Now Playing on a phone: Maximize Player, Full Window and Artwork buttons, then track details, volume and System, then the album art" width="260">
-  <img src="screenshots/phone-lyrion.png" alt="Lyrion Now Playing on a phone: a Fullscreen button, track and file details, volume and System, then the album art" width="260">
+  <img src="screenshots/phone-roon.png" alt="Roon Now Playing on a phone: Maximize Player and Full Window buttons, then track details, volume and System, then the album art" width="260">
+  <img src="screenshots/phone-lyrion.png" alt="Lyrion Now Playing on a phone: player pills, the Lyrion tabs, a Fullscreen button, then track and file details, volume and System" width="260">
 </p>
 
 ## Themes
 
-Seven themes, picked in **Settings**. `UI_THEME` sets the default for new
+Nine themes, picked in **Settings**. `UI_THEME` sets the default for new
 browsers.
 
-![The same Roon Now Playing page in seven themes: Obsidian & Copper, Original, Roon Dark, Roon Light, Dark Orange, Graphite & Brass and Miyara](screenshots/themes.png)
+![The Library page in the nine themes: Mindshovel Colorful, Mindshovel Colorful Light, Mindshovel Dark, Mindshovel Light, Mindshovel Blue, Mindshovel Dark Orange, Obsidian & Copper, Graphite & Brass and Miyara](screenshots/themes.png)
 
-The picker lists nine themes, named and ordered as in UCWEB: Mindshovel Colorful,
+The picker lists them named and ordered as in UCWEB: Mindshovel Colorful,
 Mindshovel Colorful Light, Mindshovel Dark, Mindshovel Light, Mindshovel Blue,
-Mindshovel Dark Orange, Obsidian & Copper, Graphite & Brass and Miyara. The
-screenshot was taken before Original, Roon Dark, Roon Light and Dark Orange took
-their Mindshovel names and before Colorful Light and Blue were added.
+Mindshovel Dark Orange, Obsidian & Copper, Graphite & Brass and Miyara.
 
 Each theme is a JSON file in `src/themes/`;
 [Colour themes](../README.md#colour-themes) in the README explains how to add one.

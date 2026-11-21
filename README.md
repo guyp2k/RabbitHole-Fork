@@ -23,9 +23,17 @@ Lyrion Now Playing, with the same layout:
 The player card, opened from the ▸ on a room's pill or by tapping the album art, on a desktop and on a phone:
 
 <p>
-  <img src="docs/screenshots/player-card-desktop.png" alt="Player card on a desktop: a centred card over the blurred page with album art, the room, track, seek bar, transport buttons and close button" width="560">
+  <img src="docs/screenshots/player-card-desktop.png" alt="Player card on a desktop: a centred card over the blurred page with album art, the room, track, seek bar, transport buttons, a volume row with mute and a close button" width="560">
   <img src="docs/screenshots/player-card-phone.png" alt="Player card on a phone: full screen with album art, the room, track, seek bar, transport buttons and a volume row with mute" width="220">
 </p>
+
+Playback > Library, your Roon albums filtered with Roon's Focus (here the Hi-Res library):
+
+![Playback > Library: a search box, Library, Genre, Decade, Stars and Sort drop-downs, filter toggles, and album cards with Play, Play Next, Queue and Start Radio buttons](docs/screenshots/roon-library.png)
+
+The nine colour themes, on the Library page:
+
+![The Library page in the nine themes: Mindshovel Colorful, Mindshovel Colorful Light, Mindshovel Dark, Mindshovel Light, Mindshovel Blue, Mindshovel Dark Orange, Obsidian & Copper, Graphite & Brass and Miyara](docs/screenshots/themes.png)
 
 The screenshots use made-up tracks, rooms and addresses. For a section-by-section
 walk through the changes, with more screenshots, see the [feature tour](docs/FEATURES.md).
@@ -50,6 +58,13 @@ offered upstream as pull requests.
   and clips, coloured by limits (`HQP_HOST_MONITORS`).
 - **Playback System row:** Roon zones as pills, plus optional links to the
   HQPlayer web interface, HQPTuner, HQPweb and Rouen.
+- **Roon Library:** Playback > Library browses the albums in your Roon library
+  with Roon's own Focus filters: library (each storage location, such as your
+  music folders and the TIDAL library), genre, decade, stars, sort, favorites,
+  unplayed, recently added and unidentified. Play, Play Next, Queue and Start
+  Radio go to the selected zone. Needs a
+  [Deep Roon MCP](https://github.com/renebouwmeester/deep-roon-mcp) server
+  (`DEEP_ROON_URL`); Rabbit Hole only uses its read tools.
 - **Player card:** a ▸ on every Roon zone and Lyrion player pill (or a tap on
   the album art) opens that room's card: art, track, seek, back / play-pause /
   stop / next, and volume with mute, without switching the page to that room.
@@ -139,6 +154,11 @@ not have; an access-tier error cannot be fixed by changing the search URL.
 - Roon Server on your LAN for the Roon path, and/or LMS with a connected player
   for the Lyrion path.
 - An LLM server or configured cloud provider for model-assisted discovery.
+- Optional: a [Deep Roon MCP](https://github.com/renebouwmeester/deep-roon-mcp)
+  server for Playback > Library (`DEEP_ROON_URL`). Naming each storage location
+  in the Library list needs its storage-location change
+  ([deep-roon-mcp#6](https://github.com/renebouwmeester/deep-roon-mcp/pull/6));
+  without it the list shows only Local and TIDAL.
 - FFmpeg for optional SiriusXM on-demand/artist/Xtra audio and sonic analysis.
   The supplied Docker image includes FFmpeg and FFprobe.
 
