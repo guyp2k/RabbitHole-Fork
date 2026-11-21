@@ -6,6 +6,7 @@
     <title>The Rabbit Hole</title><link rel="icon" type="image/png" href="/favicon.png">
     <link rel="stylesheet" href="/styles.css?v=20261012-unavailable-1">
     <link rel="stylesheet" href="/database.css?v=20261011-pills-1">
+    <link rel="stylesheet" href="/roonLibrary.css?v=20261121-1">
     <link rel="stylesheet" href="/sonicBlindReview.css?v=20260925-1">
     <link rel="stylesheet" href="/lyrion.css?v=46">
     <link rel="stylesheet" href="/lyrionVisualizer.css?v=11">
@@ -47,6 +48,7 @@
             <button type="button" class="active" data-nav-group="playback" data-nav-item="now-playing" data-view="player" aria-current="page">Now Playing</button>
             <button type="button" data-nav-group="playback" data-nav-item="queue" data-view="queue">Queue</button>
             <button type="button" data-nav-group="playback" data-nav-item="playlists" data-view="playlists">Playlists</button>
+            <button type="button" data-nav-group="playback" data-nav-item="roon-library" data-view="roonLibrary">Library</button>
             <button type="button" data-nav-group="playback" data-nav-item="database" data-view="database">Database</button>
           </div>
         </div>
@@ -574,6 +576,28 @@
         </section>
       </section>
 
+      <section id="roonLibraryView" class="view databaseView roonLibraryView" aria-labelledby="roonLibraryHeading">
+        <header class="dbHeader">
+          <div><p class="eyebrow">Your Roon Library</p><h2 id="roonLibraryHeading">Library</h2><p id="rlStatus" class="dbMuted" aria-live="polite">Albums in Roon, filtered with Roon's own Focus.</p></div>
+        </header>
+        <form id="rlFilters" class="rlFilters">
+          <label class="dbSearch">Search Your Library<input name="text" type="search" placeholder="Album or artist" autocomplete="off"></label>
+          <label>Genre<select name="genre"><option value="">All Genres</option></select></label>
+          <label>Decade<select name="decade"><option value="">All Decades</option></select></label>
+          <label>Stars<select name="min_stars"><option value="">Any Rating</option><option value="5">5 Stars</option><option value="4.5">4.5 Stars And Up</option><option value="4">4 Stars And Up</option><option value="3">3 Stars And Up</option></select></label>
+          <label>Sort<select name="sort"><option value="artist">Artist</option><option value="title">Title</option><option value="added">Recently Added</option><option value="released">Release Date</option><option value="most_played">Most Played</option><option value="popular">Popular</option><option value="random">Random</option></select></label>
+          <div class="rlToggles" role="group" aria-label="Library filters">
+            <button type="button" data-rl-toggle="hires" aria-pressed="false">Hi-Res Only</button>
+            <button type="button" data-rl-toggle="favorites" aria-pressed="false">Favorites</button>
+            <button type="button" data-rl-toggle="not_played_within_days" data-rl-value="90" aria-pressed="false">Unplayed 90 Days</button>
+            <button type="button" data-rl-toggle="added_within_days" data-rl-value="30" aria-pressed="false">Added Last 30 Days</button>
+            <button type="button" data-rl-toggle="identified" data-rl-value="false" aria-pressed="false">Unidentified</button>
+          </div>
+        </form>
+        <ul id="rlResults" class="dbGrid rlGrid" aria-label="Roon library albums"></ul>
+        <div class="rlMore"><button id="rlMore" type="button" hidden>Load More</button></div>
+      </section>
+
       <section id="databaseView" class="view databaseView" aria-labelledby="databaseHeading">
         <header class="dbHeader">
           <div><p class="eyebrow">Your music, explored</p><h2 id="databaseHeading">Database</h2><p id="dbCatalogStatus" class="dbMuted">Browse Rabbit Hole's stored catalog.</p></div>
@@ -813,6 +837,7 @@
     <script src="/webmcpTools.js"></script>
     <script src="/sonicCoverage.js?v=20260917-1"></script>
     <script src="/database.js?v=20260919-local-metadata-1"></script>
+    <script src="/roonLibrary.js?v=20261121-1"></script>
     <script src="/lyrion.js?v=40"></script>
     <script src="/roonZoneBar.js?v=2"></script>
     <script src="/soundSpectrumVideo.js?v=1"></script>

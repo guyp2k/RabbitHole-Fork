@@ -2954,6 +2954,7 @@ const siriusxmBrowser = new (require("./siriusxmBrowserRelay").SiriusXmBrowserRe
 // Browser heartbeats do not prove that SiriusXM refreshed its visible metadata.
 // Keep the experimental relay disabled until source freshness can be verified.
 lyrionApi.installPlaybackHandoffs();
+const roonLibraryApi = require("./roonLibraryApi").createRoonLibraryApi({ deepRoon: new (require("./deepRoonClient").DeepRoonClient)(), roon, readJson, sendJson });
 const lyrionTrackMetadata=require('./lyrionTrackMetadata').createLyrionTrackMetadata(metadataEnrichment,Date.now,lyrionCatalogue,track=>trackMemory.find(track)?.feedback);
 const server = http.createServer(async (req, res) => {
   try {
@@ -2994,6 +2995,8 @@ const server = http.createServer(async (req, res) => {
       sendJson(res,200,await lyrionApi.siriusxm.getChannelMetadata(url.searchParams.get("channel")||""));
     } else if (url.pathname === "/api/themes" && req.method === "GET") {
       sendJson(res, 200, uiThemes.list());
+    } else if (url.pathname.startsWith("/api/roon-library/")) {
+      await roonLibraryApi.handle(req, res, url);
     } else if (url.pathname.startsWith("/api/lyrion/")) {
       await lyrionApi.handle(req, res, url);
     } else if (url.pathname.startsWith("/api/soundcloud/")) {

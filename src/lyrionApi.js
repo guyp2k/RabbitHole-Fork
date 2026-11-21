@@ -167,6 +167,8 @@ function createLyrionApi({ roon, readJson, sendJson, catalogue=null, hqplayerLin
       control: (zoneId, action) => ["play", "next", "previous"].includes(action) ||
         action === "playpause" && !(roon.getState().zones || []).some(z => z.zone_id === zoneId && z.state === "playing"),
       playFromHere: () => true, playRadioStation: () => true, playSearchMatch: () => true,
+      playLibraryAlbum: (album, zoneId, action) => ["play", "radio"].includes(action) ||
+        !(roon.getState().zones || []).some(z => z.zone_id === zoneId && z.state === "playing"),
       queueTracks: (tracks, zoneId, options) => options?.mode === "replace"
     };
     for (const [name, shouldStart] of Object.entries(starts)) {
