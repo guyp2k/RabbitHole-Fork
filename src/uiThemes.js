@@ -80,6 +80,7 @@ function loadThemes(themesDir) {
     themes.set(theme.id, {
       id: theme.id,
       label: theme.label,
+      order: Number.isFinite(theme.order) ? theme.order : Number.MAX_SAFE_INTEGER,
       rules: theme.rules || [],
       greys: theme.greys === true,
       liftDarkening: theme.liftDarkening || null,
@@ -101,7 +102,8 @@ function createThemes({ themesDir, defaultTheme }) {
   }
 
   function list() {
-    return { themes: [...themes.values()].map(({ id, label }) => ({ id, label })), default: fallback };
+    const ordered = [...themes.values()].sort((a, b) => a.order - b.order || a.label.localeCompare(b.label));
+    return { themes: ordered.map(({ id, label }) => ({ id, label })), default: fallback };
   }
 
   function themeStylesheet(publicDir, theme, filePath) {

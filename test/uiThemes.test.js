@@ -36,11 +36,34 @@ function publicDir() {
   return dir;
 }
 
-test("every bundled theme is listed with its label and the default is reported", () => {
+test("the themes are listed with the Mindshovel names in the same order as UCWEB, and the default is reported", () => {
   const listed = themes.list();
-  assert.deepEqual(listed.themes.map((t) => t.id).sort(), ["copper", "dark-orange", "graphite-brass", "miyara", "original", "roon", "roon-light"]);
-  assert.equal(listed.themes.find((t) => t.id === "copper").label, "Obsidian & Copper");
+  assert.deepEqual(listed.themes.map((t) => [t.id, t.label]), [
+    ["original", "Mindshovel Colorful"], ["colorful-light", "Mindshovel Colorful Light"], ["roon", "Mindshovel Dark"],
+    ["roon-light", "Mindshovel Light"], ["mindshovel-blue", "Mindshovel Blue"], ["dark-orange", "Mindshovel Dark Orange"],
+    ["copper", "Obsidian & Copper"], ["graphite-brass", "Graphite & Brass"], ["miyara", "Miyara"]
+  ]);
   assert.equal(listed.default, "original");
+});
+
+test("Mindshovel Colorful Light turns the lavender accent into UCWEB's deep violet that reads on a light page", () => {
+  const map = (c) => mapColor(c, rules("colorful-light"), { greys: theme("colorful-light").greys });
+  const accent = hsl(map("#d9b3ff"));
+  assert.ok(accent.h > 255 && accent.h < 285, `violet hue, got ${accent.h}`);
+  assert.ok(contrast(map("#d9b3ff"), map("#05020b")) >= 4.5, "accent reads on the page background");
+  assert.ok(hsl(map("#05020b")).l > 0.9, "the near-black page becomes light");
+  assert.ok(hsl(map("#f6f4f8")).l < 0.2, "light text becomes dark");
+  assert.equal(theme("colorful-light").scheme, "light");
+});
+
+test("Mindshovel Blue turns the lavender accent UCWEB's sky blue and the page navy", () => {
+  const map = (c) => mapColor(c, rules("mindshovel-blue"));
+  const accent = hsl(map("#d9b3ff"));
+  const page = hsl(map("#05020b"));
+  assert.ok(accent.h > 205 && accent.h < 230, `blue accent hue, got ${accent.h}`);
+  assert.ok(accent.l > 0.65, "accent stays light on the dark page");
+  assert.ok(page.h > 205 && page.h < 235 && page.s > 0.25, `navy page, got ${JSON.stringify(page)}`);
+  assert.ok(contrast(map("#d9b3ff"), map("#05020b")) >= 4.5);
 });
 
 test("an unknown default theme falls back to the original look", () => {

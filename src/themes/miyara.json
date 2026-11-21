@@ -1,6 +1,7 @@
 {
   "id": "miyara",
   "label": "Miyara",
+  "order": 9,
   "stylesheet": "theme.css",
   "rules": [
     { "hue": [0, 360], "light": [0, 0.2], "set": { "hue": 219, "maxSat": 0.5, "addLight": 0.035 } },

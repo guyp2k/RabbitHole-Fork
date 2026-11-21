@@ -53,7 +53,8 @@ offered upstream as pull requests.
 - **Player card:** a ▸ on every Roon zone and Lyrion player pill (or a tap on
   the album art) opens that room's card: art, track, seek, back / play-pause /
   stop / next, and volume with mute, without switching the page to that room.
-- **Themes:** Original, Obsidian & Copper, Roon Dark, Roon Light, Dark Orange,
+- **Themes:** Mindshovel Colorful, Mindshovel Colorful Light, Mindshovel Dark,
+  Mindshovel Light, Mindshovel Blue, Mindshovel Dark Orange, Obsidian & Copper,
   Graphite & Brass and Miyara, picked in Settings (`UI_THEME` sets the default).
 - **Discovery fixes:** artist-led searches are checked against the planned
   artists, bare descriptor echoes and karaoke backing tracks are rejected, and
@@ -237,7 +238,7 @@ provider keys, TIDAL OAuth, Synapse model tiers and limits are documented in
 
 ## Colour themes
 
-Settings has a **Theme** picker: Original, Obsidian & Copper, Roon Dark, Roon Light, Dark Orange, Graphite & Brass and Miyara. The choice is saved per browser
+Settings has a **Theme** picker: Mindshovel Colorful, Mindshovel Colorful Light, Mindshovel Dark, Mindshovel Light, Mindshovel Blue, Mindshovel Dark Orange, Obsidian & Copper, Graphite & Brass and Miyara, in that order (the `order` field in each theme file). The choice is saved per browser
 in a cookie and applies to every page. `UI_THEME` in `.env` sets the theme a browser gets before it picks one
 (default `original`).
 

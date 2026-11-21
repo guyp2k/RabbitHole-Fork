@@ -1,6 +1,7 @@
 {
   "id": "dark-orange",
-  "label": "Dark Orange",
+  "label": "Mindshovel Dark Orange",
+  "order": 6,
   "rules": [
     { "hue": [0, 360], "light": [0, 0.2], "set": { "hue": 225, "maxSat": 0.2, "addLight": 0.05 } },
     { "hue": [160, 345], "light": [0.7, 1], "alpha": [0.28, 0.6], "set": { "hue": 12.9, "maxSat": 0.784, "minLight": 0.509, "maxLight": 0.509, "minAlpha": 0.95 } },
