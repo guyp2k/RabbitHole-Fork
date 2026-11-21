@@ -69,6 +69,8 @@
   async function loadFocus() {
     try {
       const focus = await getJson("/api/roon-library/focus");
+      const library = form.elements.storage;
+      for (const item of focus.libraries || []) library.append(el("option", { value: item.name, textContent: `${item.name} (${item.albums})` }));
       const genre = form.elements.genre;
       for (const item of focus.genres) genre.append(el("option", { value: item.name, textContent: `${item.name} (${item.albums})` }));
       const decade = form.elements.decade;

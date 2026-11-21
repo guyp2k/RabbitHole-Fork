@@ -103,11 +103,12 @@ volume with mute. It controls that room without switching the page to it.
 
 ## Roon Library
 
-![Playback > Library: a search box, Genre, Decade, Stars and Sort drop-downs, Hi-Res Only, Favorites, Unplayed 90 Days, Added Last 30 Days and Unidentified toggles, and album cards with Play, Play Next, Queue and Start Radio buttons](screenshots/roon-library.png)
+![Playback > Library: a search box, Library, Genre, Decade, Stars and Sort drop-downs, Favorites, Unplayed 90 Days, Added Last 30 Days and Unidentified toggles, and album cards with Play, Play Next, Queue and Start Radio buttons](screenshots/roon-library.png)
 
 **Playback > Library** browses the albums in your Roon library with Roon's own
-Focus filters: genre and decade (with Roon's counts), star rating, sort order,
-Hi-Res only, favorites, albums not played in 90 days, albums added in the last
+Focus filters: library (each of Roon's storage locations, such as your music
+folders and the TIDAL library, with its album count), genre and decade (with
+Roon's counts), star rating, sort order, favorites, albums not played in 90 days, albums added in the last
 30 days and albums Roon could not identify.
 
 - **Play**, **Play Next**, **Queue** and **Start Radio** act on the selected

@@ -582,12 +582,12 @@
         </header>
         <form id="rlFilters" class="rlFilters">
           <label class="dbSearch">Search Your Library<input name="text" type="search" placeholder="Album or artist" autocomplete="off"></label>
+          <label>Library<select name="storage"><option value="">All Libraries</option></select></label>
           <label>Genre<select name="genre"><option value="">All Genres</option></select></label>
           <label>Decade<select name="decade"><option value="">All Decades</option></select></label>
           <label>Stars<select name="min_stars"><option value="">Any Rating</option><option value="5">5 Stars</option><option value="4.5">4.5 Stars And Up</option><option value="4">4 Stars And Up</option><option value="3">3 Stars And Up</option></select></label>
           <label>Sort<select name="sort"><option value="artist">Artist</option><option value="title">Title</option><option value="added">Recently Added</option><option value="released">Release Date</option><option value="most_played">Most Played</option><option value="popular">Popular</option><option value="random">Random</option></select></label>
           <div class="rlToggles" role="group" aria-label="Library filters">
-            <button type="button" data-rl-toggle="hires" aria-pressed="false">Hi-Res Only</button>
             <button type="button" data-rl-toggle="favorites" aria-pressed="false">Favorites</button>
             <button type="button" data-rl-toggle="not_played_within_days" data-rl-value="90" aria-pressed="false">Unplayed 90 Days</button>
             <button type="button" data-rl-toggle="added_within_days" data-rl-value="30" aria-pressed="false">Added Last 30 Days</button>
@@ -837,7 +837,7 @@
     <script src="/webmcpTools.js"></script>
     <script src="/sonicCoverage.js?v=20260917-1"></script>
     <script src="/database.js?v=20260919-local-metadata-1"></script>
-    <script src="/roonLibrary.js?v=20261121-1"></script>
+    <script src="/roonLibrary.js?v=20261121-2"></script>
     <script src="/lyrion.js?v=40"></script>
     <script src="/roonZoneBar.js?v=2"></script>
     <script src="/soundSpectrumVideo.js?v=1"></script>
