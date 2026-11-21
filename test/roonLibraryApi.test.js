@@ -43,7 +43,7 @@ test("album covers are served through Rabbit Hole, never as a link to the Roon C
 test("the cover proxy only fetches image ids from the Core it learned and refuses anything else", async () => {
   const fetched = [];
   const h = harness({ deepRoon: { roon_library: () => ({ total: 1, rows: [row] }) },
-    fetchImpl: async (url) => { fetched.push(String(url)); return new Response(new Uint8Array([1, 2]), { headers: { "Content-Type": "image/jpeg" } }); } });
+    fetchImpl: async (url) => { fetched.push(String(url)); return new Response(new Uint8Array([0xff, 0xd8, 0xff, 0xdb, 2])); } });
   const res = { writeHead(status, headers) { this.status = status; this.headers = headers; }, end(body) { this.body = body; } };
   await h.api.handle({ method: "GET" }, res, new URL("http://rh.test/api/roon-library/image/uhuoaaaa"));
   assert.equal(h.replies.at(-1).status, 404);
@@ -91,4 +91,18 @@ test("when Deep Roon is not set up the tab says so with a 503 instead of an empt
   await api.handle({ method: "GET" }, res, new URL("http://rh.test/api/roon-library/albums"));
   assert.equal(res.status, 503);
   assert.match(res.payload.error, /DEEP_ROON_URL/);
+});
+
+test("a cover the Core sends without a Content-Type is served when its bytes are a JPEG or PNG, and anything else is refused", async () => {
+  const bodies = { aaaa: [0xff, 0xd8, 0xff, 0xe0, 1], bbbb: [0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a], cccc: [0x3c, 0x68, 0x74, 0x6d, 0x6c] };
+  const h = harness({ deepRoon: { roon_library: () => ({ total: 1, rows: [row] }) },
+    fetchImpl: async (url) => new Response(new Uint8Array(bodies[String(url).match(/image\/(\w+)\.jpg/)[1]])) });
+  await h.get("/api/roon-library/albums");
+  const served = {};
+  for (const id of Object.keys(bodies)) {
+    const res = { writeHead(status, headers) { served[id] = [status, headers["Content-Type"]]; }, end() {} };
+    await h.api.handle({ method: "GET" }, res, new URL(`http://rh.test/api/roon-library/image/${id}`));
+  }
+  assert.deepEqual(served, { aaaa: [200, "image/jpeg"], bbbb: [200, "image/png"] });
+  assert.equal(h.replies.at(-1).status, 404);
 });
