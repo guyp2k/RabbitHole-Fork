@@ -1,6 +1,7 @@
 {
   "id": "roon",
-  "label": "Roon Dark",
+  "label": "Mindshovel Dark",
+  "order": 3,
   "rules": [
     { "hue": [0, 360], "light": [0, 0.2], "set": { "maxSat": 0.03, "addLight": 0.05 } },
     { "hue": [160, 345], "light": [0.7, 1], "set": { "maxSat": 0.04 } },

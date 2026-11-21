@@ -157,6 +157,12 @@ browsers.
 
 ![The same Roon Now Playing page in seven themes: Obsidian & Copper, Original, Roon Dark, Roon Light, Dark Orange, Graphite & Brass and Miyara](screenshots/themes.png)
 
+The picker lists nine themes, named and ordered as in UCWEB: Mindshovel Colorful,
+Mindshovel Colorful Light, Mindshovel Dark, Mindshovel Light, Mindshovel Blue,
+Mindshovel Dark Orange, Obsidian & Copper, Graphite & Brass and Miyara. The
+screenshot was taken before Original, Roon Dark, Roon Light and Dark Orange took
+their Mindshovel names and before Colorful Light and Blue were added.
+
 Each theme is a JSON file in `src/themes/`;
 [Colour themes](../README.md#colour-themes) in the README explains how to add one.
 

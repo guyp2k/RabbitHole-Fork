@@ -1,6 +1,7 @@
 {
   "id": "roon-light",
-  "label": "Roon Light",
+  "label": "Mindshovel Light",
+  "order": 4,
   "scheme": "light",
   "greys": true,
   "liftDarkening": { "below": 0.7, "brightness": 1.1 },

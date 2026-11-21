@@ -1,0 +1,12 @@
+{
+  "id": "mindshovel-blue",
+  "label": "Mindshovel Blue",
+  "order": 5,
+  "rules": [
+    { "hue": [0, 360], "light": [0, 0.2], "set": { "hue": 219, "maxSat": 0.48, "addLight": 0.08 } },
+    { "hue": [160, 345], "sat": [0.25, 1], "light": [0.7, 1], "set": { "hue": 217, "minLight": 0.76, "maxLight": 0.8 } },
+    { "hue": [160, 345], "light": [0.7, 1], "set": { "hue": 215, "maxSat": 0.3 } },
+    { "hue": [200, 345], "set": { "hue": 217, "maxSat": 0.7 } },
+    { "hue": [160, 200], "set": { "maxSat": 0.06 } }
+  ]
+}
