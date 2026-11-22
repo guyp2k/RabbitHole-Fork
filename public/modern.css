@@ -1016,3 +1016,45 @@ body.layoutModern .modernUpNextCard small {
     line-height: 1.15;
   }
 }
+
+body.layoutModern #playerView .player:is(.isMaximized, .isFullWindow) > .controls {
+  display: flex !important;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 14px;
+  transform: none !important;
+}
+
+body.layoutModern #playerView .player:is(.isMaximized, .isFullWindow) > .artStack {
+  transform: none !important;
+}
+
+body.layoutModern #playerView .player:is(.isMaximized, .isFullWindow) > .controls > .transportButton {
+  flex: 0 0 auto;
+  width: 52px !important;
+  min-width: 52px;
+  height: 52px !important;
+  min-height: 52px;
+  padding: 0 !important;
+  border-radius: 50% !important;
+  justify-content: center;
+}
+
+body.layoutModern #playerView .player:is(.isMaximized, .isFullWindow) > .controls > .nowVolume {
+  flex: 1 0 100%;
+}
+
+body.layoutModern #playerView .player:is(.isMaximized, .isFullWindow) .seekBlock :is(.playerMeta, #playState, #queueInfo) {
+  display: none !important;
+}
+
+@media (min-width: 1100px) {
+  body.layoutModern #playerView .player.player--maximized.isMaximized:not(.isFullWindow) {
+    grid-template-rows: 46px minmax(0, 1fr) 14px auto 46px !important;
+  }
+
+  body.layoutModern #playerView .player.isFullWindow {
+    grid-template-rows: 46px minmax(0, 1fr) 12px auto 46px !important;
+  }
+}

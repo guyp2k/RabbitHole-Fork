@@ -721,3 +721,31 @@ test("on phones the player toolbar buttons wrap their labels inside the button i
   assert.match(rule, /min-width: 0;/);
   assert.match(rule, /flex: 1 1 0;/);
 });
+
+test("maximized and Full Window keep the transport as one centred row of round buttons, without the split corner layout or duplicate queue text", () => {
+  const rule = (selector) => {
+    const rules = cssRules(css).filter((r) => r.selector === selector && !r.media);
+    assert.ok(rules.length, `${selector} has a rule`);
+    return rules.map((r) => r.block).join("\n");
+  };
+  const controls = rule("body.layoutModern #playerView .player:is(.isMaximized, .isFullWindow) > .controls");
+  assert.match(controls, /display: flex !important;/);
+  assert.match(controls, /justify-content: center;/);
+  assert.match(controls, /transform: none !important;/);
+  assert.match(rule("body.layoutModern #playerView .player:is(.isMaximized, .isFullWindow) > .artStack"), /transform: none !important;/);
+  const button = rule("body.layoutModern #playerView .player:is(.isMaximized, .isFullWindow) > .controls > .transportButton");
+  assert.match(button, /width: 52px !important;/);
+  assert.match(button, /border-radius: 50% !important;/);
+  assert.match(rule("body.layoutModern #playerView .player:is(.isMaximized, .isFullWindow) > .controls > .nowVolume"), /flex: 1 0 100%;/);
+  assert.match(rule("body.layoutModern #playerView .player:is(.isMaximized, .isFullWindow) .seekBlock :is(.playerMeta, #playState, #queueInfo)"), /display: none !important;/);
+});
+
+test("on desktop, maximized and Full Window size the controls row to its content so the volume never overlaps the seek bar", () => {
+  const wide = (selector) => {
+    const rules = cssRules(css).filter((r) => r.selector === selector && r.media.includes("@media (min-width: 1100px)"));
+    assert.ok(rules.length, `${selector} has a desktop rule`);
+    return rules.map((r) => r.block).join("\n");
+  };
+  assert.match(wide("body.layoutModern #playerView .player.player--maximized.isMaximized:not(.isFullWindow)"), /grid-template-rows: 46px minmax\(0, 1fr\) 14px auto 46px !important;/);
+  assert.match(wide("body.layoutModern #playerView .player.isFullWindow"), /grid-template-rows: 46px minmax\(0, 1fr\) 12px auto 46px !important;/);
+});
