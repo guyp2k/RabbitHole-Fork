@@ -151,6 +151,21 @@
     return detail.state === "playing" ? detail : { ...detail, hqplayer: null };
   }
 
+  function readExtras(saved) {
+    let value = {};
+    try { value = JSON.parse(saved || "{}") || {}; } catch { value = {}; }
+    return { upNext: value.upNext === true, spectrum: value.spectrum === true };
+  }
+
+  function upNextCards(items) {
+    return (items || []).filter((item) => String(item.id || "").trim()).map((item) => ({
+      id: String(item.id).trim(),
+      title: item.title || "",
+      artist: String(item.subtitle || "").split(/\s+-\s+/)[0].trim(),
+      image: item.imageKey ? `/api/roon/image/${encodeURIComponent(item.imageKey)}?width=80&height=80` : ""
+    }));
+  }
+
   function formatLine(detail) {
     return detail?.text ? [detail.text, detail.note].filter(Boolean).join(" · ") : "";
   }
@@ -172,7 +187,7 @@
   window.RabbitHoleModernShell = {
     railSections, lyrionRailItems, systemChoices, chooseSystem: chooseValue, deviceMenu,
     chooseDevice: chooseValue, openDeviceControls, menuLinks, pageVolumeHomes, sectionOpen, toggleSection,
-    roonPanelGroups, readFolded, nowDetailsGroups, ambientPalette, artworkFromCss, trackChanged, signalChain, formatLine, fitStageHeight, lyrionChainDetail
+    roonPanelGroups, readFolded, nowDetailsGroups, ambientPalette, artworkFromCss, trackChanged, signalChain, formatLine, fitStageHeight, lyrionChainDetail, readExtras, upNextCards
   };
 
   if (!document.body.classList.contains("layoutModern")) return;
@@ -575,6 +590,62 @@
   if (playback && artStack) new ResizeObserver(() => artStack.style.setProperty("--modern-strip-height", `${playback.offsetHeight}px`)).observe(playback);
   document.querySelector("#playerView .player")?.addEventListener("roon-signal", ({ detail }) => renderSignalChain(chainStrip, detail, "Roon"));
   $("lyrionNow")?.addEventListener("lyrion-signal", ({ detail }) => renderSignalChain(lyrionChainStrip, lyrionChainDetail(detail), "Lyrion"));
+
+  const EXTRAS_KEY = "rabbitHole.modernExtras";
+  let extras = readExtras((() => { try { return localStorage.getItem(EXTRAS_KEY); } catch { return null; } })());
+  const applyExtras = () => {
+    document.body.classList.toggle("modernUpNextOn", extras.upNext);
+    document.body.classList.toggle("modernSpectrumOn", extras.spectrum);
+  };
+  for (const [key, label, tip] of [["upNext", "Up next", "Show the next covers in the queue"], ["spectrum", "Spectrum", "Decorative: moves with playback, not live audio levels"]]) {
+    const toggle = make("button", { type: "button", className: "modernExtraToggle", "aria-pressed": String(extras[key]), title: tip },
+      make("span", { className: "modernExtraDot", "aria-hidden": "true" }), make("span", { text: label }));
+    toggle.addEventListener("click", () => {
+      extras = { ...extras, [key]: !extras[key] };
+      toggle.setAttribute("aria-pressed", String(extras[key]));
+      try { localStorage.setItem(EXTRAS_KEY, JSON.stringify(extras)); } catch {}
+      applyExtras();
+    });
+    $("togglePlayerMax")?.before(toggle);
+  }
+  applyExtras();
+
+  const spectrum = make("div", { className: "modernSpectrum", "aria-hidden": "true" });
+  for (let bar = 0; bar < 32; bar += 1) {
+    const x = bar / 31;
+    const height = 20 + 70 * Math.abs(Math.sin(bar * 0.9) * Math.cos(bar * 0.23)) * (1 - 0.5 * x);
+    const node = make("i");
+    node.style.setProperty("--h", `${Math.round(height)}%`);
+    node.style.setProperty("--d", `${(0.55 + ((bar * 7) % 9) * 0.08).toFixed(2)}s`);
+    spectrum.append(node);
+  }
+  $("nowPlayback")?.append(spectrum);
+  document.querySelector("#playerView .player")?.addEventListener("roon-playback", ({ detail }) => spectrum.classList.toggle("isPlaying", detail.state === "playing"));
+
+  const upNextStrip = make("div", { className: "modernUpNextStrip", hidden: true });
+  $("nowPlayback")?.append(upNextStrip);
+  let upNextKey = "";
+  document.querySelector("#playerView .player")?.addEventListener("roon-queue", ({ detail }) => {
+    const cards = upNextCards(detail.items);
+    const key = JSON.stringify([detail.info, cards]);
+    if (key === upNextKey) return;
+    upNextKey = key;
+    if (!cards.length) {
+      upNextStrip.replaceChildren();
+      upNextStrip.hidden = true;
+      return;
+    }
+    const list = make("ol", { className: "modernUpNextList" });
+    for (const card of cards) {
+      const art = card.image ? make("img", { src: card.image, alt: "", loading: "lazy" }) : make("span", { className: "modernUpNextBlank", "aria-hidden": "true" });
+      list.append(make("li", {}, make("button", { type: "button", className: "queueItemButton modernUpNextCard", "data-queue-item-id": card.id, "aria-haspopup": "menu", "aria-controls": "queueActionMenu", "aria-expanded": "false", title: `${card.title}: tap or hold for Play from here` },
+        art, make("span", { className: "queueText" }, make("strong", { className: "queueItemTitle", text: card.title }), make("small", { text: card.artist })))));
+    }
+    upNextStrip.replaceChildren(make("h4", { text: detail.info ? `Up next · ${detail.info}` : "Up next" }), list);
+    upNextStrip.hidden = false;
+  });
+  const queueMenu = $("queueActionMenu");
+  if (queueMenu) document.body.append(queueMenu);
 
   const text = (node) => node.textContent.trim();
   const TRACK_WATCH = [

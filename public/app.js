@@ -865,6 +865,10 @@ function formatUpNext(zone) {
   return [`Up next: ${label}`, info].filter(Boolean).join(" · ");
 }
 
+function shareQueue(zone) {
+  document.querySelector("#playerView .player")?.dispatchEvent(new CustomEvent("roon-queue", { detail: { info: zone && !isLiveRadioZone(zone) ? formatQueueInfo(zone) : "", items: zone ? displayQueueItems(zone).slice(0, 5).map((item) => ({ id: String(item.id ?? "").trim(), title: item.title || "", subtitle: item.subtitle || "", imageKey: item.imageKey || "" })) : [] } }));
+}
+
 function roonPlayerCardState(zone) {
   if (!zone) throw new Error("That Roon zone is no longer available.");
   const now = summarizeNowPlaying(zone);
@@ -4874,6 +4878,7 @@ function renderState(payload) {
     liveQueue.hidden = true;
     liveQueue.innerHTML = "";
   }
+  shareQueue(zone);
 
   const cover = $("#cover");
   const metadataArtworkAllowed = artworkMetadataMatchesRoon(now, now?.metadata_enrichment);
