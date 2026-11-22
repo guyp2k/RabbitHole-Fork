@@ -569,13 +569,15 @@ body.layoutModern.modernAmbientOn .modernAmbient {
   body.layoutModern .modernAmbient { transition: none; }
 }
 
-body.layoutModern #playerView .player.player--regular:not(.isMaximized):not(.isFullWindow) > :is(.now, .nowDiscoveryTools) {
-  grid-row: 2 / -1;
-  align-self: stretch;
-  height: auto;
-  min-height: 0;
-  contain: size;
-  overflow-y: auto;
+@media (min-width: 1100px) {
+  body.layoutModern #playerView .player.player--regular:not(.isMaximized):not(.isFullWindow) > :is(.now, .nowDiscoveryTools) {
+    grid-row: 2 / -1;
+    align-self: stretch;
+    height: auto;
+    min-height: 0;
+    contain: size;
+    overflow-y: auto;
+  }
 }
 
 @keyframes modernReveal { from { opacity: 0; transform: translateY(-6px); } }
