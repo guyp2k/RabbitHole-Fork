@@ -511,6 +511,13 @@
   document.querySelector("#playerView .seekBlock")?.after(chainStrip);
   const lyrionChainStrip = make("div", { className: "modernSignalChain", "aria-label": "Signal Chain", hidden: true });
   document.querySelector("#lyrionNow .lyrionStageFooter")?.after(lyrionChainStrip);
+  const tidyWires = (strip) => {
+    for (const wire of strip.querySelectorAll(".modernChainWire")) {
+      const previous = wire.previousElementSibling, next = wire.nextElementSibling;
+      wire.style.visibility = next.getBoundingClientRect().top >= previous.getBoundingClientRect().bottom ? "hidden" : "";
+    }
+  };
+  for (const strip of [chainStrip, lyrionChainStrip]) new ResizeObserver(() => tidyWires(strip)).observe(strip);
   function renderSignalChain(strip, detail, transport) {
     const stages = signalChain({ transport, zoneName: detail.zoneName, state: detail.state, hqplayer: detail.hqplayer, output: hqplayerRows(detail.hqplayer)[0]?.[1] || "" });
     if (!stages) {
@@ -533,6 +540,7 @@
     });
     strip.replaceChildren(pills, host);
     strip.hidden = false;
+    tidyWires(strip);
   }
   const stagePlayer = document.querySelector("#playerView .player"), shellNode = document.querySelector(".shell");
   function fitStage() {
