@@ -524,3 +524,19 @@ test("Modern puts the format line under the playback status and hides it when em
   assert.match(rule, /color: var\(--muted\);/);
   assert.match(rule, /text-align: center;/);
 });
+
+test("the cover area shrinks by exactly the overflow so the whole player fits the window, within its floor and cap", () => {
+  const fit = (over) => shell.fitStageHeight({ stage: 638, playerBottom: 1101, trailing: 24, viewport: 1064, min: 320, max: 660, ...over });
+  assert.equal(fit(), 577);
+  assert.equal(fit({ stage: 460, playerBottom: 923, viewport: 860 }), 373);
+  assert.equal(fit({ stage: 660, playerBottom: 1123, viewport: 1400 }), 660);
+  assert.equal(fit({ viewport: 600 }), 320);
+  assert.equal(fit({ stage: Number.NaN }), null);
+});
+
+test("Modern refits the cover area on resize and only in the regular player", () => {
+  assert.match(source, /player\.style\.setProperty\("--rh-regular-stage-height", `\$\{next\}px`\)/);
+  assert.match(source, /player\.style\.removeProperty\("--rh-regular-stage-height"\)/);
+  assert.match(source, /addEventListener\("resize", fitStage\)/);
+  assert.match(source, /trailing: shellNode\.getBoundingClientRect\(\)\.bottom - box\.bottom/);
+});

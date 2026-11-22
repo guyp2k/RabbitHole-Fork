@@ -142,6 +142,11 @@
     return stages;
   }
 
+  function fitStageHeight({ stage, playerBottom, trailing, viewport, min, max }) {
+    if (![stage, playerBottom, trailing, viewport].every(Number.isFinite)) return null;
+    return Math.round(Math.min(max, Math.max(min, stage + viewport - playerBottom - trailing)));
+  }
+
   function formatLine(detail) {
     return detail?.text ? [detail.text, detail.note].filter(Boolean).join(" · ") : "";
   }
@@ -163,7 +168,7 @@
   window.RabbitHoleModernShell = {
     railSections, lyrionRailItems, systemChoices, chooseSystem: chooseValue, deviceMenu,
     chooseDevice: chooseValue, openDeviceControls, menuLinks, pageVolumeHomes, sectionOpen, toggleSection,
-    roonPanelGroups, readFolded, nowDetailsGroups, ambientPalette, artworkFromCss, trackChanged, signalChain, formatLine
+    roonPanelGroups, readFolded, nowDetailsGroups, ambientPalette, artworkFromCss, trackChanged, signalChain, formatLine, fitStageHeight
   };
 
   if (!document.body.classList.contains("layoutModern")) return;
@@ -523,6 +528,25 @@
     chainStrip.replaceChildren(pills, host);
     chainStrip.hidden = false;
   }
+  const stagePlayer = document.querySelector("#playerView .player"), shellNode = document.querySelector(".shell");
+  function fitStage() {
+    const player = stagePlayer;
+    if (!player || !shellNode) return;
+    const regular = player.classList.contains("player--regular") && !player.classList.contains("isMaximized") && !player.classList.contains("isFullWindow");
+    if (!regular || !player.offsetParent || innerWidth < 1100) {
+      player.style.removeProperty("--rh-regular-stage-height");
+      return;
+    }
+    const stage = parseFloat(getComputedStyle(player).gridTemplateRows.split(" ")[1]);
+    const box = player.getBoundingClientRect();
+    const next = fitStageHeight({ stage, playerBottom: box.bottom, trailing: shellNode.getBoundingClientRect().bottom - box.bottom, viewport: innerHeight, min: 320, max: 660 });
+    if (next !== null && Math.abs(next - stage) >= 2) player.style.setProperty("--rh-regular-stage-height", `${next}px`);
+  }
+  if (stagePlayer) {
+    new ResizeObserver(fitStage).observe(stagePlayer);
+    new MutationObserver(fitStage).observe(stagePlayer, { attributes: true, attributeFilter: ["class"] });
+  }
+  window.addEventListener("resize", fitStage);
   const formatLineNode = make("p", { className: "modernFormatLine", hidden: true });
   $("nowPlaybackChain")?.after(formatLineNode);
   document.querySelector("#playerView .player")?.addEventListener("roon-format", ({ detail }) => {
