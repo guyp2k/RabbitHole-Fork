@@ -14,6 +14,7 @@
     <link rel="stylesheet" href="/waveformSeek.css?v=2">
   </head>
   <body>
+    <script src="/layoutPicker.js?v=1"></script>
     <main class="shell">
       <section class="appHeader">
         <div class="appIdentity">
@@ -180,6 +181,10 @@
             <label class="zonePicker themePicker">
               <span>Theme</span>
               <select id="themeSelect" aria-label="Colour theme"></select>
+            </label>
+            <label class="zonePicker layoutPicker">
+              <span>Layout</span>
+              <select id="layoutSelect" aria-label="Layout"><option value="classic">Classic</option><option value="modern">Modern</option></select>
             </label>
           </div>
           <section class="settingsSection sonicProductionSettings" aria-labelledby="sonicProductionHeading">
