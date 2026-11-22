@@ -324,3 +324,38 @@ test("miyara ships Fraunces, Archivo and IBM Plex Mono with their licence, and f
   assert.match(css, /color: #070c16 !important;/);
   for (const fill of fills) assert.ok(contrast(fill, "#070c16") >= 4.5, `${fill} on #070c16 ${contrast(fill, "#070c16").toFixed(2)}`);
 });
+
+test("Mindshovel Blue keeps body text near-white and separate from the sky-blue accent", () => {
+  const map = (c) => mapColor(c, rules("mindshovel-blue"));
+  const text = map("#faf6ff"), accent = map("#d9b3ff");
+  assert.ok(hsl(text).l >= 0.93, `text stays near-white, got ${text}`);
+  assert.notEqual(text, accent);
+  assert.ok(contrast(text, map("#05020b")) >= 12, `text on page ${contrast(text, map("#05020b")).toFixed(2)}`);
+});
+
+test("Mindshovel Blue pins the handoff palette and fills active controls mid-blue with white text, like ucweb and the Integration Manager", () => {
+  assert.equal(theme("mindshovel-blue").stylesheet, "theme.css");
+  const css = fs.readFileSync(path.join(__dirname, "..", "public", "themes", "mindshovel-blue", "theme.css"), "utf8");
+  const root = css.slice(css.indexOf(":root {")).split("}")[0];
+  for (const [token, value] of [["--bg", "#101a2d"], ["--text", "#edf2f8"], ["--muted", "#b3c0d5"], ["--accent", "#8db9ff"], ["--accent-2", "#6f9fe0"], ["--line", "rgba(71, 102, 141, 0.55)"]]) {
+    assert.ok(root.includes(`${token}: ${value};`), `${token} is ${value}`);
+  }
+  const fills = [...css.matchAll(/background: (#[0-9a-f]{6}) !important;/g)].map((m) => m[1]);
+  assert.deepEqual([...new Set(fills)], ["#3d75c4", "#2f63ad"], "the button fill and its darker hover");
+  assert.match(css, /color: #ffffff !important;/);
+  for (const fill of ["#3d75c4", "#2f63ad"]) assert.ok(contrast(fill, "#ffffff") >= 4.5, `${fill} on white ${contrast(fill, "#ffffff").toFixed(2)}`);
+  for (const selector of ["html body.layoutModern .modernRail .modernSystemSwitch button[aria-pressed=\"true\"]", "html body.layoutModern .modernMenuPanel .modernDeviceChoice[aria-pressed=\"true\"]"]) {
+    assert.ok(css.includes(selector), `${selector} outranks modern.css`);
+  }
+});
+
+test("Mindshovel Blue draws Now Playing text in white with muted labels and keeps the accent for the artist line", () => {
+  const css = fs.readFileSync(path.join(__dirname, "..", "public", "themes", "mindshovel-blue", "theme.css"), "utf8");
+  const rule = (selector) => css.slice(css.indexOf(`${selector} {`)).split("}")[0];
+  assert.match(rule("html body :is(#playerView #nowTitle, #lyrionTitle)"), /color: var\(--text\) !important;/);
+  assert.match(rule("html body :is(#playerView #nowSubtitle, #lyrionArtist)"), /color: var\(--accent\) !important;/);
+  assert.match(rule("html body :is(#playerView .sourceLabel, #lyrionView .sourceLabel, #playerView .pcTempChip > span, #lyrionView .pcTempChip > span)"), /color: var\(--muted\) !important;/);
+  assert.match(rule("html body :is(#playerView .sourceValue, #lyrionView .sourceValue, #playerView .fullscreenConnectionStatus .statusPill, #lyrionView .fullscreenConnectionStatus .statusPill)"), /color: var\(--text\) !important;/);
+  assert.match(rule("html body :is(#playerView .seekBlock :is(.playerMeta, #playState, #queueInfo, .seekTimes))"), /color: var\(--muted\) !important;/);
+  assert.match(rule("html body :is(#playerView .feedbackButton, #playerView .nowDiscoveryActions button, #playerView .nowTidalPlaylistCreate button, #lyrionDiscoveryRail button):not(:disabled)"), /color: var\(--text\) !important;/);
+});
