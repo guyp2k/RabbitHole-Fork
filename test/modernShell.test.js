@@ -642,3 +642,20 @@ test("the one-column player also covers the 700 to 1099px range where the side r
   const phoneOnlyPlayer = cssRules(css).filter((r) => r.media.includes("@media (max-width: 699px)") && /#playerView \.player(\.player--regular:not\(\.isMaximized\):not\(\.isFullWindow\))?( >|$)/.test(r.selector));
   assert.deepEqual(phoneOnlyPlayer.map((r) => r.selector), []);
 });
+
+test("under 1100px the signal chain is one aligned stack of equal-width rows, label left and value right, without connectors", () => {
+  const rule = (selector) => {
+    const rules = cssRules(css).filter((r) => r.selector === selector && r.media.includes("@media (max-width: 1099px)"));
+    assert.ok(rules.length, `${selector} has a narrow rule`);
+    return rules.map((r) => r.block).join("\n");
+  };
+  const stages = rule("body.layoutModern .modernChainStages");
+  assert.match(stages, /display: grid;/);
+  assert.match(stages, /grid-template-columns: minmax\(0, 1fr\);/);
+  assert.match(stages, /width: min\(100%, 440px\);/);
+  const stage = rule("body.layoutModern .modernChainStage");
+  assert.match(stage, /flex-direction: row;/);
+  assert.match(stage, /justify-content: space-between;/);
+  assert.match(rule("body.layoutModern .modernChainStage span"), /text-align: right;/);
+  assert.match(rule("body.layoutModern .modernChainWire"), /display: none;/);
+});
