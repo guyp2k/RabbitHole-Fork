@@ -83,9 +83,27 @@
     return { expanded, collapsed };
   }
 
+  function roonPanelGroups() {
+    return [
+      { key: "rating", label: "Rating", selector: "#nowDiscoveryTools > #nowFeedback" },
+      { key: "actions", label: "Actions", selector: "#nowDiscoveryTools > .nowDiscoveryActions" },
+      { key: "playlists", label: "Playlists", selector: "#nowDiscoveryTools > .nowTidalPlaylistGroup" }
+    ];
+  }
+
+  function readFolded(saved) {
+    try {
+      const value = JSON.parse(saved);
+      return Array.isArray(value) ? value.filter((item) => typeof item === "string") : [];
+    } catch {
+      return [];
+    }
+  }
+
   window.RabbitHoleModernShell = {
     railSections, lyrionRailItems, systemChoices, chooseSystem: chooseValue, deviceMenu,
-    chooseDevice: chooseValue, openDeviceControls, menuLinks, pageVolumeHomes, sectionOpen, toggleSection
+    chooseDevice: chooseValue, openDeviceControls, menuLinks, pageVolumeHomes, sectionOpen, toggleSection,
+    roonPanelGroups, readFolded
   };
 
   if (!document.body.classList.contains("layoutModern")) return;
@@ -201,6 +219,34 @@
     if (!control || !row) continue;
     control.classList.add("modernPageVolume");
     row.append(control);
+  }
+
+  const FOLDED_KEY = "rabbitHole.modernFolded";
+  let foldedKeys = readFolded((() => { try { return localStorage.getItem(FOLDED_KEY); } catch { return null; } })());
+  const foldButton = (label, key, apply) => {
+    const folded = foldedKeys.includes(key);
+    const caret = make("span", { className: "modernCaret", "aria-hidden": "true", text: folded ? "▸" : "▾" });
+    const button = make("button", { type: "button", className: "modernFoldButton", "aria-expanded": String(!folded) }, make("span", { text: label }), caret);
+    button.addEventListener("click", () => {
+      const fold = button.getAttribute("aria-expanded") === "true";
+      foldedKeys = fold ? [...foldedKeys.filter((item) => item !== key), key] : foldedKeys.filter((item) => item !== key);
+      try { localStorage.setItem(FOLDED_KEY, JSON.stringify(foldedKeys)); } catch {}
+      button.setAttribute("aria-expanded", String(!fold));
+      caret.textContent = fold ? "▸" : "▾";
+      apply(fold);
+    });
+    apply(folded);
+    return button;
+  };
+  for (const group of roonPanelGroups()) {
+    const target = document.querySelector(group.selector);
+    if (!target) continue;
+    target.before(make("h3", { className: "modernPanelHeading" }, foldButton(group.label, `roon:${group.key}`, (fold) => target.classList.toggle("modernFolded", fold))));
+  }
+  for (const heading of document.querySelectorAll("#lyrionDiscoveryRail > section > h3")) {
+    const label = heading.textContent.trim();
+    const section = heading.parentElement;
+    heading.replaceChildren(foldButton(label, `lyrion:${label.toLowerCase()}`, (fold) => section.classList.toggle("modernSectionFolded", fold)));
   }
 
   const sources = {

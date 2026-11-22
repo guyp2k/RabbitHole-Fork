@@ -291,3 +291,36 @@ test("the rail's menu panels hang off the page, not the rail, so the rail's blur
   assert.match(source, /document\.body\.append\(rail, tabs, zonePanel, linksPanel\);/);
   assert.match(source, /const inside = \[zoneMenu, linksMenu, zonePanel, linksPanel\]\.some\(\(node\) => node\.contains\(event\.target\)\);/);
 });
+
+test("the transport row spans its whole column, so the moved volume wraps under the buttons at every window width", () => {
+  assert.match(css, /body\.layoutModern :is\(#playerView \.controls, #lyrionNow \.lyrionActions\):has\(\.modernPageVolume\)\s*\{[^}]*width: 100%;/);
+  assert.match(css, /body\.layoutModern \.modernPageVolume \.volumeReadout\s*\{[^}]*white-space: nowrap;/);
+  assert.match(css, /body\.layoutModern \.modernPageVolume\s*\{[^}]*max-width: none;/, ".nowVolume's 380px cap would let it fit beside the buttons on a wide row");
+  assert.match(css, /body\.layoutModern \.modernPageVolume \.volumeSlider\s*\{[^}]*flex: 0 1 260px;/, "the slider keeps a compact width on its own line");
+});
+
+test("Roon's right-hand groups get real Rating, Actions and Playlists headings that fold them", () => {
+  assert.deepEqual(shell.roonPanelGroups(), [
+    { key: "rating", label: "Rating", selector: "#nowDiscoveryTools > #nowFeedback" },
+    { key: "actions", label: "Actions", selector: "#nowDiscoveryTools > .nowDiscoveryActions" },
+    { key: "playlists", label: "Playlists", selector: "#nowDiscoveryTools > .nowTidalPlaylistGroup" }
+  ]);
+  assert.match(css, /body\.layoutModern #nowDiscoveryTools > :is\(#nowFeedback, \.nowDiscoveryActions, \.nowTidalPlaylistGroup\)::before\s*\{\s*content: none !important;/);
+});
+
+test("Lyrion's right-hand sections fold from their own headings", () => {
+  assert.match(source, /document\.querySelectorAll\("#lyrionDiscoveryRail > section > h3"\)/);
+});
+
+test("a folded panel group hides its content but keeps its heading, and the heading says whether it is open", () => {
+  assert.match(css, /body\.layoutModern \.modernFolded\s*\{\s*display: none !important;/);
+  assert.match(css, /body\.layoutModern section\.modernSectionFolded > :not\(h3\)\s*\{\s*display: none !important;/);
+  assert.match(source, /"aria-expanded": String\(!folded\)/);
+});
+
+test("folded panel groups are remembered per browser, and a broken saved value counts as nothing folded", () => {
+  assert.deepEqual(shell.readFolded('["roon:rating","lyrion:add to playlist"]'), ["roon:rating", "lyrion:add to playlist"]);
+  assert.deepEqual(shell.readFolded("not json"), []);
+  assert.deepEqual(shell.readFolded('{"a":1}'), []);
+  assert.deepEqual(shell.readFolded(null), []);
+});
