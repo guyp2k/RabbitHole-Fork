@@ -359,3 +359,12 @@ test("Mindshovel Blue draws Now Playing text in white with muted labels and keep
   assert.match(rule("html body :is(#playerView .seekBlock :is(.playerMeta, #playState, #queueInfo, .seekTimes))"), /color: var\(--muted\) !important;/);
   assert.match(rule("html body :is(#playerView .feedbackButton, #playerView .nowDiscoveryActions button, #playerView .nowTidalPlaylistCreate button, #lyrionDiscoveryRail button):not(:disabled)"), /color: var\(--text\) !important;/);
 });
+
+test("Mindshovel Blue gives unstyled text, hints and eyebrows the palette's text, muted and accent colours instead of the old pastel", () => {
+  const css = fs.readFileSync(path.join(__dirname, "..", "public", "themes", "mindshovel-blue", "theme.css"), "utf8");
+  const rule = (selector) => css.slice(css.indexOf(`${selector} {`)).split("}")[0];
+  assert.match(rule("html body"), /color: var\(--text\);/);
+  assert.match(rule("html body :is(.muted, .queueGestureHint, .lyrionPlaylistHint, #lyrionStageQueue, .liveQueueHead span, .liveQueue > p)"), /color: var\(--muted\) !important;/);
+  assert.match(rule("html body .eyebrow"), /color: var\(--accent\) !important;/);
+  assert.match(rule("html body .volumeReadout"), /color: var\(--text\) !important;/);
+});
