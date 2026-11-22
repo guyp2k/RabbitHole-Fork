@@ -604,7 +604,7 @@ const narrowRule = (selector) => {
 };
 
 test("on phones the Roon player runs title, cover, up next, transport, seek, signal chain, then the rating and playlist panels", () => {
-  assert.match(narrowRule("body.layoutModern #playerView .player:is(.player--regular:not(.isMaximized), .player--maximized.isMaximized):not(.isFullWindow)"), /grid-template-areas: "viewControls" "now" "art" "upnext" "controls" "seek" "chain" "tools" !important;/);
+  assert.match(narrowRule("body.layoutModern #playerView .player:is(.player--regular, .player--maximized, .player--fullscreen)"), /grid-template-areas: "viewControls" "now" "art" "upnext" "controls" "seek" "chain" "tools" !important;/);
   assert.match(narrowRule("body.layoutModern #playerView .player > .nowUpNext"), /grid-area: upnext !important;/);
   assert.match(narrowRule("body.layoutModern #playerView .player > .modernSignalChain"), /grid-area: chain !important;/);
   assert.match(narrowRule("body.layoutModern #playerView .player > .artStack"), /height: calc\(min\(100vw - var\(--modern-rail-width\) - 2 \* var\(--modern-gutter\) - 64px, 440px\) \+ var\(--modern-strip-height, 70px\) \+ 8px\);/);
@@ -632,13 +632,13 @@ test("on phones each playlist checkbox sits in a 44px-wide tap column of its lab
 });
 
 test("the one-column player also covers the 700 to 1099px range where the side rail leaves too little width for three columns", () => {
-  assert.match(narrowRule("body.layoutModern #playerView .player:is(.player--regular:not(.isMaximized), .player--maximized.isMaximized):not(.isFullWindow)"), /grid-template-columns: minmax\(0, 1fr\) !important;/);
+  assert.match(narrowRule("body.layoutModern #playerView .player:is(.player--regular, .player--maximized, .player--fullscreen)"), /grid-template-columns: minmax\(0, 1fr\) !important;/);
   for (const [child, area] of [[".playerViewControls", "viewControls"], [".now", "now"], [".artStack", "art"], [".controls", "controls"], [".seekBlock", "seek"], ["#nowDiscoveryTools", "tools"]]) {
-    assert.match(narrowRule(`body.layoutModern #playerView .player:is(.player--regular:not(.isMaximized), .player--maximized.isMaximized):not(.isFullWindow) > ${child}`), new RegExp(`grid-area: ${area} !important;`), child);
+    assert.match(narrowRule(`body.layoutModern #playerView .player:is(.player--regular, .player--maximized, .player--fullscreen) > ${child}`), new RegExp(`grid-area: ${area} !important;`), child);
   }
   const player = narrowRule("body.layoutModern #playerView .player.player--regular:not(.isMaximized):not(.isFullWindow)");
   assert.match(player, /height: auto !important;\s*max-height: none !important;\s*overflow: visible !important;/);
-  assert.match(narrowRule("body.layoutModern #playerView .player:is(.player--regular:not(.isMaximized), .player--maximized.isMaximized):not(.isFullWindow) > :is(.now, .seekBlock, #nowDiscoveryTools)"), /height: auto !important;\s*max-height: none !important;/);
+  assert.match(narrowRule("body.layoutModern #playerView .player:is(.player--regular, .player--maximized, .player--fullscreen) > :is(.now, .seekBlock, #nowDiscoveryTools)"), /height: auto !important;\s*max-height: none !important;/);
   const phoneOnlyPlayer = cssRules(css).filter((r) => r.media.includes("@media (max-width: 699px)") && /#playerView \.player(\.player--regular:not\(\.isMaximized\):not\(\.isFullWindow\))?( >|$)/.test(r.selector));
   assert.deepEqual(phoneOnlyPlayer.map((r) => r.selector), []);
 });
@@ -709,7 +709,9 @@ test("the extras show only when switched on, the spectrum animates only while pl
 });
 
 test("under 1100px the maximized player also gets the one-column layout but keeps its own full-screen box", () => {
-  const both = "body.layoutModern #playerView .player:is(.player--regular:not(.isMaximized), .player--maximized.isMaximized):not(.isFullWindow)";
+  assert.match(narrowRule("body.layoutModern #playerView .player:is(.player--regular, .player--maximized, .player--fullscreen)"), /grid-auto-rows: max-content !important;/);
+  assert.match(narrowRule("body.layoutModern #playerView .player:is(.player--regular, .player--maximized, .player--fullscreen) > :is(.now, .seekBlock, #nowDiscoveryTools)"), /min-height: min-content !important;/);
+  const both = "body.layoutModern #playerView .player:is(.player--regular, .player--maximized, .player--fullscreen)";
   assert.match(narrowRule(both), /grid-template-areas: "viewControls" "now" "art" "upnext" "controls" "seek" "chain" "tools" !important;/);
   const released = cssRules(css).filter((r) => r.media.includes("@media (max-width: 1099px)") && /overflow: visible !important;/.test(r.block));
   assert.deepEqual(released.map((r) => r.selector), ["body.layoutModern #playerView .player.player--regular:not(.isMaximized):not(.isFullWindow)"]);

@@ -729,38 +729,40 @@ body.layoutModern :is(#lyrionHqplayer, #lyrionPlayback > .hqpHostLine) {
     overflow: visible !important;
   }
 
-  body.layoutModern #playerView .player:is(.player--regular:not(.isMaximized), .player--maximized.isMaximized):not(.isFullWindow) > :is(.now, .seekBlock, #nowDiscoveryTools) {
+  body.layoutModern #playerView .player:is(.player--regular, .player--maximized, .player--fullscreen) > :is(.now, .seekBlock, #nowDiscoveryTools) {
     height: auto !important;
     max-height: none !important;
+    min-height: min-content !important;
   }
 
-  body.layoutModern #playerView .player:is(.player--regular:not(.isMaximized), .player--maximized.isMaximized):not(.isFullWindow) > .playerViewControls {
+  body.layoutModern #playerView .player:is(.player--regular, .player--maximized, .player--fullscreen) > .playerViewControls {
     grid-area: viewControls !important;
   }
 
-  body.layoutModern #playerView .player:is(.player--regular:not(.isMaximized), .player--maximized.isMaximized):not(.isFullWindow) > .now {
+  body.layoutModern #playerView .player:is(.player--regular, .player--maximized, .player--fullscreen) > .now {
     grid-area: now !important;
   }
 
-  body.layoutModern #playerView .player:is(.player--regular:not(.isMaximized), .player--maximized.isMaximized):not(.isFullWindow) > .artStack {
+  body.layoutModern #playerView .player:is(.player--regular, .player--maximized, .player--fullscreen) > .artStack {
     grid-area: art !important;
   }
 
-  body.layoutModern #playerView .player:is(.player--regular:not(.isMaximized), .player--maximized.isMaximized):not(.isFullWindow) > .controls {
+  body.layoutModern #playerView .player:is(.player--regular, .player--maximized, .player--fullscreen) > .controls {
     grid-area: controls !important;
   }
 
-  body.layoutModern #playerView .player:is(.player--regular:not(.isMaximized), .player--maximized.isMaximized):not(.isFullWindow) > .seekBlock {
+  body.layoutModern #playerView .player:is(.player--regular, .player--maximized, .player--fullscreen) > .seekBlock {
     grid-area: seek !important;
   }
 
-  body.layoutModern #playerView .player:is(.player--regular:not(.isMaximized), .player--maximized.isMaximized):not(.isFullWindow) > #nowDiscoveryTools {
+  body.layoutModern #playerView .player:is(.player--regular, .player--maximized, .player--fullscreen) > #nowDiscoveryTools {
     grid-area: tools !important;
   }
 
-  body.layoutModern #playerView .player:is(.player--regular:not(.isMaximized), .player--maximized.isMaximized):not(.isFullWindow) {
+  body.layoutModern #playerView .player:is(.player--regular, .player--maximized, .player--fullscreen) {
     grid-template-areas: "viewControls" "now" "art" "upnext" "controls" "seek" "chain" "tools" !important;
     grid-template-rows: none !important;
+    grid-auto-rows: max-content !important;
     grid-template-columns: minmax(0, 1fr) !important;
   }
 
