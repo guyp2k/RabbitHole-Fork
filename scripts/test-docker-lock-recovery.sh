@@ -83,15 +83,20 @@ force_remove() {
   docker rm -f "$container" >/dev/null
 }
 crash_and_restart() {
-  local mode="$1" previous_pid
-  previous_pid="$(owner_pid)"
-  force_remove
-  start_container "$mode"
-  wait_for_http "forced $mode restart"
-  [[ "$(owner_pid)" == "$previous_pid" ]] || fail "The test did not reproduce PID reuse for $mode"
-  check_sentinel
-  check_competing_owner
-  printf 'Passed: forced restart with PID reuse (%s), sentinel retained, live contender refused\n' "$mode"
+  local mode="$1" previous_pid attempt
+  for attempt in 1 2 3 4 5; do
+    previous_pid="$(owner_pid)"
+    force_remove
+    start_container "$mode"
+    wait_for_http "forced $mode restart"
+    if [[ "$(owner_pid)" == "$previous_pid" ]]; then
+      check_sentinel
+      check_competing_owner
+      printf 'Passed: forced restart with PID reuse (%s, attempt %s), sentinel retained, live contender refused\n' "$mode" "$attempt"
+      return
+    fi
+  done
+  fail "The test did not reproduce PID reuse for $mode in 5 restarts"
 }
 
 docker volume create --label "$label=$test_id" "$volume" >/dev/null
