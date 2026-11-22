@@ -65,3 +65,19 @@ html body :is(#playerView .seekBlock :is(.playerMeta, #playState, #queueInfo, .s
 html body :is(#playerView .feedbackButton, #playerView .nowDiscoveryActions button, #playerView .nowTidalPlaylistCreate button, #lyrionDiscoveryRail button):not(:disabled) {
   color: var(--text) !important;
 }
+
+html body {
+  color: var(--text);
+}
+
+html body :is(.muted, .queueGestureHint, .lyrionPlaylistHint, #lyrionStageQueue, .liveQueueHead span, .liveQueue > p) {
+  color: var(--muted) !important;
+}
+
+html body .eyebrow {
+  color: var(--accent) !important;
+}
+
+html body .volumeReadout {
+  color: var(--text) !important;
+}
