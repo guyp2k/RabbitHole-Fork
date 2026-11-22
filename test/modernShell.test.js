@@ -579,3 +579,36 @@ test("the full-height side columns apply only to the desktop three-column player
   assert.equal(rules.length, 1, "one side-column rule");
   assert.equal(rules[0].media, "@media (min-width: 1100px)");
 });
+
+const phoneRule = (selector) => {
+  const rules = cssRules(css).filter((r) => r.selector === selector && r.media.includes("@media (max-width: 699px)"));
+  assert.ok(rules.length, `${selector} has a phone rule`);
+  return rules.map((r) => r.block).join("\n");
+};
+
+test("on phones the top bar keeps Roon|Lyrion, Zone and Links on the first row and scrolls the page chips on a second row", () => {
+  assert.match(phoneRule("body.layoutModern .modernRail"), /flex-wrap: wrap;/);
+  assert.match(phoneRule("body.layoutModern .modernSystemSwitch"), /order: -2;/);
+  const tools = phoneRule("body.layoutModern .modernRailTools");
+  assert.match(tools, /order: -1;/);
+  assert.match(tools, /flex-direction: row;/);
+  const sections = phoneRule("body.layoutModern .modernRailSections");
+  assert.match(sections, /flex: 1 0 100%;/);
+  assert.match(sections, /overflow-x: auto;/);
+});
+
+test("on phones the Roon player runs title, cover, up next, transport, seek, signal chain, then the rating and playlist panels", () => {
+  assert.match(phoneRule("body.layoutModern #playerView .player.player--regular:not(.isMaximized):not(.isFullWindow)"), /grid-template-areas: "viewControls" "now" "art" "upnext" "controls" "seek" "chain" "tools" !important;/);
+  assert.match(phoneRule("body.layoutModern #playerView .player > .nowUpNext"), /grid-area: upnext !important;/);
+  assert.match(phoneRule("body.layoutModern #playerView .player > .modernSignalChain"), /grid-area: chain !important;/);
+  assert.match(phoneRule("body.layoutModern #playerView .player > .artStack"), /height: calc\(min\(100vw - 2 \* var\(--modern-gutter\) - 32px, 440px\) \+ var\(--modern-strip-height, 70px\) \+ 8px\);/);
+});
+
+test("on phones the transport is one row of 48px buttons, the duplicate play-state line is gone, and fold headings sit above their panels", () => {
+  assert.match(phoneRule("body.layoutModern #playerView .player > .controls"), /display: flex !important;/);
+  assert.match(phoneRule("body.layoutModern #playerView .player > .controls > .transportButton"), /min-width: 48px;\s*min-height: 48px;/);
+  assert.match(phoneRule("body.layoutModern #playerView .seekBlock :is(.playerMeta, #playState, #queueInfo)"), /display: none !important;/);
+  const tools = phoneRule("body.layoutModern #nowDiscoveryTools");
+  assert.match(tools, /display: flex !important;/);
+  assert.match(tools, /flex-direction: column;/);
+});
