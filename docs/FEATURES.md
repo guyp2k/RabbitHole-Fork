@@ -120,7 +120,8 @@ Roon's counts), star rating, sort order, favorites, albums not played in 90 days
 - Browsing needs a [Deep Roon MCP](https://github.com/renebouwmeester/deep-roon-mcp)
   server, set with `DEEP_ROON_URL`. Rabbit Hole only calls its read tools; any
   other tool is refused before a request is sent. Covers are served through
-  Rabbit Hole.
+  Rabbit Hole. Setup, the full tool list and the storage-location list are in the
+  [Deep Roon guide](deep-roon.md).
 
 ## Lyrion
 
