@@ -572,3 +572,10 @@ test("a connector between pills that wrap onto different rows is hidden instead 
   assert.match(source, /for \(const strip of \[chainStrip, lyrionChainStrip\]\) new ResizeObserver\(\(\) => tidyWires\(strip\)\)\.observe\(strip\);/);
   assert.match(source, /strip\.replaceChildren\(pills, host\);\s*strip\.hidden = false;\s*tidyWires\(strip\);/);
 });
+
+test("the full-height side columns apply only to the desktop three-column player, never to the one-column phone layout", () => {
+  const selector = "body.layoutModern #playerView .player.player--regular:not(.isMaximized):not(.isFullWindow) > :is(.now, .nowDiscoveryTools)";
+  const rules = cssRules(css).filter((rule) => rule.selector === selector);
+  assert.equal(rules.length, 1, "one side-column rule");
+  assert.equal(rules[0].media, "@media (min-width: 1100px)");
+});
