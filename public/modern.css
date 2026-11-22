@@ -720,13 +720,52 @@ body.layoutModern :is(#lyrionHqplayer, #lyrionPlayback > .hqpHostLine) {
     overflow-x: auto;
   }
 
+}
+
+@media (max-width: 1099px) {
+  body.layoutModern #playerView .player.player--regular:not(.isMaximized):not(.isFullWindow) {
+    height: auto !important;
+    max-height: none !important;
+    overflow: visible !important;
+  }
+
+  body.layoutModern #playerView .player.player--regular:not(.isMaximized):not(.isFullWindow) > :is(.now, .seekBlock, #nowDiscoveryTools) {
+    height: auto !important;
+    max-height: none !important;
+  }
+
+  body.layoutModern #playerView .player.player--regular:not(.isMaximized):not(.isFullWindow) > .playerViewControls {
+    grid-area: viewControls !important;
+  }
+
+  body.layoutModern #playerView .player.player--regular:not(.isMaximized):not(.isFullWindow) > .now {
+    grid-area: now !important;
+  }
+
+  body.layoutModern #playerView .player.player--regular:not(.isMaximized):not(.isFullWindow) > .artStack {
+    grid-area: art !important;
+  }
+
+  body.layoutModern #playerView .player.player--regular:not(.isMaximized):not(.isFullWindow) > .controls {
+    grid-area: controls !important;
+  }
+
+  body.layoutModern #playerView .player.player--regular:not(.isMaximized):not(.isFullWindow) > .seekBlock {
+    grid-area: seek !important;
+  }
+
+  body.layoutModern #playerView .player.player--regular:not(.isMaximized):not(.isFullWindow) > #nowDiscoveryTools {
+    grid-area: tools !important;
+  }
+
   body.layoutModern #playerView .player.player--regular:not(.isMaximized):not(.isFullWindow) {
     grid-template-areas: "viewControls" "now" "art" "upnext" "controls" "seek" "chain" "tools" !important;
     grid-template-rows: none !important;
+    grid-template-columns: minmax(0, 1fr) !important;
   }
 
   body.layoutModern #playerView .player > .artStack {
-    height: calc(min(100vw - 2 * var(--modern-gutter) - 32px, 440px) + var(--modern-strip-height, 70px) + 8px);
+    height: calc(min(100vw - var(--modern-rail-width) - 2 * var(--modern-gutter) - 64px, 440px) + var(--modern-strip-height, 70px) + 8px);
   }
 
   body.layoutModern #playerView .player > .nowUpNext {

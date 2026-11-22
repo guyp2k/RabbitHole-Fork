@@ -597,18 +597,24 @@ test("on phones the top bar keeps Roon|Lyrion, Zone and Links on the first row a
   assert.match(sections, /overflow-x: auto;/);
 });
 
+const narrowRule = (selector) => {
+  const rules = cssRules(css).filter((r) => r.selector === selector && r.media.includes("@media (max-width: 1099px)"));
+  assert.ok(rules.length, `${selector} has a narrow-player rule`);
+  return rules.map((r) => r.block).join("\n");
+};
+
 test("on phones the Roon player runs title, cover, up next, transport, seek, signal chain, then the rating and playlist panels", () => {
-  assert.match(phoneRule("body.layoutModern #playerView .player.player--regular:not(.isMaximized):not(.isFullWindow)"), /grid-template-areas: "viewControls" "now" "art" "upnext" "controls" "seek" "chain" "tools" !important;/);
-  assert.match(phoneRule("body.layoutModern #playerView .player > .nowUpNext"), /grid-area: upnext !important;/);
-  assert.match(phoneRule("body.layoutModern #playerView .player > .modernSignalChain"), /grid-area: chain !important;/);
-  assert.match(phoneRule("body.layoutModern #playerView .player > .artStack"), /height: calc\(min\(100vw - 2 \* var\(--modern-gutter\) - 32px, 440px\) \+ var\(--modern-strip-height, 70px\) \+ 8px\);/);
+  assert.match(narrowRule("body.layoutModern #playerView .player.player--regular:not(.isMaximized):not(.isFullWindow)"), /grid-template-areas: "viewControls" "now" "art" "upnext" "controls" "seek" "chain" "tools" !important;/);
+  assert.match(narrowRule("body.layoutModern #playerView .player > .nowUpNext"), /grid-area: upnext !important;/);
+  assert.match(narrowRule("body.layoutModern #playerView .player > .modernSignalChain"), /grid-area: chain !important;/);
+  assert.match(narrowRule("body.layoutModern #playerView .player > .artStack"), /height: calc\(min\(100vw - var\(--modern-rail-width\) - 2 \* var\(--modern-gutter\) - 64px, 440px\) \+ var\(--modern-strip-height, 70px\) \+ 8px\);/);
 });
 
 test("on phones the transport is one row of 48px buttons, the duplicate play-state line is gone, and fold headings sit above their panels", () => {
-  assert.match(phoneRule("body.layoutModern #playerView .player > .controls"), /display: flex !important;/);
-  assert.match(phoneRule("body.layoutModern #playerView .player > .controls > .transportButton"), /min-width: 48px;\s*min-height: 48px;/);
-  assert.match(phoneRule("body.layoutModern #playerView .seekBlock :is(.playerMeta, #playState, #queueInfo)"), /display: none !important;/);
-  const tools = phoneRule("body.layoutModern #nowDiscoveryTools");
+  assert.match(narrowRule("body.layoutModern #playerView .player > .controls"), /display: flex !important;/);
+  assert.match(narrowRule("body.layoutModern #playerView .player > .controls > .transportButton"), /min-width: 48px;\s*min-height: 48px;/);
+  assert.match(narrowRule("body.layoutModern #playerView .seekBlock :is(.playerMeta, #playState, #queueInfo)"), /display: none !important;/);
+  const tools = narrowRule("body.layoutModern #nowDiscoveryTools");
   assert.match(tools, /display: flex !important;/);
   assert.match(tools, /flex-direction: column;/);
 });
@@ -623,4 +629,16 @@ test("on phones each playlist checkbox sits in a 44px-wide tap column of its lab
   assert.match(phoneRule("body.layoutModern #playerView .player #nowDiscoveryTools .nowTidalPlaylistTarget"), /grid-template-columns: 44px minmax\(0, 1fr\);/);
   const box = phoneRule("body.layoutModern #nowDiscoveryTools .nowTidalPlaylistTarget > input[type=\"checkbox\"]");
   assert.match(box, /width: 24px;\s*height: 24px;\s*min-height: 24px;\s*margin: 0;\s*justify-self: center;/);
+});
+
+test("the one-column player also covers the 700 to 1099px range where the side rail leaves too little width for three columns", () => {
+  assert.match(narrowRule("body.layoutModern #playerView .player.player--regular:not(.isMaximized):not(.isFullWindow)"), /grid-template-columns: minmax\(0, 1fr\) !important;/);
+  for (const [child, area] of [[".playerViewControls", "viewControls"], [".now", "now"], [".artStack", "art"], [".controls", "controls"], [".seekBlock", "seek"], ["#nowDiscoveryTools", "tools"]]) {
+    assert.match(narrowRule(`body.layoutModern #playerView .player.player--regular:not(.isMaximized):not(.isFullWindow) > ${child}`), new RegExp(`grid-area: ${area} !important;`), child);
+  }
+  const player = narrowRule("body.layoutModern #playerView .player.player--regular:not(.isMaximized):not(.isFullWindow)");
+  assert.match(player, /height: auto !important;\s*max-height: none !important;\s*overflow: visible !important;/);
+  assert.match(narrowRule("body.layoutModern #playerView .player.player--regular:not(.isMaximized):not(.isFullWindow) > :is(.now, .seekBlock, #nowDiscoveryTools)"), /height: auto !important;\s*max-height: none !important;/);
+  const phoneOnlyPlayer = cssRules(css).filter((r) => r.media.includes("@media (max-width: 699px)") && /#playerView \.player(\.player--regular:not\(\.isMaximized\):not\(\.isFullWindow\))?( >|$)/.test(r.selector));
+  assert.deepEqual(phoneOnlyPlayer.map((r) => r.selector), []);
 });
