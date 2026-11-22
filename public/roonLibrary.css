@@ -7,7 +7,11 @@
 .rlGrid { grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); }
 .rlCard { display: flex; flex-direction: column; min-width: 0; }
 .rlCard .dbCollectionMeta { overflow-wrap: anywhere; }
-.rlActions { display: grid; grid-template-columns: 1fr 1fr; gap: var(--db-space-1); margin-top: var(--db-space-3); }
+.rlActions { display: grid; grid-template-columns: 1fr 1fr; gap: var(--db-space-1); margin-top: auto; padding-top: var(--db-space-3); }
+.rlCard :is(.dbCollectionName, .dbCollectionMeta) { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; }
+#rlFilters[hidden] { display: none; }
+#roonLibraryView .rlFiltersFold { display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%; min-height: 44px; margin-bottom: var(--db-space-3); padding: 0 14px; border: 0 !important; border-left: 3px solid var(--accent) !important; border-radius: 10px !important; background: linear-gradient(90deg, color-mix(in srgb, var(--accent) 24%, transparent), color-mix(in srgb, var(--accent) 6%, transparent)) !important; box-shadow: none !important; color: var(--text) !important; font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-align: left; text-transform: uppercase; cursor: pointer; }
+.rlFiltersTitle { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .roonLibraryView .rlActions button { min-height: 34px; padding: 0 var(--db-space-2); font-size: 12px; }
 #roonLibraryView .rlActions button.rlPrimary { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 78%, #000); color: #fff; font-weight: 600; }
 .rlMore { display: flex; justify-content: center; padding: var(--db-space-6) 0; }

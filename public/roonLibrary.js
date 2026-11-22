@@ -1,5 +1,18 @@
 "use strict";
 (() => {
+  function filterSummary({ text, selects, toggles }) {
+    const parts = [];
+    const search = String(text || "").trim();
+    if (search) parts.push(`\u201c${search}\u201d`);
+    for (const select of selects) {
+      if (!select.value || (select.name === "sort" && select.value === "artist")) continue;
+      parts.push(String(select.label).replace(/\s*\(\d[\d,]*\)$/, ""));
+    }
+    parts.push(...toggles);
+    return parts.join(" · ");
+  }
+  window.RoonLibraryFilters = { filterSummary };
+
   const $ = (selector) => document.querySelector(selector);
   const form = $("#rlFilters");
   const results = $("#rlResults");
@@ -39,8 +52,8 @@
     actions.querySelectorAll("button").forEach((button, index) => { button.dataset.rlAction = ACTIONS[index][0]; button.dataset.rlKey = album.key; button.dataset.rlTitle = album.title; });
     return el("li", { className: "rlCard" }, [
       el("div", { className: "dbMosaic dbAlbumCover" }, [art]),
-      el("span", { className: "dbCollectionName", textContent: album.title }),
-      el("span", { className: "dbCollectionMeta", textContent: meta }),
+      el("span", { className: "dbCollectionName", textContent: album.title, title: album.title }),
+      el("span", { className: "dbCollectionMeta", textContent: meta, title: meta }),
       actions
     ]);
   }
@@ -98,7 +111,37 @@
     }
   }
 
+  const FOLD_KEY = "rabbitHole.rlFiltersFolded";
+  const fold = el("button", { type: "button", className: "rlFiltersFold" });
+  fold.setAttribute("aria-controls", "rlFilters");
+  const foldSummary = el("span", { className: "rlFiltersSummary" });
+  const caret = el("span", { className: "rlFiltersCaret" });
+  caret.setAttribute("aria-hidden", "true");
+  fold.append(el("span", { className: "rlFiltersTitle" }, [el("span", { textContent: "Filters" }), foldSummary]), caret);
+  form.before(fold);
+  let folded = (() => { try { return localStorage.getItem(FOLD_KEY) === "1"; } catch { return false; } })();
+  function summarise() {
+    const selects = [...form.querySelectorAll("select")].map((select) => ({ name: select.name, value: select.value, label: select.selectedOptions[0]?.textContent || "" }));
+    const toggles = [...form.querySelectorAll("[data-rl-toggle][aria-pressed='true']")].map((button) => button.textContent.trim());
+    const summary = filterSummary({ text: form.elements.text?.value || "", selects, toggles });
+    foldSummary.textContent = summary ? ` · ${summary}` : "";
+  }
+  function applyFold() {
+    fold.setAttribute("aria-expanded", String(!folded));
+    form.hidden = folded;
+    caret.textContent = folded ? "▸" : "▾";
+  }
+  fold.addEventListener("click", () => {
+    folded = !folded;
+    try { localStorage.setItem(FOLD_KEY, folded ? "1" : "0"); } catch {}
+    applyFold();
+  });
+  applyFold();
+  summarise();
+
   form.addEventListener("submit", (event) => { event.preventDefault(); load(); });
+  form.addEventListener("change", summarise);
+  form.addEventListener("input", summarise);
   form.addEventListener("change", () => load());
   form.addEventListener("input", (event) => {
     if (event.target.name !== "text") return;
@@ -109,6 +152,7 @@
     const toggle = event.target.closest("[data-rl-toggle]");
     if (!toggle) return;
     toggle.setAttribute("aria-pressed", toggle.getAttribute("aria-pressed") === "true" ? "false" : "true");
+    summarise();
     load();
   });
   results.addEventListener("click", (event) => {
