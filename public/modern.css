@@ -678,3 +678,90 @@ body.layoutModern .modernFormatLine[hidden] {
 body.layoutModern :is(#lyrionHqplayer, #lyrionPlayback > .hqpHostLine) {
   display: none !important;
 }
+
+@media (max-width: 699px) {
+  body.layoutModern .modernRail {
+    flex-wrap: wrap;
+    overflow: visible;
+    row-gap: 6px;
+  }
+
+  body.layoutModern .modernSystemSwitch {
+    order: -2;
+  }
+
+  body.layoutModern .modernRailTools {
+    order: -1;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    flex: 1 1 0;
+    justify-content: flex-end;
+    gap: 6px;
+    min-width: 0;
+    margin-top: 0;
+  }
+
+  body.layoutModern .modernRailTools .modernMenu {
+    min-width: 0;
+  }
+
+  body.layoutModern .modernRailTools .modernMenuButton {
+    max-width: 34vw;
+    min-height: 44px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  body.layoutModern .modernRailSections {
+    order: 0;
+    flex: 1 0 100%;
+    overflow-x: auto;
+  }
+
+  body.layoutModern #playerView .player.player--regular:not(.isMaximized):not(.isFullWindow) {
+    grid-template-areas: "viewControls" "now" "art" "upnext" "controls" "seek" "chain" "tools" !important;
+    grid-template-rows: none !important;
+  }
+
+  body.layoutModern #playerView .player > .artStack {
+    height: calc(min(100vw - 2 * var(--modern-gutter) - 32px, 440px) + var(--modern-strip-height, 70px) + 8px);
+  }
+
+  body.layoutModern #playerView .player > .nowUpNext {
+    grid-area: upnext !important;
+    text-align: center;
+  }
+
+  body.layoutModern #playerView .player > .modernSignalChain {
+    grid-area: chain !important;
+  }
+
+  body.layoutModern #playerView .seekBlock :is(.playerMeta, #playState, #queueInfo) {
+    display: none !important;
+  }
+
+  body.layoutModern #playerView .player > .controls {
+    display: flex !important;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 14px;
+  }
+
+  body.layoutModern #playerView .player > .controls > .transportButton {
+    min-width: 48px;
+    min-height: 48px;
+  }
+
+  body.layoutModern #playerView .player > .controls > .nowVolume {
+    flex: 1 0 100%;
+  }
+
+  body.layoutModern #nowDiscoveryTools {
+    display: flex !important;
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
