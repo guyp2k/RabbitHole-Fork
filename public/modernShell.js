@@ -87,7 +87,15 @@
     return [
       { key: "rating", label: "Rating", selector: "#nowDiscoveryTools > #nowFeedback" },
       { key: "actions", label: "Actions", selector: "#nowDiscoveryTools > .nowDiscoveryActions" },
-      { key: "playlists", label: "Playlists", selector: "#nowDiscoveryTools > .nowTidalPlaylistGroup" }
+      { key: "playlists", label: "Playlists", selector: "#nowDiscoveryTools > .nowTidalPlaylistGroup" },
+      { key: "system", label: "System", selector: "#playerView .nowInfo > #pcTempOverlay" }
+    ];
+  }
+
+  function nowDetailsGroups() {
+    return [
+      { key: "roon:now playing", container: "#playerView .nowInfo", keep: "#pcTempOverlay" },
+      { key: "lyrion:now playing", container: "#lyrionNow .lyrionNowDetails", keep: "#lyrionSystem" }
     ];
   }
 
@@ -103,7 +111,7 @@
   window.RabbitHoleModernShell = {
     railSections, lyrionRailItems, systemChoices, chooseSystem: chooseValue, deviceMenu,
     chooseDevice: chooseValue, openDeviceControls, menuLinks, pageVolumeHomes, sectionOpen, toggleSection,
-    roonPanelGroups, readFolded
+    roonPanelGroups, readFolded, nowDetailsGroups
   };
 
   if (!document.body.classList.contains("layoutModern")) return;
@@ -243,7 +251,12 @@
     if (!target) continue;
     target.before(make("h3", { className: "modernPanelHeading" }, foldButton(group.label, `roon:${group.key}`, (fold) => target.classList.toggle("modernFolded", fold))));
   }
-  for (const heading of document.querySelectorAll("#lyrionDiscoveryRail > section > h3")) {
+  for (const group of nowDetailsGroups()) {
+    const container = document.querySelector(group.container);
+    if (!container) continue;
+    container.prepend(make("h3", { className: "modernPanelHeading" }, foldButton("Now Playing", group.key, (fold) => container.classList.toggle("modernNowFolded", fold))));
+  }
+  for (const heading of document.querySelectorAll("#lyrionDiscoveryRail > section > h3, #lyrionSystem > h3")) {
     const label = heading.textContent.trim();
     const section = heading.parentElement;
     heading.replaceChildren(foldButton(label, `lyrion:${label.toLowerCase()}`, (fold) => section.classList.toggle("modernSectionFolded", fold)));

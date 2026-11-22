@@ -303,13 +303,14 @@ test("Roon's right-hand groups get real Rating, Actions and Playlists headings t
   assert.deepEqual(shell.roonPanelGroups(), [
     { key: "rating", label: "Rating", selector: "#nowDiscoveryTools > #nowFeedback" },
     { key: "actions", label: "Actions", selector: "#nowDiscoveryTools > .nowDiscoveryActions" },
-    { key: "playlists", label: "Playlists", selector: "#nowDiscoveryTools > .nowTidalPlaylistGroup" }
+    { key: "playlists", label: "Playlists", selector: "#nowDiscoveryTools > .nowTidalPlaylistGroup" },
+    { key: "system", label: "System", selector: "#playerView .nowInfo > #pcTempOverlay" }
   ]);
   assert.match(css, /body\.layoutModern #nowDiscoveryTools > :is\(#nowFeedback, \.nowDiscoveryActions, \.nowTidalPlaylistGroup\)::before\s*\{\s*content: none !important;/);
 });
 
 test("Lyrion's right-hand sections fold from their own headings", () => {
-  assert.match(source, /document\.querySelectorAll\("#lyrionDiscoveryRail > section > h3"\)/);
+  assert.match(source, /document\.querySelectorAll\("#lyrionDiscoveryRail > section > h3, /);
 });
 
 test("a folded panel group hides its content but keeps its heading, and the heading says whether it is open", () => {
@@ -323,4 +324,19 @@ test("folded panel groups are remembered per browser, and a broken saved value c
   assert.deepEqual(shell.readFolded("not json"), []);
   assert.deepEqual(shell.readFolded('{"a":1}'), []);
   assert.deepEqual(shell.readFolded(null), []);
+});
+
+test("the left column's Now Playing details fold from a Now Playing heading, on Roon and Lyrion", () => {
+  assert.deepEqual(shell.nowDetailsGroups(), [
+    { key: "roon:now playing", container: "#playerView .nowInfo", keep: "#pcTempOverlay" },
+    { key: "lyrion:now playing", container: "#lyrionNow .lyrionNowDetails", keep: "#lyrionSystem" }
+  ]);
+  assert.match(css, /body\.layoutModern \.modernNowFolded > :not\(\.modernPanelHeading\):not\(#pcTempOverlay\):not\(#lyrionSystem\)\s*\{\s*display: none !important;/);
+  assert.match(css, /body\.layoutModern :is\(#playerView \.nowInfo, #lyrionNow \.lyrionNowDetails\) > \.eyebrow\s*\{\s*display: none !important;/, "the heading replaces the eyebrow");
+});
+
+test("the left column's System block folds from a System heading, on Roon and Lyrion", () => {
+  assert.deepEqual(shell.roonPanelGroups().find((group) => group.key === "system"), { key: "system", label: "System", selector: "#playerView .nowInfo > #pcTempOverlay" });
+  assert.match(css, /body\.layoutModern #pcTempOverlay::before\s*\{\s*content: none !important;/);
+  assert.match(source, /document\.querySelectorAll\("#lyrionDiscoveryRail > section > h3, #lyrionSystem > h3"\)/);
 });

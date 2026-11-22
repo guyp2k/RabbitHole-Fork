@@ -221,6 +221,19 @@ body.layoutModern #nowDiscoveryTools > :is(#nowFeedback, .nowDiscoveryActions, .
   display: none !important;
 }
 
+body.layoutModern #pcTempOverlay::before {
+  content: none !important;
+  display: none !important;
+}
+
+body.layoutModern .modernNowFolded > :not(.modernPanelHeading):not(#pcTempOverlay):not(#lyrionSystem) {
+  display: none !important;
+}
+
+body.layoutModern :is(#playerView .nowInfo, #lyrionNow .lyrionNowDetails) > .eyebrow {
+  display: none !important;
+}
+
 body.layoutModern .modernFolded {
   display: none !important;
 }
@@ -229,7 +242,7 @@ body.layoutModern section.modernSectionFolded > :not(h3) {
   display: none !important;
 }
 
-body.layoutModern :is(.modernPanelHeading, #lyrionDiscoveryRail > section > h3) {
+body.layoutModern :is(.modernPanelHeading, #lyrionDiscoveryRail > section > h3, #lyrionSystem > h3) {
   margin: 10px 0 4px;
   padding: 0;
   font: inherit;
