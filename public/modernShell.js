@@ -210,8 +210,9 @@
     make("div", { className: "modernNow" }, art, make("div", { className: "modernNowText" }, nowTitle, nowArtist)),
     make("div", { className: "modernTransport" },
       make("div", { className: "modernTransportButtons" }, previous, playPause, next),
+      volumeLabel,
       make("div", { className: "modernSeekRow" }, seekPosition, seek, seekLength)),
-    make("div", { className: "modernBarTools" }, zoneMenu, linksMenu, volumeLabel));
+    make("div", { className: "modernBarTools" }, zoneMenu, linksMenu));
 
   document.body.append(rail, tabs, bar);
 

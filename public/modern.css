@@ -605,9 +605,6 @@ body.layoutModern .modernVolume input[type="range"] {
     max-width: 46vw;
   }
 
-  body.layoutModern .modernVolume > span {
-    display: none;
-  }
 
   body.layoutModern .modernVolume input[type="range"] {
     width: 96px;

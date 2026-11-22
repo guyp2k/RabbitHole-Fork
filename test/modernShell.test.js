@@ -252,3 +252,11 @@ test("under 700px the rail becomes a bottom tab bar; above it the tab bar is not
   assert.match(phone.block, /display: grid;/);
   assert.match(phone.block, /position: fixed;/);
 });
+
+test("the player bar puts the volume directly under the transport buttons, above the seek bar", () => {
+  const transport = source.slice(source.indexOf('make("div", { className: "modernTransport" }'), source.indexOf('make("div", { className: "modernBarTools" }'));
+  const order = ["modernTransportButtons", "volumeLabel", "modernSeekRow"].map((marker) => transport.indexOf(marker));
+  assert.ok(order.every((at) => at > 0), `all three in the transport column: ${order}`);
+  assert.deepEqual([...order].sort((a, b) => a - b), order);
+  assert.doesNotMatch(source.slice(source.indexOf('make("div", { className: "modernBarTools" }')), /volumeLabel\)/);
+});
