@@ -413,3 +413,14 @@ test("the ambient colours follow the Roon artwork backdrop and the Lyrion cover"
   assert.match(source, /documentElement\.style\.setProperty\("--ambient-1"/);
   assert.match(source, /document\.body\.prepend\(make\("div", \{ className: "modernAmbient", "aria-hidden": "true" \}\)\)/);
 });
+
+test("the Now Playing side columns run the full player height so their panels are not cut off at the cover", () => {
+  const selector = "body.layoutModern #playerView .player.player--regular:not(.isMaximized):not(.isFullWindow) > :is(.now, .nowDiscoveryTools) {";
+  assert.ok(css.includes(selector), "the side-column rule exists");
+  const rule = css.slice(css.indexOf(selector)).split("}")[0];
+  assert.match(rule, /grid-row: 2 \/ -1;/);
+  assert.match(rule, /align-self: stretch;/);
+  assert.match(rule, /height: auto;/);
+  assert.match(rule, /contain: size;/);
+  assert.match(rule, /overflow-y: auto;/);
+});
