@@ -612,3 +612,15 @@ test("on phones the transport is one row of 48px buttons, the duplicate play-sta
   assert.match(tools, /display: flex !important;/);
   assert.match(tools, /flex-direction: column;/);
 });
+
+test("the playback status under the cover is drawn above the blurred art and vignette so it stays legible", () => {
+  const rule = css.slice(css.indexOf("body.layoutModern #playerView .artStack > #nowPlayback {")).split("}")[0];
+  assert.match(rule, /position: relative;/);
+  assert.match(rule, /z-index: 2;/);
+});
+
+test("on phones each playlist checkbox sits in a 44px-wide tap column of its label", () => {
+  assert.match(phoneRule("body.layoutModern #playerView .player #nowDiscoveryTools .nowTidalPlaylistTarget"), /grid-template-columns: 44px minmax\(0, 1fr\);/);
+  const box = phoneRule("body.layoutModern #nowDiscoveryTools .nowTidalPlaylistTarget > input[type=\"checkbox\"]");
+  assert.match(box, /width: 24px;\s*height: 24px;\s*min-height: 24px;\s*margin: 0;\s*justify-self: center;/);
+});

@@ -765,3 +765,22 @@ body.layoutModern :is(#lyrionHqplayer, #lyrionPlayback > .hqpHostLine) {
     align-items: stretch;
   }
 }
+
+body.layoutModern #playerView .artStack > #nowPlayback {
+  position: relative;
+  z-index: 2;
+}
+
+@media (max-width: 699px) {
+  body.layoutModern #playerView .player #nowDiscoveryTools .nowTidalPlaylistTarget {
+    grid-template-columns: 44px minmax(0, 1fr);
+  }
+
+  body.layoutModern #nowDiscoveryTools .nowTidalPlaylistTarget > input[type="checkbox"] {
+    width: 24px;
+    height: 24px;
+    min-height: 24px;
+    margin: 0;
+    justify-self: center;
+  }
+}
