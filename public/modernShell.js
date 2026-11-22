@@ -66,34 +66,26 @@
     return [{ label: "", links: links(playbackAnchors) }, { label: "HQPlayer", links: links(hqplayerAnchors) }].filter((group) => group.links.length);
   }
 
-  function splitTime(text) {
-    const [position = "", length = ""] = String(text || "").split(" / ");
-    return [position, length];
-  }
-
-  function forwardRange(target, value, type) {
-    if (!target || target.disabled) return;
-    target.value = String(value);
-    target.dispatchEvent(new Event(type));
-  }
-
-  function nowPlayingOnScreen(system, { playerViewActive, lyrionNowSelected }) {
-    return system === "lyrion" ? Boolean(lyrionNowSelected) : Boolean(playerViewActive);
-  }
-
   function pageVolumeHomes() {
     return [{ volume: "nowVolume", row: "#playerView .controls" }, { volume: "lyrionVolume", row: "#lyrionNow .lyrionActions" }];
   }
 
-  function volumeStepButton(root, direction) {
-    const label = direction === "down" ? "volume down" : "volume up";
-    return [...(root?.querySelectorAll(".volumeStep") || [])].find((button) => String(button.getAttribute("aria-label") || "").toLowerCase() === label) || null;
+  function sectionOpen(id, { current, expanded, collapsed }) {
+    if (collapsed.includes(id)) return false;
+    return id === current || expanded.includes(id);
+  }
+
+  function toggleSection(id, state) {
+    const expanded = state.expanded.filter((item) => item !== id);
+    const collapsed = state.collapsed.filter((item) => item !== id);
+    if (sectionOpen(id, state)) collapsed.push(id);
+    else expanded.push(id);
+    return { expanded, collapsed };
   }
 
   window.RabbitHoleModernShell = {
     railSections, lyrionRailItems, systemChoices, chooseSystem: chooseValue, deviceMenu,
-    chooseDevice: chooseValue, openDeviceControls, menuLinks, splitTime, forwardRange,
-    nowPlayingOnScreen, pageVolumeHomes, volumeStepButton
+    chooseDevice: chooseValue, openDeviceControls, menuLinks, pageVolumeHomes, sectionOpen, toggleSection
   };
 
   if (!document.body.classList.contains("layoutModern")) return;
@@ -125,11 +117,7 @@
     listen: ["M9 18V6l10-2v12", "M9 18a3 3 0 1 1-3-3 3 3 0 0 1 3 3Z", "M19 16a3 3 0 1 1-3-3 3 3 0 0 1 3 3Z"],
     discover: ["M11 18a7 7 0 1 1 7-7 7 7 0 0 1-7 7Z", "m20 20-4-4"],
     you: ["M12 12a4 4 0 1 1 4-4 4 4 0 0 1-4 4Z", "M4 21c1.5-4 5-6 8-6s6.5 2 8 6"],
-    system: ["M12 15a3 3 0 1 1 3-3 3 3 0 0 1-3 3Z", "M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M5 19l2-2M17 7l2-2"],
-    previous: ["M19 5 9 12l10 7V5Z", "M5 5v14"],
-    next: ["m5 5 10 7-10 7V5Z", "M19 5v14"],
-    play: ["M7 4.5v15L19 12 7 4.5Z"],
-    pause: ["M9 5v14", "M15 5v14"]
+    system: ["M12 15a3 3 0 1 1 3-3 3 3 0 0 1-3 3Z", "M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M5 19l2-2M17 7l2-2"]
   };
 
   const system = () => (document.body.dataset.playbackSystem === "lyrion" ? "lyrion" : "roon");
@@ -142,6 +130,7 @@
   })), primaryLabels, viewHeading);
   const lyrionTabs = [...document.querySelectorAll("#lyrionView .lyrionTabs [role='tab']")];
   const railLinks = [];
+  let railState = { expanded: [], collapsed: [] };
 
   const primaryButton = (group) => document.querySelector(`.primaryNav [data-nav-group="${group}"]`);
   const openSection = (section) => {
@@ -160,8 +149,9 @@
     }
     let heading;
     if (attribute === "aria-current") {
-      heading = make("button", { type: "button", className: "modernRailHeading", "aria-expanded": "false", "aria-controls": listId, text: section.label });
-      heading.addEventListener("click", () => openSection(section));
+      heading = make("button", { type: "button", className: "modernRailHeading", "aria-expanded": "false", "aria-controls": listId },
+        make("span", { text: section.label }), make("span", { className: "modernCaret", "aria-hidden": "true", text: "▸" }));
+      heading.addEventListener("click", () => { railState = { ...railState, ...toggleSection(section.id, { ...railState, current: currentRailSection() }) }; syncRail(); });
     } else {
       heading = make("span", { className: "modernRailHeading", text: section.label });
     }
@@ -184,7 +174,6 @@
     button.addEventListener("click", () => chooseValue(systemSelect, choice.value));
     systemSwitch.append(button);
   }
-  rail.append(brand, railBody, systemSwitch);
 
   const tabs = make("nav", { className: "modernTabs", "aria-label": "Sections" });
   for (const section of sections) {
@@ -193,49 +182,18 @@
     tabs.append(button);
   }
 
-  const art = make("span", { className: "modernArt", "aria-hidden": "true" });
-  const nowTitle = make("strong", { className: "modernNowTitle" });
-  const nowArtist = make("span", { className: "modernNowArtist" });
-  const transportButton = (control, label, paths) => {
-    const button = make("button", { type: "button", className: "modernTransportButton", "data-modern-control": control, "aria-label": label, title: label }, icon(paths));
-    button.addEventListener("click", () => sourceControl(control)?.click());
-    return button;
-  };
-  const previous = transportButton("previous", "Previous", ICONS.previous);
-  const playPause = transportButton("playpause", "Play", ICONS.play);
-  playPause.classList.add("modernPlayPause");
-  const next = transportButton("next", "Next", ICONS.next);
-  const seekPosition = make("span", { className: "modernSeekTime" });
-  const seekLength = make("span", { className: "modernSeekTime" });
-  const seek = make("input", { type: "range", className: "modernSeek", "aria-label": "Seek Position", min: "0", max: "0", value: "0" });
-  const volume = make("input", { type: "range", className: "modernVolumeSlider", "aria-label": "Volume" });
-  const volumeStep = (direction, label, text) => {
-    const button = make("button", { type: "button", className: "modernVolumeStep", "aria-label": label, title: label, text });
-    button.addEventListener("click", () => volumeStepButton(current().volume(), direction)?.click());
-    return button;
-  };
-  const volumeDown = volumeStep("down", "Volume Down", "−");
-  const volumeUp = volumeStep("up", "Volume Up", "+");
-  const volumeLabel = make("div", { className: "modernVolume", role: "group", "aria-label": "Volume" }, volumeDown, volume, volumeUp);
-
   const menuButton = (id, panelId) => make("button", { type: "button", id, className: "modernMenuButton", "aria-expanded": "false", "aria-controls": panelId });
   const zoneButton = menuButton("modernZoneMenuButton", "modernZoneMenu");
   const zonePanel = make("div", { id: "modernZoneMenu", className: "modernMenuPanel", hidden: true });
   const linksButton = menuButton("modernLinksMenuButton", "modernLinksMenu");
   linksButton.append(make("span", { text: "Links" }), make("span", { className: "modernCaret", "aria-hidden": "true", text: "▾" }));
   const linksPanel = make("div", { id: "modernLinksMenu", className: "modernMenuPanel", hidden: true });
-  const zoneMenu = make("div", { className: "modernMenu" }, zoneButton, zonePanel);
-  const linksMenu = make("div", { className: "modernMenu" }, linksButton, linksPanel);
+  const zoneMenu = make("div", { className: "modernMenu" }, zoneButton);
+  const linksMenu = make("div", { className: "modernMenu" }, linksButton);
 
-  const bar = make("footer", { className: "modernPlayerBar", "aria-label": "Player" },
-    make("div", { className: "modernNow" }, art, make("div", { className: "modernNowText" }, nowTitle, nowArtist)),
-    make("div", { className: "modernTransport" },
-      make("div", { className: "modernTransportButtons" }, previous, playPause, next),
-      volumeLabel,
-      make("div", { className: "modernSeekRow" }, seekPosition, seek, seekLength)),
-    make("div", { className: "modernBarTools" }, zoneMenu, linksMenu));
-
-  document.body.append(rail, tabs, bar);
+  const railTools = make("div", { className: "modernRailTools" }, zoneMenu, linksMenu);
+  rail.append(brand, railBody, railTools, systemSwitch);
+  document.body.append(rail, tabs, zonePanel, linksPanel);
 
   for (const home of pageVolumeHomes()) {
     const control = $(home.volume);
@@ -245,83 +203,11 @@
     row.append(control);
   }
 
-  let lyrionState = "";
-  $("lyrionNow")?.addEventListener("lyrion-playback", (event) => { lyrionState = event.detail?.state || ""; schedule(); });
-
   const sources = {
-    roon: {
-      title: () => $("nowTitle")?.textContent || "",
-      artist: () => $("nowSubtitle")?.textContent || "",
-      art: () => $("cover")?.style.backgroundImage || "",
-      playing: () => ($("playState")?.textContent || "").trim() === "playing",
-      control: (name) => document.querySelector(`#playerView .controls [data-control="${name}"]`),
-      seek: () => $("seekSlider"),
-      times: () => [$("seekPosition")?.textContent || "", $("seekLength")?.textContent || ""],
-      volume: () => $("nowVolume"),
-      select: () => $("zoneSelect")
-    },
-    lyrion: {
-      title: () => $("lyrionTitle")?.textContent || "",
-      artist: () => $("lyrionArtist")?.textContent || "",
-      art: () => { const cover = $("lyrionCover"); return cover && !cover.hidden && cover.src ? `url("${cover.src.replace(/"/g, "%22")}")` : ""; },
-      playing: () => lyrionState === "playing",
-      control: (name) => document.querySelector(`#lyrionNow [data-lyrion-control="${name}"]`),
-      seek: () => $("lyrionProgress"),
-      times: () => splitTime($("lyrionTime")?.textContent),
-      volume: () => $("lyrionVolume"),
-      select: () => $("lyrionPlayer")
-    }
+    roon: { select: () => $("zoneSelect") },
+    lyrion: { select: () => $("lyrionPlayer") }
   };
   const current = () => sources[system()];
-  const sourceControl = (name) => current().control(name);
-  const volumeSource = () => {
-    const root = current().volume();
-    const slider = root?.querySelector(".volumeSlider");
-    return root && !root.hidden && slider && !slider.hidden ? slider : null;
-  };
-
-  const setText = (node, text) => { if (node.textContent !== text) node.textContent = text; };
-  const held = { seek: false, volume: false };
-  const mirrorRange = (target, from, key) => {
-    target.disabled = !from || from.disabled;
-    if (!from || held[key]) return;
-    for (const name of ["min", "max", "step"]) if (target[name] !== from[name]) target[name] = from[name];
-    if (target.value !== from.value) target.value = from.value;
-    const span = Number(target.max) - Number(target.min);
-    target.style.setProperty("--modern-progress", `${span > 0 ? ((Number(target.value) - Number(target.min)) / span) * 100 : 0}%`);
-  };
-
-  function syncBar() {
-    const source = current();
-    setText(nowTitle, source.title().trim());
-    setText(nowArtist, source.artist().trim());
-    const image = source.art();
-    if (art.style.backgroundImage !== image) art.style.backgroundImage = image;
-    art.classList.toggle("hasArt", Boolean(image));
-    const playing = source.playing();
-    const label = playing ? "Pause" : "Play";
-    if (playPause.getAttribute("aria-label") !== label) {
-      playPause.setAttribute("aria-label", label);
-      playPause.title = label;
-      playPause.replaceChildren(icon(playing ? ICONS.pause : ICONS.play));
-    }
-    for (const [button, name] of [[previous, "previous"], [playPause, "playpause"], [next, "next"]]) {
-      const target = source.control(name);
-      button.disabled = !target || target.disabled;
-    }
-    mirrorRange(seek, source.seek(), "seek");
-    const [position, length] = source.times();
-    setText(seekPosition, position);
-    setText(seekLength, length);
-    const slider = volumeSource();
-    volumeLabel.hidden = !slider;
-    mirrorRange(volume, slider, "volume");
-    for (const [button, direction] of [[volumeDown, "down"], [volumeUp, "up"]]) {
-      const target = volumeStepButton(source.volume(), direction);
-      button.disabled = !target || target.disabled;
-    }
-  }
-
   function syncDevices() {
     const menu = deviceMenu(system(), current().select());
     if (zoneButton.dataset.label !== menu.label) {
@@ -363,22 +249,34 @@
       ...group.links.map((link) => make("a", { href: link.href, target: "_blank", rel: "noopener noreferrer" }, link.label, make("span", { "aria-hidden": "true", text: "↗" }))))));
   }
 
+  let lastCurrent = "";
+  function currentRailSection() {
+    const kind = system();
+    return railLinks.find((link) => link.button.getAttribute("aria-current") === "page" && (kind === "lyrion") === (link.section === "lyrion"))?.section || "";
+  }
+
   function syncRail() {
     const kind = system();
-    document.body.classList.toggle("modernOnNowPlaying", nowPlayingOnScreen(kind, {
-      playerViewActive: Boolean($("playerView")?.classList.contains("isActive")),
-      lyrionNowSelected: $("lyrionTab-now")?.getAttribute("aria-selected") === "true"
-    }));
     for (const link of railLinks) {
       const active = link.attribute === "aria-selected" ? link.source?.getAttribute("aria-selected") === "true" : link.source?.getAttribute("aria-current") === "page";
       if (active) link.button.setAttribute("aria-current", "page");
       else link.button.removeAttribute("aria-current");
     }
-    const currentSection = railLinks.find((link) => link.button.getAttribute("aria-current") === "page" && (kind === "lyrion") === (link.section === "lyrion"))?.section || "";
+    const currentSection = currentRailSection();
+    if (currentSection !== lastCurrent) {
+      railState = { expanded: railState.expanded, collapsed: railState.collapsed.filter((id) => id !== currentSection) };
+      lastCurrent = currentSection;
+    }
     for (const section of railBody.children) {
-      const isCurrent = section.dataset.railSection === currentSection;
-      section.classList.toggle("isCurrent", isCurrent);
-      section.querySelector("button.modernRailHeading")?.setAttribute("aria-expanded", String(isCurrent));
+      const id = section.dataset.railSection;
+      const open = id === "lyrion" || sectionOpen(id, { ...railState, current: currentSection });
+      section.classList.toggle("isCurrent", id === currentSection);
+      section.classList.toggle("isOpen", open);
+      const heading = section.querySelector("button.modernRailHeading");
+      if (heading) {
+        heading.setAttribute("aria-expanded", String(open));
+        heading.querySelector(".modernCaret").textContent = open ? "▾" : "▸";
+      }
     }
     for (const tab of tabs.children) {
       if (tab.dataset.railTab === currentSection) tab.setAttribute("aria-current", "page");
@@ -394,7 +292,6 @@
     queued = true;
     requestAnimationFrame(() => {
       queued = false;
-      syncBar();
       syncDevices();
     });
   }
@@ -416,36 +313,26 @@
   }
   zoneButton.addEventListener("click", () => toggleMenu(zoneButton, zonePanel, renderDevicePanel));
   linksButton.addEventListener("click", () => toggleMenu(linksButton, linksPanel, syncLinks));
-  document.addEventListener("click", (event) => { if (!zoneMenu.contains(event.target) && !linksMenu.contains(event.target)) closeMenus(); });
+  document.addEventListener("click", (event) => {
+    const inside = [zoneMenu, linksMenu, zonePanel, linksPanel].some((node) => node.contains(event.target));
+    if (!inside) closeMenus();
+  });
   document.addEventListener("keydown", (event) => {
     if (event.key !== "Escape") return;
     const open = [[zoneButton, zonePanel], [linksButton, linksPanel]].find(([, panel]) => !panel.hidden);
     if (open) closeMenus(open[0]);
   });
 
-  const bindRange = (input, key, target) => {
-    input.addEventListener("pointerdown", () => { held[key] = true; });
-    input.addEventListener("input", () => { held[key] = true; forwardRange(target(), input.value, "input"); });
-    input.addEventListener("change", () => { forwardRange(target(), input.value, "change"); held[key] = false; });
-    input.addEventListener("blur", () => { held[key] = false; });
-  };
-  bindRange(seek, "seek", () => current().seek());
-  bindRange(volume, "volume", volumeSource);
-
   const sizes = new ResizeObserver(() => {
-    document.body.style.setProperty("--modern-bar-height", `${bar.offsetHeight}px`);
     document.body.style.setProperty("--modern-tabs-height", `${tabs.offsetHeight}px`);
     document.body.style.setProperty("--modern-rail-height", `${rail.offsetHeight}px`);
   });
-  for (const node of [bar, tabs, rail]) sizes.observe(node);
+  for (const node of [tabs, rail]) sizes.observe(node);
 
   const watch = (node, options) => { if (node) new MutationObserver(schedule).observe(node, options); };
   watch(document.querySelector(".secondaryNav"), { subtree: true, attributes: true, attributeFilter: ["aria-current"] });
   watch(document.querySelector("#lyrionView .lyrionTabs"), { subtree: true, attributes: true, attributeFilter: ["aria-selected"] });
   watch(document.body, { attributes: true, attributeFilter: ["data-playback-system"] });
-  const playbackChanges = { subtree: true, childList: true, characterData: true, attributes: true, attributeFilter: ["style", "hidden", "disabled", "src", "class"] };
-  watch($("playerView"), playbackChanges);
-  watch($("lyrionNow"), playbackChanges);
   watch($("zoneSelect"), { childList: true, subtree: true });
   watch($("lyrionPlayer"), { childList: true, subtree: true });
   for (const select of [$("zoneSelect"), $("lyrionPlayer"), systemSelect]) select?.addEventListener("change", schedule);
@@ -453,6 +340,5 @@
 
   syncLinks();
   syncRail();
-  syncBar();
   syncDevices();
 })();

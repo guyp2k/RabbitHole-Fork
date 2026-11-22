@@ -155,24 +155,6 @@ test("the Links menu carries the configured Rouen and HQPlayer links, as today, 
   assert.deepEqual(shell.menuLinks([], []), []);
 });
 
-test("Lyrion's position line splits into the bar's elapsed and total times", () => {
-  assert.deepEqual(shell.splitTime("1:01 / 4:05"), ["1:01", "4:05"]);
-  assert.deepEqual(shell.splitTime("Live stream"), ["Live stream", ""]);
-  assert.deepEqual(shell.splitTime(""), ["", ""]);
-});
-
-test("the bar's seek and volume sliders hand their value to the existing slider and fire its own event", () => {
-  const events = [];
-  const target = { value: "0", disabled: false, dispatchEvent: (event) => events.push([event.type, target.value]) };
-  shell.forwardRange(target, 42, "input");
-  shell.forwardRange(target, 57, "change");
-  assert.deepEqual(events, [["input", "42"], ["change", "57"]]);
-  target.disabled = true;
-  shell.forwardRange(target, 99, "change");
-  assert.equal(target.value, "57", "a disabled slider is left alone");
-  assert.equal(events.length, 2);
-});
-
 test("the page loads the Modern stylesheet last and the Modern shell after every script it mirrors", () => {
   assert.match(html, /<link rel="stylesheet" href="\/waveformSeek\.css\?v=\d+">\n    <link rel="stylesheet" href="\/modern\.css\?v=[\w-]+">\n  <\/head>/);
   const at = (file) => html.indexOf(`src="/${file}`);
@@ -222,7 +204,7 @@ test("every Modern rule is scoped under body.layoutModern, so Classic renders ex
   }
 });
 
-test("Modern hides the five stacked rows the rail and player bar replace", () => {
+test("Modern hides the five stacked rows the rail replaces", () => {
   const hidden = cssRules(css).filter((r) => /display:\s*none/.test(r.block) && !r.media).flatMap((r) => splitSelectors(r.selector));
   for (const row of [".playbackSystemBar", "#hqplayerLinks", "#roonZoneBar", "#lyrionPlayerBar", ".shell > .topbar", ".shell > .secondaryNav"]) {
     assert.ok(hidden.some((s) => s === `body.layoutModern ${row}`), `${row} is hidden in Modern`);
@@ -235,8 +217,8 @@ test("Modern text is drawn only in theme colours, so every theme recolours it", 
   for (const value of declarations) assert.match(value, /^(var\(--(text|muted|accent|bg)\)|inherit|currentColor)( !important)?$/, value);
 });
 
-test("rail, tab and player bar controls are at least 44px touch targets", () => {
-  const rule = cssRules(css).find((r) => r.selector === "body.layoutModern :is(.modernRail, .modernTabs, .modernPlayerBar, .modernMenuPanel) :is(button, a)");
+test("rail, tab and menu controls are at least 44px touch targets", () => {
+  const rule = cssRules(css).find((r) => r.selector === "body.layoutModern :is(.modernRail, .modernTabs, .modernMenuPanel) :is(button, a)");
   assert.ok(rule, "one shared control rule");
   assert.match(rule.block, /min-height: 44px( !important)?;/);
   assert.match(rule.block, /min-width: 44px;/);
@@ -253,56 +235,58 @@ test("under 700px the rail becomes a bottom tab bar; above it the tab bar is not
   assert.match(phone.block, /position: fixed;/);
 });
 
-test("the player bar puts the volume directly under the transport buttons, above the seek bar", () => {
-  const transport = source.slice(source.indexOf('make("div", { className: "modernTransport" }'), source.indexOf('make("div", { className: "modernBarTools" }'));
-  const order = ["modernTransportButtons", "volumeLabel", "modernSeekRow"].map((marker) => transport.indexOf(marker));
-  assert.ok(order.every((at) => at > 0), `all three in the transport column: ${order}`);
-  assert.deepEqual([...order].sort((a, b) => a - b), order);
-  assert.doesNotMatch(source.slice(source.indexOf('make("div", { className: "modernBarTools" }')), /volumeLabel\)/);
-});
-
-test("Now Playing counts as on screen for Roon when the player view is active and for Lyrion when its Now Playing tab is selected", () => {
-  assert.equal(shell.nowPlayingOnScreen("roon", { playerViewActive: true, lyrionNowSelected: false }), true);
-  assert.equal(shell.nowPlayingOnScreen("roon", { playerViewActive: false, lyrionNowSelected: true }), false);
-  assert.equal(shell.nowPlayingOnScreen("lyrion", { playerViewActive: true, lyrionNowSelected: false }), false);
-  assert.equal(shell.nowPlayingOnScreen("lyrion", { playerViewActive: false, lyrionNowSelected: true }), true);
-});
-
-test("while Now Playing is on screen the bar hides its own transport, seek and volume, so no control is shown twice", () => {
-  assert.match(css, /body\.layoutModern\.modernOnNowPlaying \.modernTransport\s*\{\s*display: none;/);
-  assert.match(source, /document\.body\.classList\.toggle\("modernOnNowPlaying", nowPlayingOnScreen\(/);
-});
-
 test("in Modern the page's own volume moves directly under the page's transport buttons, for Roon and Lyrion", () => {
   assert.deepEqual(shell.pageVolumeHomes(), [{ volume: "nowVolume", row: "#playerView .controls" }, { volume: "lyrionVolume", row: "#lyrionNow .lyrionActions" }]);
   assert.match(source, /for \(const home of pageVolumeHomes\(\)\)/);
   assert.match(source, /row\.append\(control\)/, "inside the transport row, so the view's grid cannot auto-place it elsewhere");
   assert.match(css, /body\.layoutModern :is\(#playerView \.controls, #lyrionNow \.lyrionActions\):has\(\.modernPageVolume\)\s*\{[^}]*flex-wrap: wrap;[^}]*justify-content: center;/);
-  assert.match(css, /body\.layoutModern \.modernPageVolume\s*\{[^}]*flex-basis: 100%;[^}]*justify-content: center;/);
-});
-
-test("the bar's volume has minus and plus buttons that press the current source's own volume steps", () => {
-  const down = { id: "down", getAttribute: (name) => (name === "aria-label" ? "Volume down" : null) };
-  const up = { id: "up", getAttribute: (name) => (name === "aria-label" ? "Volume up" : null) };
-  const root = { querySelectorAll: (selector) => (selector === ".volumeStep" ? [up, down] : []) };
-  assert.deepEqual(shell.volumeStepButton(root, "down"), { id: "down" });
-  assert.deepEqual(shell.volumeStepButton(root, "up"), { id: "up" });
-  assert.equal(shell.volumeStepButton(null, "up"), null);
-  assert.match(source, /volumeStep\("down", "Volume Down", "−"\)/);
-  assert.match(source, /volumeStep\("up", "Volume Up", "\+"\)/);
-  assert.match(source, /addEventListener\("click", \(\) => volumeStepButton\(current\(\)\.volume\(\), direction\)\?\.click\(\)\)/);
-});
-
-test("the bar's volume group has no visible Volume word, so minus, slider and plus sit centred under play", () => {
-  const group = source.slice(source.indexOf("const volumeLabel"), source.indexOf("\n", source.indexOf("const volumeLabel")));
-  assert.doesNotMatch(group, /text: "Volume"/);
-  assert.match(css, /body\.layoutModern \.modernVolume\s*\{[^}]*justify-content: center;/);
-});
-
-test("with the bar's transport hidden on Now Playing, Zone and Links stay in the bar's right-hand column", () => {
-  assert.match(css, /body\.layoutModern\.modernOnNowPlaying \.modernBarTools\s*\{\s*grid-column: 3;/);
+  assert.match(css, /body\.layoutModern \.modernPageVolume\s*\{[^}]*grid-column: 1 \/ -1;[^}]*flex-basis: 100%;[^}]*justify-content: center;/, "its own full-width row under the buttons, in the grid and the flex layouts");
 });
 
 test("the moved page volume's minus and plus are round 44px buttons on Roon and Lyrion alike", () => {
   assert.match(css, /body\.layoutModern \.modernPageVolume \.volumeStep\s*\{[^}]*flex: 0 0 44px;[^}]*width: 44px;[^}]*height: 44px;[^}]*border-radius: 50% !important;/);
+});
+
+test("Modern has no bottom player bar: the page's own controls are the only transport", () => {
+  assert.doesNotMatch(source, /modernPlayerBar/);
+  assert.doesNotMatch(css, /modernPlayerBar/);
+  assert.doesNotMatch(source, /modernTransport|modernSeek|modernVolume/);
+});
+
+test("Zone and Links live in the side rail, above the Roon and Lyrion switch", () => {
+  assert.match(source, /const railTools = make\("div", \{ className: "modernRailTools" \}, zoneMenu, linksMenu\);/);
+  assert.match(source, /rail\.append\(brand, railBody, railTools, systemSwitch\);/);
+  assert.match(css, /body\.layoutModern \.modernRailTools\s*\{[^}]*margin-top: auto;/);
+});
+
+test("the rail's menus open beside the rail, so the rail's own overflow cannot clip them", () => {
+  const panel = css.slice(css.indexOf("body.layoutModern .modernMenuPanel {"));
+  assert.match(panel.slice(0, panel.indexOf("}")), /position: fixed;[^}]*left: calc\(var\(--modern-rail-width\) \+ 8px\);/);
+});
+
+test("a rail section shows its items when it is the current one or was expanded, unless it was collapsed", () => {
+  const empty = { expanded: [], collapsed: [] };
+  assert.equal(shell.sectionOpen("listen", { current: "listen", ...empty }), true);
+  assert.equal(shell.sectionOpen("discover", { current: "listen", ...empty }), false);
+  assert.equal(shell.sectionOpen("discover", { current: "listen", expanded: ["discover"], collapsed: [] }), true);
+  assert.equal(shell.sectionOpen("listen", { current: "listen", expanded: [], collapsed: ["listen"] }), false);
+});
+
+test("clicking a rail heading expands or collapses that section in place and never navigates", () => {
+  assert.deepEqual(shell.toggleSection("discover", { current: "listen", expanded: [], collapsed: [] }), { expanded: ["discover"], collapsed: [] });
+  assert.deepEqual(shell.toggleSection("discover", { current: "listen", expanded: ["discover"], collapsed: [] }), { expanded: [], collapsed: ["discover"] });
+  assert.deepEqual(shell.toggleSection("listen", { current: "listen", expanded: [], collapsed: [] }), { expanded: [], collapsed: ["listen"] });
+  const heading = source.slice(source.indexOf("heading.addEventListener"), source.indexOf("\n", source.indexOf("heading.addEventListener")));
+  assert.doesNotMatch(heading, /openSection|\.click\(\)/);
+  assert.match(css, /body\.layoutModern \.modernRailSection:not\(\.isOpen\) \.modernRailItems\s*\{\s*display: none;/);
+  assert.match(source, /className: "modernCaret", "aria-hidden": "true"/);
+});
+
+test("a hidden rail menu, such as Links with no links configured, takes no space", () => {
+  assert.match(css, /body\.layoutModern \.modernMenu\[hidden\]\s*\{\s*display: none;/);
+});
+
+test("the rail's menu panels hang off the page, not the rail, so the rail's blur and overflow cannot clip them", () => {
+  assert.match(source, /document\.body\.append\(rail, tabs, zonePanel, linksPanel\);/);
+  assert.match(source, /const inside = \[zoneMenu, linksMenu, zonePanel, linksPanel\]\.some\(\(node\) => node\.contains\(event\.target\)\);/);
 });
