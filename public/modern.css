@@ -568,3 +568,12 @@ body.layoutModern.modernAmbientOn .modernAmbient {
 @media (prefers-reduced-motion: reduce) {
   body.layoutModern .modernAmbient { transition: none; }
 }
+
+body.layoutModern #playerView .player.player--regular:not(.isMaximized):not(.isFullWindow) > :is(.now, .nowDiscoveryTools) {
+  grid-row: 2 / -1;
+  align-self: stretch;
+  height: auto;
+  min-height: 0;
+  contain: size;
+  overflow-y: auto;
+}
