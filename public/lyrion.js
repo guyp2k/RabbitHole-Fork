@@ -568,6 +568,8 @@
     const list=$("lyrionDetails"),rows=lyrionDetailRows(track,duration,status,enrichedDetails?.key===detailKey(track)?enrichedDetails.details:null);
     list.replaceChildren(...rows.map(([label,value,note])=>{const row=document.createElement("div"),dt=document.createElement("dt"),dd=document.createElement("dd");row.className="sourceRow";dt.className="sourceLabel";dd.className="sourceValue";dt.textContent=label;dd.textContent=value;if(note){const n=document.createElement("span");n.className="sourceNote";n.textContent=note;dd.append(" ",n);}row.append(dt,dd);return row;}));
     list.hidden=!rows.length;
+    const format=rows.find(([label])=>label==="Format");
+    $("lyrionNow").dispatchEvent(new CustomEvent("lyrion-format", { detail: { text: format?.[1] || "", note: format?.[2] || "" } }));
   }
   function renderLyrionSystem(snapshot){
     const cpu=snapshot?.cpu?.temperatureC,gpu=snapshot?.gpu?.temperatureC;
@@ -582,9 +584,10 @@
     try{const response=await fetch("/api/pc-monitor",{cache:"no-store"});renderLyrionSystem(response.ok?await response.json():null);}
     catch{renderLyrionSystem(null);}finally{systemLoading=false;}
   }
-  function renderHqplayer(h){
+  function renderHqplayer(h,status=null){
     const line=$("lyrionHqplayer"),text=hqplayerSummary(h);
     line.textContent=text;line.hidden=!text;renderHqpHost(line,h);
+    $("lyrionNow").dispatchEvent(new CustomEvent("lyrion-signal", { detail: { zoneName: status?.playerName || "", state: status?.connected ? status.state : "", hqplayer: h || null } }));
   }
   let statusRequest=0,lastAppliedStatus=0;
   function upNext(s){
@@ -633,7 +636,7 @@
     renderLyrionPlayerInfo(s);
     lyrionVolume.update(s.connected?s.volume:null);
     $("lyrionCompactTitle").textContent=[t?.title,t?.artist].filter(Boolean).join(" - ");
-    renderHqplayer(s.hqplayer);
+    renderHqplayer(s.hqplayer, s);
     $("lyrionChain").textContent=`Lyrion → ${s.playerName} · ${s.connected?s.state:"player offline"}${t?.source?` · ${t.source}`:""}`;
     const artworkIdentity=JSON.stringify([requestedPlayer,t?.url||'',t?.title||'',t?.artist||'']);
     artworkImage($("lyrionCover"),t?.artwork || "",artworkIdentity,t?.artworkFallback||"");

@@ -127,7 +127,7 @@
     return previous !== null && Boolean(next) && next !== previous;
   }
 
-  function signalChain({ zoneName, state, hqplayer, output }) {
+  function signalChain({ transport, zoneName, state, hqplayer, output }) {
     if (!zoneName || !hqplayer?.rate || !output) return null;
     const stages = [];
     const source = hqplayer.source;
@@ -135,7 +135,7 @@
       const rate = source.rate >= 1e6 ? `${+(source.rate / 1e6).toFixed(4)} MHz` : `${+(source.rate / 1000).toFixed(1)} kHz`;
       stages.push({ label: "Source", value: source.bits ? `${rate} / ${source.bits}-bit` : rate });
     }
-    stages.push({ label: "Roon", value: `${zoneName} · ${state}` });
+    stages.push({ label: transport, value: `${zoneName} · ${state}` });
     const dsp = [hqplayer.filter, hqplayer.shaper].filter(Boolean).join(" · ");
     if (dsp) stages.push({ label: "HQPlayer", value: dsp });
     stages.push({ label: "Output", value: output });
@@ -505,11 +505,13 @@
 
   const chainStrip = make("div", { className: "modernSignalChain", "aria-label": "Signal Chain", hidden: true });
   document.querySelector("#playerView .seekBlock")?.after(chainStrip);
-  function renderSignalChain(detail) {
-    const stages = signalChain({ zoneName: detail.zoneName, state: detail.state, hqplayer: detail.hqplayer, output: hqplayerRows(detail.hqplayer)[0]?.[1] || "" });
+  const lyrionChainStrip = make("div", { className: "modernSignalChain", "aria-label": "Signal Chain", hidden: true });
+  document.querySelector("#lyrionNow .lyrionStageFooter")?.after(lyrionChainStrip);
+  function renderSignalChain(strip, detail, transport) {
+    const stages = signalChain({ transport, zoneName: detail.zoneName, state: detail.state, hqplayer: detail.hqplayer, output: hqplayerRows(detail.hqplayer)[0]?.[1] || "" });
     if (!stages) {
-      chainStrip.replaceChildren();
-      chainStrip.hidden = true;
+      strip.replaceChildren();
+      strip.hidden = true;
       return;
     }
     const pills = make("div", { className: "modernChainStages" });
@@ -525,8 +527,8 @@
       if (part.level) span.dataset.level = part.level;
       host.append(span);
     });
-    chainStrip.replaceChildren(pills, host);
-    chainStrip.hidden = false;
+    strip.replaceChildren(pills, host);
+    strip.hidden = false;
   }
   const stagePlayer = document.querySelector("#playerView .player"), shellNode = document.querySelector(".shell");
   function fitStage() {
@@ -547,15 +549,20 @@
     new MutationObserver(fitStage).observe(stagePlayer, { attributes: true, attributeFilter: ["class"] });
   }
   window.addEventListener("resize", fitStage);
+  const showFormat = (node, detail) => {
+    node.textContent = formatLine(detail);
+    node.hidden = !node.textContent;
+  };
   const formatLineNode = make("p", { className: "modernFormatLine", hidden: true });
   $("nowPlaybackChain")?.after(formatLineNode);
-  document.querySelector("#playerView .player")?.addEventListener("roon-format", ({ detail }) => {
-    formatLineNode.textContent = formatLine(detail);
-    formatLineNode.hidden = !formatLineNode.textContent;
-  });
+  document.querySelector("#playerView .player")?.addEventListener("roon-format", ({ detail }) => showFormat(formatLineNode, detail));
+  const lyrionFormatNode = make("p", { className: "modernFormatLine", hidden: true });
+  $("lyrionChain")?.after(lyrionFormatNode);
+  $("lyrionNow")?.addEventListener("lyrion-format", ({ detail }) => showFormat(lyrionFormatNode, detail));
   const playback = $("nowPlayback"), artStack = document.querySelector("#playerView .player > .artStack");
   if (playback && artStack) new ResizeObserver(() => artStack.style.setProperty("--modern-strip-height", `${playback.offsetHeight}px`)).observe(playback);
-  document.querySelector("#playerView .player")?.addEventListener("roon-signal", ({ detail }) => renderSignalChain(detail));
+  document.querySelector("#playerView .player")?.addEventListener("roon-signal", ({ detail }) => renderSignalChain(chainStrip, detail, "Roon"));
+  $("lyrionNow")?.addEventListener("lyrion-signal", ({ detail }) => renderSignalChain(lyrionChainStrip, detail, "Lyrion"));
 
   const text = (node) => node.textContent.trim();
   const TRACK_WATCH = [

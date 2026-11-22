@@ -122,16 +122,19 @@ test("Lyrion's playback chain and HQPlayer output sit in one strip under the alb
   assert.match(source, /<p class="lyrionArtEmpty muted">Artwork will appear here<\/p><div id="lyrionPlayback" class="playbackStrip"><p id="lyrionChain">Lyrion<\/p><p id="lyrionHqplayer" class="playbackStripSignal" hidden><\/p><p id="lyrionRating" class="nowRating" hidden><\/p><\/div>/);
   assert.doesNotMatch(source, /<h3>Playback<\/h3>/);
   const refresh = section("  async function refreshStatus()", "  async function loadPlayer()");
-  assert.match(refresh, /renderHqplayer\(s\.hqplayer\);/);
+  assert.match(refresh, /renderHqplayer\(s\.hqplayer, s\);/);
 });
 
 test("the Lyrion HQPlayer line shows the one-line summary and hides when HQPlayer reports nothing", () => {
   const line = { textContent: "", hidden: true, nextElementSibling: null, after(node) { this.nextElementSibling = node; } };
   const make = () => ({ className: "", hidden: false, textContent: "", dataset: {}, children: [], replaceChildren(...nodes) { this.children = nodes; } });
-  const context = { $: id => ({ lyrionHqplayer: line })[id], document: { createElement: make } };
+  const signals = [], stage = { dispatchEvent: (event) => { signals.push(event); return true; } };
+  const context = { $: id => ({ lyrionHqplayer: line, lyrionNow: stage })[id], document: { createElement: make }, CustomEvent: class { constructor(type, init) { this.type = type; this.detail = init.detail; } } };
   vm.runInNewContext(summary + section("  function renderHqplayer(", "  let statusRequest="), context);
-  context.renderHqplayer(parseHqplayerStatus(DSD));
+  context.renderHqplayer(parseHqplayerStatus(DSD), { playerName: "HQPlayer (HQPlayerEmbedded)", connected: true, state: "play" });
   assert.deepEqual([line.textContent, line.hidden], ["DSD512 · 22.5792 MHz / 1-bit SDM · poly-sinc-gauss-xla · ASDM7ECv3 · 1.4x realtime", false]);
+  assert.deepEqual([signals.at(-1).type, signals.at(-1).detail.zoneName, signals.at(-1).detail.state, signals.at(-1).detail.hqplayer.filter], ["lyrion-signal", "HQPlayer (HQPlayerEmbedded)", "play", "poly-sinc-gauss-xla"]);
   context.renderHqplayer(null);
   assert.deepEqual([line.textContent, line.hidden], ["", true]);
+  assert.deepEqual(JSON.parse(JSON.stringify(signals.at(-1).detail)), { zoneName: "", state: "", hqplayer: null });
 });
