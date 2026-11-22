@@ -476,9 +476,11 @@ test("there is no signal chain without a zone or an HQPlayer output", () => {
   assert.equal(shell.signalChain({ zoneName: "Den", state: "playing", hqplayer: { ...HQP, rate: 0 }, output: "" }), null);
 });
 
-test("the signal chain strip sits below the seek bar across the player and its pills keep their text inside", () => {
+test("the signal chain strip sits under the playback status below the cover and its pills keep their text inside", () => {
+  assert.match(source, /\$\("nowPlayback"\)\?\.append\(chainStrip\)/);
+  assert.doesNotMatch(source, /seekBlock"\)\?\.after\(chainStrip\)/);
   const strip = css.slice(css.indexOf("body.layoutModern .modernSignalChain {")).split("}")[0];
-  assert.match(strip, /grid-column: 1 \/ -1;/);
+  assert.doesNotMatch(strip, /grid-(column|row):/);
   const pills = css.slice(css.indexOf("body.layoutModern .modernChainStages {")).split("}")[0];
   assert.match(pills, /flex-wrap: wrap;/);
   const value = css.slice(css.indexOf("body.layoutModern .modernChainStage span {")).split("}")[0];
@@ -487,7 +489,13 @@ test("the signal chain strip sits below the seek bar across the player and its p
   const stage = css.slice(css.indexOf("body.layoutModern .modernChainStage {")).split("}")[0];
   assert.match(stage, /min-width: 0;/);
   assert.match(stage, /max-width: 100%;/);
-  assert.match(css, /body\.layoutModern :is\(#nowPlaybackSignal, #nowPlayback \.hqpHostLine\) \{\s*display: none !important;/);
+  assert.match(css, /body\.layoutModern :is\(#nowPlaybackSignal, #nowPlayback > \.hqpHostLine\) \{\s*display: none !important;/);
+});
+
+test("the cover shrinks by the measured height of the playback strip so the pills are never clipped", () => {
+  assert.match(source, /new ResizeObserver\(\(\) => artStack\.style\.setProperty\("--modern-strip-height", `\$\{playback\.offsetHeight\}px`\)\)\.observe\(playback\)/);
+  const rule = css.slice(css.indexOf("body.layoutModern #playerView .player > .artStack > .cover:has(+ #nowPlayback:not([hidden])) {")).split("}")[0];
+  assert.match(rule, /width: min\(100cqw, calc\(100cqh - var\(--modern-strip-height, 52px\) - 8px\)\) !important;/);
 });
 
 test("the strip follows roon-signal and draws the host health with its warning levels", () => {
@@ -495,4 +503,9 @@ test("the strip follows roon-signal and draws the host health with its warning l
   assert.match(source, /output: hqplayerRows\(detail\.hqplayer\)\[0\]\?\.\[1\] \|\| ""/);
   assert.match(source, /hqpHostParts\(detail\.hqplayer\)/);
   assert.match(source, /if \(part\.level\) span\.dataset\.level = part\.level;/);
+});
+
+test("a connector between pills that wrap onto different rows is hidden instead of dangling at a row end", () => {
+  assert.match(source, /wire\.style\.visibility = next\.getBoundingClientRect\(\)\.top >= previous\.getBoundingClientRect\(\)\.bottom \? "hidden" : "";/);
+  assert.match(source, /new ResizeObserver\(\(\) => tidyWires\(chainStrip\)\)\.observe\(chainStrip\)/);
 });

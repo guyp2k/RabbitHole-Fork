@@ -495,7 +495,16 @@
   if (lyrionCoverNode) new MutationObserver(syncAmbient).observe(lyrionCoverNode, { attributes: true, attributeFilter: ["src", "hidden"] });
 
   const chainStrip = make("div", { className: "modernSignalChain", "aria-label": "Signal Chain", hidden: true });
-  document.querySelector("#playerView .seekBlock")?.after(chainStrip);
+  $("nowPlayback")?.append(chainStrip);
+  const playback = $("nowPlayback"), artStack = document.querySelector("#playerView .player > .artStack");
+  if (playback && artStack) new ResizeObserver(() => artStack.style.setProperty("--modern-strip-height", `${playback.offsetHeight}px`)).observe(playback);
+  const tidyWires = (strip) => {
+    for (const wire of strip.querySelectorAll(".modernChainWire")) {
+      const previous = wire.previousElementSibling, next = wire.nextElementSibling;
+      wire.style.visibility = next.getBoundingClientRect().top >= previous.getBoundingClientRect().bottom ? "hidden" : "";
+    }
+  };
+  new ResizeObserver(() => tidyWires(chainStrip)).observe(chainStrip);
   function renderSignalChain(detail) {
     const stages = signalChain({ zoneName: detail.zoneName, state: detail.state, hqplayer: detail.hqplayer, output: hqplayerRows(detail.hqplayer)[0]?.[1] || "" });
     if (!stages) {
@@ -518,6 +527,7 @@
     });
     chainStrip.replaceChildren(pills, host);
     chainStrip.hidden = false;
+    tidyWires(chainStrip);
   }
   document.querySelector("#playerView .player")?.addEventListener("roon-signal", ({ detail }) => renderSignalChain(detail));
 
