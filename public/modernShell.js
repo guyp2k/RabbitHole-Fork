@@ -192,7 +192,7 @@
   const linksMenu = make("div", { className: "modernMenu" }, linksButton);
 
   const railTools = make("div", { className: "modernRailTools" }, zoneMenu, linksMenu);
-  rail.append(brand, railBody, railTools, systemSwitch);
+  rail.append(brand, railBody, systemSwitch, railTools);
   document.body.append(rail, tabs, zonePanel, linksPanel);
 
   for (const home of pageVolumeHomes()) {

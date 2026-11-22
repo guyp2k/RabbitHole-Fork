@@ -253,10 +253,11 @@ test("Modern has no bottom player bar: the page's own controls are the only tran
   assert.doesNotMatch(source, /modernTransport|modernSeek|modernVolume/);
 });
 
-test("Zone and Links live in the side rail, above the Roon and Lyrion switch", () => {
+test("Zone and Links live in the side rail, below the Roon and Lyrion switch", () => {
   assert.match(source, /const railTools = make\("div", \{ className: "modernRailTools" \}, zoneMenu, linksMenu\);/);
-  assert.match(source, /rail\.append\(brand, railBody, railTools, systemSwitch\);/);
-  assert.match(css, /body\.layoutModern \.modernRailTools\s*\{[^}]*margin-top: auto;/);
+  assert.match(source, /rail\.append\(brand, railBody, systemSwitch, railTools\);/);
+  assert.match(css, /body\.layoutModern \.modernSystemSwitch\s*\{[^}]*margin-top: auto;/, "the switch starts the bottom group");
+  assert.doesNotMatch(css.slice(css.indexOf("body.layoutModern .modernRailTools {")).split("}")[0], /margin-top: auto/);
 });
 
 test("the rail's menus open beside the rail, so the rail's own overflow cannot clip them", () => {

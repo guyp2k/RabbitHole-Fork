@@ -177,6 +177,7 @@ body.layoutModern .modernRail .modernRailItem[aria-current="page"] {
 body.layoutModern .modernSystemSwitch {
   display: flex;
   gap: 4px;
+  margin-top: auto;
   flex: 0 0 auto;
   padding: 4px;
   border: 1px solid var(--line);
@@ -245,7 +246,6 @@ body.layoutModern .modernRailTools {
   display: flex;
   flex-direction: column;
   gap: 6px;
-  margin-top: auto;
 }
 
 body.layoutModern .modernMenu[hidden] {
