@@ -1,4 +1,4 @@
-/* Modern layout: side rail and persistent player bar. Every rule is scoped to body.layoutModern so Classic is untouched. */
+/* Modern layout: side rail. Every rule is scoped to body.layoutModern so Classic is untouched. */
 
 body.layoutModern {
   --modern-rail-width: 232px;
@@ -23,14 +23,14 @@ body.layoutModern:not(.playerFullWindow):not(.playerMaximized):not(.lyrionFullsc
   width: auto;
   max-width: none;
   margin: 0 var(--modern-gutter) 0 calc(var(--modern-rail-width) + var(--modern-gutter));
-  padding-bottom: calc(var(--modern-bar-height, 96px) + 24px);
+  padding-bottom: 24px;
 }
 
-body.layoutModern:is(.playerFullWindow, .playerMaximized, .lyrionFullscreenOpen) :is(.modernRail, .modernTabs, .modernPlayerBar) {
+body.layoutModern:is(.playerFullWindow, .playerMaximized, .lyrionFullscreenOpen) :is(.modernRail, .modernTabs) {
   display: none;
 }
 
-body.layoutModern :is(.modernRail, .modernTabs, .modernPlayerBar, .modernMenuPanel) :is(button, a) {
+body.layoutModern :is(.modernRail, .modernTabs, .modernMenuPanel) :is(button, a) {
   min-height: 44px !important;
   min-width: 44px;
   box-sizing: border-box;
@@ -51,17 +51,17 @@ body.layoutModern :is(.modernRail, .modernTabs, .modernPlayerBar, .modernMenuPan
   cursor: pointer;
 }
 
-body.layoutModern :is(.modernRail, .modernTabs, .modernPlayerBar, .modernMenuPanel) :is(button, a):hover {
+body.layoutModern :is(.modernRail, .modernTabs, .modernMenuPanel) :is(button, a):hover {
   border-color: var(--line) !important;
   background: var(--panel-2) !important;
 }
 
-body.layoutModern :is(.modernRail, .modernTabs, .modernPlayerBar, .modernMenuPanel) :is(button, a, input):focus-visible {
+body.layoutModern :is(.modernRail, .modernTabs, .modernMenuPanel) :is(button, a, input):focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
 }
 
-body.layoutModern :is(.modernRail, .modernTabs, .modernPlayerBar) button:disabled {
+body.layoutModern :is(.modernRail, .modernTabs) button:disabled {
   cursor: default;
   opacity: 0.45;
 }
@@ -70,7 +70,7 @@ body.layoutModern .modernRail {
   position: fixed;
   z-index: 40;
   top: 0;
-  bottom: var(--modern-bar-height, 96px);
+  bottom: 0;
   left: 0;
   display: flex;
   flex-direction: column;
@@ -129,6 +129,7 @@ body.layoutModern .modernRailTitle {
 body.layoutModern .modernRail .modernRailHeading {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   width: 100%;
   min-height: 44px;
   padding: 0 10px;
@@ -139,7 +140,7 @@ body.layoutModern .modernRail .modernRailHeading {
   text-align: left;
 }
 
-body.layoutModern .modernRailSection:not(.isCurrent) .modernRailItems {
+body.layoutModern .modernRailSection:not(.isOpen) .modernRailItems {
   display: none;
 }
 
@@ -176,6 +177,7 @@ body.layoutModern .modernRail .modernRailItem[aria-current="page"] {
 body.layoutModern .modernSystemSwitch {
   display: flex;
   gap: 4px;
+  margin-top: auto;
   flex: 0 0 auto;
   padding: 4px;
   border: 1px solid var(--line);
@@ -198,85 +200,6 @@ body.layoutModern .modernTabs {
   display: none;
 }
 
-body.layoutModern .modernPlayerBar {
-  position: fixed;
-  z-index: 45;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  display: grid;
-  grid-template-columns: minmax(200px, 1fr) minmax(320px, 2fr) minmax(200px, 1fr);
-  align-items: center;
-  gap: 12px 20px;
-  box-sizing: border-box;
-  padding: 10px 20px;
-  border-top: 1px solid var(--line);
-  background: var(--panel-3);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  color: var(--text);
-}
-
-body.layoutModern .modernNow {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  min-width: 0;
-}
-
-body.layoutModern .modernArt {
-  flex: 0 0 auto;
-  width: 52px;
-  height: 52px;
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  background: var(--panel-2) center / cover no-repeat;
-}
-
-body.layoutModern .modernNowText {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  min-width: 0;
-}
-
-body.layoutModern :is(.modernNowTitle, .modernNowArtist) {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-body.layoutModern .modernNowTitle {
-  color: var(--text);
-  font-size: 15px;
-}
-
-body.layoutModern .modernNowArtist {
-  color: var(--muted);
-  font-size: 13px;
-}
-
-body.layoutModern .modernTransport {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4px;
-  min-width: 0;
-}
-
-body.layoutModern.modernOnNowPlaying .modernTransport {
-  display: none;
-}
-
-body.layoutModern .modernPlayerBar .modernVolumeStep {
-  display: inline-grid;
-  place-items: center;
-  width: 44px;
-  padding: 0;
-  border-radius: 50% !important;
-  font-size: 18px;
-}
-
 body.layoutModern :is(#playerView .controls, #lyrionNow .lyrionActions):has(.modernPageVolume) {
   flex-wrap: wrap;
   justify-content: center;
@@ -284,6 +207,7 @@ body.layoutModern :is(#playerView .controls, #lyrionNow .lyrionActions):has(.mod
 
 body.layoutModern .modernPageVolume {
   display: flex;
+  grid-column: 1 / -1;
   flex-basis: 100%;
   align-items: center;
   justify-content: center;
@@ -299,10 +223,6 @@ body.layoutModern .modernPageVolume .volumeStep {
   border-radius: 50% !important;
 }
 
-body.layoutModern.modernOnNowPlaying .modernBarTools {
-  grid-column: 3;
-}
-
 body.layoutModern .modernPageVolume .volumeLabel {
   position: absolute;
   width: 1px;
@@ -312,79 +232,9 @@ body.layoutModern .modernPageVolume .volumeLabel {
   white-space: nowrap;
 }
 
-body.layoutModern .modernTransportButtons {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-body.layoutModern .modernPlayerBar .modernTransportButton {
-  display: inline-grid;
-  place-items: center;
-  width: 44px;
-  padding: 0;
-  border-radius: 50% !important;
-}
-
-body.layoutModern .modernPlayerBar .modernPlayPause {
-  width: 48px;
-  height: 48px;
-  border-color: var(--text) !important;
-  background: var(--text) !important;
-  color: var(--bg) !important;
-}
-
 body.layoutModern .modernIcon {
   width: 22px;
   height: 22px;
-}
-
-body.layoutModern .modernSeekRow {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  width: 100%;
-  max-width: 620px;
-}
-
-body.layoutModern .modernSeekTime {
-  flex: 0 0 auto;
-  min-width: 40px;
-  color: var(--muted);
-  font-size: 12px;
-  font-variant-numeric: tabular-nums;
-}
-
-body.layoutModern .modernSeekTime:last-child {
-  text-align: right;
-}
-
-body.layoutModern .modernPlayerBar input[type="range"] {
-  flex: 1 1 auto;
-  min-width: 0;
-  height: 44px;
-  min-height: 44px;
-  margin: 0;
-  padding: 0;
-  border: 0;
-  background: transparent;
-  box-shadow: none;
-  accent-color: var(--accent);
-  cursor: pointer;
-}
-
-body.layoutModern .modernPlayerBar input[type="range"]:disabled {
-  cursor: default;
-  opacity: 0.5;
-}
-
-body.layoutModern .modernBarTools {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 8px;
-  min-width: 0;
 }
 
 body.layoutModern .modernMenu {
@@ -392,16 +242,22 @@ body.layoutModern .modernMenu {
   min-width: 0;
 }
 
-body.layoutModern .modernMenu[hidden],
-body.layoutModern .modernVolume[hidden] {
+body.layoutModern .modernRailTools {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+body.layoutModern .modernMenu[hidden] {
   display: none;
 }
 
-body.layoutModern .modernPlayerBar .modernMenuButton {
-  display: inline-flex;
+body.layoutModern .modernRail .modernMenuButton {
+  display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 6px;
-  max-width: 260px;
+  width: 100%;
   padding: 0 12px;
   border-color: var(--line) !important;
   background: var(--panel) !important;
@@ -419,10 +275,10 @@ body.layoutModern .modernCaret {
 }
 
 body.layoutModern .modernMenuPanel {
-  position: absolute;
+  position: fixed;
   z-index: 50;
-  right: 0;
-  bottom: calc(100% + 8px);
+  left: calc(var(--modern-rail-width) + 8px);
+  bottom: 14px;
   display: flex;
   flex-direction: column;
   gap: 6px;
@@ -501,31 +357,6 @@ body.layoutModern .modernMenuPanel a {
   padding: 0 12px;
 }
 
-body.layoutModern .modernVolume {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  min-height: 44px;
-  color: var(--muted);
-  font-size: 13px;
-}
-
-body.layoutModern .modernVolume input[type="range"] {
-  width: 110px;
-}
-
-@media (max-width: 1100px) {
-  body.layoutModern .modernPlayerBar {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr);
-  }
-
-  body.layoutModern .modernBarTools {
-    grid-column: 1 / -1;
-    justify-content: flex-start;
-  }
-}
-
 @media (max-width: 699px) {
   body.layoutModern {
     --modern-rail-width: 0px;
@@ -535,7 +366,7 @@ body.layoutModern .modernVolume input[type="range"] {
   body.layoutModern:not(.playerFullWindow):not(.playerMaximized):not(.lyrionFullscreenOpen) .shell {
     margin: 0 var(--modern-gutter);
     padding-top: calc(var(--modern-rail-height, 60px) + 8px);
-    padding-bottom: calc(var(--modern-bar-height, 140px) + var(--modern-tabs-height, 64px) + 16px);
+    padding-bottom: calc(var(--modern-tabs-height, 64px) + 16px);
   }
 
   body.layoutModern .modernRail {
@@ -619,50 +450,15 @@ body.layoutModern .modernVolume input[type="range"] {
     font-weight: 600;
   }
 
-  body.layoutModern .modernPlayerBar {
-    bottom: var(--modern-tabs-height, 64px);
-    grid-template-columns: minmax(0, 1fr) auto;
-    gap: 4px 8px;
-    padding: 8px 12px;
-  }
-
-  body.layoutModern[data-playback-system="lyrion"] .modernPlayerBar {
-    bottom: 0;
-  }
-
-  body.layoutModern .modernArt {
-    width: 44px;
-    height: 44px;
-  }
-
-  body.layoutModern .modernTransport {
-    display: contents;
-  }
-
-  body.layoutModern .modernSeekRow {
-    grid-column: 1 / -1;
-    max-width: none;
-  }
-
-  body.layoutModern .modernBarTools {
-    grid-column: 1 / -1;
-    flex-wrap: nowrap;
-    justify-content: space-between;
-  }
-
   body.layoutModern .modernMenuButton {
     max-width: 46vw;
   }
 
 
-  body.layoutModern .modernVolume input[type="range"] {
-    width: 96px;
-  }
-
   body.layoutModern .modernMenuPanel {
     position: fixed;
     right: 12px;
-    bottom: calc(var(--modern-bar-height, 140px) + var(--modern-tabs-height, 64px) + 8px);
+    bottom: calc(var(--modern-tabs-height, 64px) + 8px);
     left: 12px;
     width: auto;
     max-width: none;
