@@ -556,7 +556,13 @@ test("Lyrion shares its HQPlayer reading and its format as events for the Modern
 test("Modern draws the Lyrion format line and signal chain from those events and hides Lyrion's old HQPlayer lines", () => {
   assert.match(source, /\$\("lyrionChain"\)\?\.after\(lyrionFormatNode\)/);
   assert.match(source, /addEventListener\("lyrion-format", \(\{ detail \}\) => showFormat\(lyrionFormatNode, detail\)\)/);
-  assert.match(source, /addEventListener\("lyrion-signal", \(\{ detail \}\) => renderSignalChain\(lyrionChainStrip, detail, "Lyrion"\)\)/);
   assert.match(source, /addEventListener\("roon-signal", \(\{ detail \}\) => renderSignalChain\(chainStrip, detail, "Roon"\)\)/);
   assert.match(css, /body\.layoutModern :is\(#lyrionHqplayer, #lyrionPlayback > \.hqpHostLine\) \{\s*display: none !important;/);
+});
+
+test("Lyrion's chain uses the HQPlayer reading only while that Lyrion player is playing, since HQPlayer may be playing Roon", () => {
+  const detail = (state) => ({ zoneName: "HQPlayer (HQPlayerEmbedded)", state, hqplayer: HQP });
+  assert.deepEqual(shell.lyrionChainDetail(detail("playing")), detail("playing"));
+  for (const state of ["stopped", "paused", ""]) assert.deepEqual(shell.lyrionChainDetail(detail(state)), { ...detail(state), hqplayer: null }, state);
+  assert.match(source, /addEventListener\("lyrion-signal", \(\{ detail \}\) => renderSignalChain\(lyrionChainStrip, lyrionChainDetail\(detail\), "Lyrion"\)\)/);
 });
