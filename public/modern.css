@@ -545,3 +545,26 @@ body.layoutModern .modernMenuPanel a {
     max-width: none;
   }
 }
+
+@property --ambient-1 { syntax: "<color>"; inherits: true; initial-value: transparent; }
+@property --ambient-2 { syntax: "<color>"; inherits: true; initial-value: transparent; }
+
+body.layoutModern .modernAmbient {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 70% 60% at 22% 8%, color-mix(in srgb, var(--ambient-1) 34%, transparent), transparent 70%),
+    radial-gradient(ellipse 60% 55% at 88% 92%, color-mix(in srgb, var(--ambient-2) 26%, transparent), transparent 70%);
+  opacity: 0;
+  transition: --ambient-1 1.6s ease, --ambient-2 1.6s ease;
+}
+
+body.layoutModern.modernAmbientOn .modernAmbient {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body.layoutModern .modernAmbient { transition: none; }
+}

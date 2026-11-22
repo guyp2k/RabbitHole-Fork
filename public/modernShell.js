@@ -99,6 +99,35 @@
     ];
   }
 
+  function ambientPalette(data) {
+    const bins = new Map();
+    for (let index = 0; index + 3 < data.length; index += 4) {
+      const [r, g, b, a] = [data[index], data[index + 1], data[index + 2], data[index + 3]];
+      if (a < 128) continue;
+      const key = ((r >> 4) << 8) | ((g >> 4) << 4) | (b >> 4);
+      const weight = 1 + 3 * ((Math.max(r, g, b) - Math.min(r, g, b)) / 255);
+      const bin = bins.get(key) || { r: 0, g: 0, b: 0, weight: 0, count: 0 };
+      bin.r += r; bin.g += g; bin.b += b; bin.count += 1; bin.weight += weight;
+      bins.set(key, bin);
+    }
+    if (!bins.size) return null;
+    const colours = [...bins.values()].sort((x, y) => y.weight - x.weight)
+      .map((bin) => [bin.r, bin.g, bin.b].map((channel) => channel / bin.count));
+    const first = colours[0];
+    const second = colours.find((colour) => Math.hypot(...colour.map((channel, at) => channel - first[at])) > 64) || first;
+    const lift = (colour) => {
+      const peak = Math.max(...colour);
+      const scale = peak > 0 && peak < 140 ? 140 / peak : 1;
+      return `rgb(${colour.map((channel) => Math.min(255, Math.round(channel * scale))).join(", ")})`;
+    };
+    return [lift(first), lift(second)];
+  }
+
+  function artworkFromCss(value) {
+    const match = /url\(\s*["']?(.*?)["']?\s*\)/.exec(String(value || ""));
+    return match && match[1] ? match[1] : null;
+  }
+
   function readFolded(saved) {
     try {
       const value = JSON.parse(saved);
@@ -111,7 +140,7 @@
   window.RabbitHoleModernShell = {
     railSections, lyrionRailItems, systemChoices, chooseSystem: chooseValue, deviceMenu,
     chooseDevice: chooseValue, openDeviceControls, menuLinks, pageVolumeHomes, sectionOpen, toggleSection,
-    roonPanelGroups, readFolded, nowDetailsGroups
+    roonPanelGroups, readFolded, nowDetailsGroups, ambientPalette, artworkFromCss
   };
 
   if (!document.body.classList.contains("layoutModern")) return;
@@ -397,7 +426,46 @@
   for (const select of [$("zoneSelect"), $("lyrionPlayer"), systemSelect]) select?.addEventListener("change", schedule);
   for (const links of [$("playbackSystemLinks"), $("hqplayerLinkList")]) if (links) new MutationObserver(syncLinks).observe(links, { childList: true });
 
+  document.body.prepend(make("div", { className: "modernAmbient", "aria-hidden": "true" }));
+  let ambientUrl = null;
+  const ambientCanvas = document.createElement("canvas");
+  ambientCanvas.width = ambientCanvas.height = 32;
+  const clearAmbient = () => document.body.classList.remove("modernAmbientOn");
+  function syncAmbient() {
+    const lyrionCover = $("lyrionCover");
+    const url = system() === "lyrion"
+      ? (lyrionCover && !lyrionCover.hidden && lyrionCover.getAttribute("src")) || null
+      : artworkFromCss(document.body.style.getPropertyValue("--now-artwork-backdrop"));
+    if (url === ambientUrl) return;
+    ambientUrl = url;
+    if (!url) return clearAmbient();
+    const image = new Image();
+    image.crossOrigin = "anonymous";
+    image.onload = () => {
+      if (url !== ambientUrl) return;
+      let palette = null;
+      try {
+        const context = ambientCanvas.getContext("2d", { willReadFrequently: true });
+        context.clearRect(0, 0, 32, 32);
+        context.drawImage(image, 0, 0, 32, 32);
+        palette = ambientPalette(context.getImageData(0, 0, 32, 32).data);
+      } catch {
+        palette = null;
+      }
+      if (!palette) return clearAmbient();
+      document.documentElement.style.setProperty("--ambient-1", palette[0]);
+      document.documentElement.style.setProperty("--ambient-2", palette[1]);
+      document.body.classList.add("modernAmbientOn");
+    };
+    image.onerror = () => { if (url === ambientUrl) clearAmbient(); };
+    image.src = url;
+  }
+  new MutationObserver(syncAmbient).observe(document.body, { attributes: true, attributeFilter: ["style", "data-playback-system"] });
+  const lyrionCoverNode = $("lyrionCover");
+  if (lyrionCoverNode) new MutationObserver(syncAmbient).observe(lyrionCoverNode, { attributes: true, attributeFilter: ["src", "hidden"] });
+
   syncLinks();
   syncRail();
   syncDevices();
+  syncAmbient();
 })();
