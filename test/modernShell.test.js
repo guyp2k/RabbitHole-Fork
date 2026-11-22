@@ -260,3 +260,49 @@ test("the player bar puts the volume directly under the transport buttons, above
   assert.deepEqual([...order].sort((a, b) => a - b), order);
   assert.doesNotMatch(source.slice(source.indexOf('make("div", { className: "modernBarTools" }')), /volumeLabel\)/);
 });
+
+test("Now Playing counts as on screen for Roon when the player view is active and for Lyrion when its Now Playing tab is selected", () => {
+  assert.equal(shell.nowPlayingOnScreen("roon", { playerViewActive: true, lyrionNowSelected: false }), true);
+  assert.equal(shell.nowPlayingOnScreen("roon", { playerViewActive: false, lyrionNowSelected: true }), false);
+  assert.equal(shell.nowPlayingOnScreen("lyrion", { playerViewActive: true, lyrionNowSelected: false }), false);
+  assert.equal(shell.nowPlayingOnScreen("lyrion", { playerViewActive: false, lyrionNowSelected: true }), true);
+});
+
+test("while Now Playing is on screen the bar hides its own transport, seek and volume, so no control is shown twice", () => {
+  assert.match(css, /body\.layoutModern\.modernOnNowPlaying \.modernTransport\s*\{\s*display: none;/);
+  assert.match(source, /document\.body\.classList\.toggle\("modernOnNowPlaying", nowPlayingOnScreen\(/);
+});
+
+test("in Modern the page's own volume moves directly under the page's transport buttons, for Roon and Lyrion", () => {
+  assert.deepEqual(shell.pageVolumeHomes(), [{ volume: "nowVolume", row: "#playerView .controls" }, { volume: "lyrionVolume", row: "#lyrionNow .lyrionActions" }]);
+  assert.match(source, /for \(const home of pageVolumeHomes\(\)\)/);
+  assert.match(source, /row\.append\(control\)/, "inside the transport row, so the view's grid cannot auto-place it elsewhere");
+  assert.match(css, /body\.layoutModern :is\(#playerView \.controls, #lyrionNow \.lyrionActions\):has\(\.modernPageVolume\)\s*\{[^}]*flex-wrap: wrap;[^}]*justify-content: center;/);
+  assert.match(css, /body\.layoutModern \.modernPageVolume\s*\{[^}]*flex-basis: 100%;[^}]*justify-content: center;/);
+});
+
+test("the bar's volume has minus and plus buttons that press the current source's own volume steps", () => {
+  const down = { id: "down", getAttribute: (name) => (name === "aria-label" ? "Volume down" : null) };
+  const up = { id: "up", getAttribute: (name) => (name === "aria-label" ? "Volume up" : null) };
+  const root = { querySelectorAll: (selector) => (selector === ".volumeStep" ? [up, down] : []) };
+  assert.deepEqual(shell.volumeStepButton(root, "down"), { id: "down" });
+  assert.deepEqual(shell.volumeStepButton(root, "up"), { id: "up" });
+  assert.equal(shell.volumeStepButton(null, "up"), null);
+  assert.match(source, /volumeStep\("down", "Volume Down", "−"\)/);
+  assert.match(source, /volumeStep\("up", "Volume Up", "\+"\)/);
+  assert.match(source, /addEventListener\("click", \(\) => volumeStepButton\(current\(\)\.volume\(\), direction\)\?\.click\(\)\)/);
+});
+
+test("the bar's volume group has no visible Volume word, so minus, slider and plus sit centred under play", () => {
+  const group = source.slice(source.indexOf("const volumeLabel"), source.indexOf("\n", source.indexOf("const volumeLabel")));
+  assert.doesNotMatch(group, /text: "Volume"/);
+  assert.match(css, /body\.layoutModern \.modernVolume\s*\{[^}]*justify-content: center;/);
+});
+
+test("with the bar's transport hidden on Now Playing, Zone and Links stay in the bar's right-hand column", () => {
+  assert.match(css, /body\.layoutModern\.modernOnNowPlaying \.modernBarTools\s*\{\s*grid-column: 3;/);
+});
+
+test("the moved page volume's minus and plus are round 44px buttons on Roon and Lyrion alike", () => {
+  assert.match(css, /body\.layoutModern \.modernPageVolume \.volumeStep\s*\{[^}]*flex: 0 0 44px;[^}]*width: 44px;[^}]*height: 44px;[^}]*border-radius: 50% !important;/);
+});
