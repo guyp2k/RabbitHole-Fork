@@ -496,3 +496,31 @@ test("the strip follows roon-signal and draws the host health with its warning l
   assert.match(source, /hqpHostParts\(detail\.hqplayer\)/);
   assert.match(source, /if \(part\.level\) span\.dataset\.level = part\.level;/);
 });
+
+test("the cover is sized from the measured playback strip height so no gap is left under the rating", () => {
+  assert.match(source, /new ResizeObserver\(\(\) => artStack\.style\.setProperty\("--modern-strip-height", `\$\{playback\.offsetHeight\}px`\)\)\.observe\(playback\)/);
+  const rule = css.slice(css.indexOf("body.layoutModern #playerView .player > .artStack > .cover:has(+ #nowPlayback:not([hidden])) {")).split("}")[0];
+  assert.match(rule, /width: min\(100cqw, calc\(100cqh - var\(--modern-strip-height, 52px\) - 8px\)\) !important;/);
+});
+
+test("the centre format line reads the format and where it came from, and is empty when nothing matched", () => {
+  assert.equal(shell.formatLine({ text: "44.1 kHz / 16-bit", note: "Library file" }), "44.1 kHz / 16-bit · Library file");
+  assert.equal(shell.formatLine({ text: "FLAC 96 kHz / 24-bit", note: "" }), "FLAC 96 kHz / 24-bit");
+  assert.equal(shell.formatLine({ text: "", note: "TIDAL catalogue" }), "");
+  assert.equal(shell.formatLine(null), "");
+});
+
+test("the app shares every Now Playing format change, including the reset, as a roon-format event", () => {
+  const app = fs.readFileSync(require.resolve("../public/app.js"), "utf8");
+  assert.match(app, /function shareNowFormat\(\) \{\s*document\.querySelector\("#playerView \.player"\)\?\.dispatchEvent\(new CustomEvent\("roon-format", \{ detail: \{ text: state\.nowFormat\.text, note: NOW_FORMAT_NOTES\[state\.nowFormat\.from\] \|\| "" \} \}\)\);\s*\}/);
+  assert.match(app, /state\.nowFormat = \{ key, text: "", from: "" \};\s*shareNowFormat\(\);/);
+  assert.match(app, /state\.nowFormat = \{ key, text: result\.format, from: result\.from \|\| "" \};\s*shareNowFormat\(\);/);
+});
+
+test("Modern puts the format line under the playback status and hides it when empty", () => {
+  assert.match(source, /\$\("nowPlaybackChain"\)\?\.after\(formatLineNode\)/);
+  assert.match(source, /addEventListener\("roon-format", \(\{ detail \}\) => \{\s*formatLineNode\.textContent = formatLine\(detail\);\s*formatLineNode\.hidden = !formatLineNode\.textContent;\s*\}\)/);
+  const rule = css.slice(css.indexOf("body.layoutModern .modernFormatLine {")).split("}")[0];
+  assert.match(rule, /color: var\(--muted\);/);
+  assert.match(rule, /text-align: center;/);
+});
