@@ -455,7 +455,7 @@ test("the cover, title and artist animate when the Roon or Lyrion track changes"
 const HQP = { state: 2, mode: "SDM (DSD)", rate: 22579200, bits: 1, filter: "poly-sinc-ext2-xla", shaper: "ASDM7ECv3", source: { rate: 96000, bits: 24 } };
 
 test("the signal chain runs source, Roon, HQPlayer and output from the HQPlayer reading", () => {
-  assert.deepEqual(shell.signalChain({ zoneName: "HQPd", state: "playing", hqplayer: HQP, output: "DSD512 · 22.5792 MHz / 1-bit SDM" }), [
+  assert.deepEqual(shell.signalChain({ transport: "Roon", zoneName: "HQPd", state: "playing", hqplayer: HQP, output: "DSD512 · 22.5792 MHz / 1-bit SDM" }), [
     { label: "Source", value: "96 kHz / 24-bit" },
     { label: "Roon", value: "HQPd · playing" },
     { label: "HQPlayer", value: "poly-sinc-ext2-xla · ASDM7ECv3" },
@@ -464,16 +464,16 @@ test("the signal chain runs source, Roon, HQPlayer and output from the HQPlayer 
 });
 
 test("the signal chain formats CD and DSD sources and leaves out a source HQPlayer did not report", () => {
-  const source = (src) => shell.signalChain({ zoneName: "HQPd", state: "playing", hqplayer: { ...HQP, source: src }, output: "x" })[0];
+  const source = (src) => shell.signalChain({ transport: "Roon", zoneName: "HQPd", state: "playing", hqplayer: { ...HQP, source: src }, output: "x" })[0];
   assert.deepEqual(source({ rate: 44100, bits: 16 }), { label: "Source", value: "44.1 kHz / 16-bit" });
   assert.deepEqual(source({ rate: 2822400, bits: 1 }), { label: "Source", value: "2.8224 MHz / 1-bit" });
   assert.deepEqual(source(undefined), { label: "Roon", value: "HQPd · playing" });
 });
 
 test("there is no signal chain without a zone or an HQPlayer output", () => {
-  assert.equal(shell.signalChain({ zoneName: "", state: "stopped", hqplayer: HQP, output: "x" }), null);
-  assert.equal(shell.signalChain({ zoneName: "Den", state: "playing", hqplayer: null, output: "" }), null);
-  assert.equal(shell.signalChain({ zoneName: "Den", state: "playing", hqplayer: { ...HQP, rate: 0 }, output: "" }), null);
+  assert.equal(shell.signalChain({ transport: "Roon", zoneName: "", state: "stopped", hqplayer: HQP, output: "x" }), null);
+  assert.equal(shell.signalChain({ transport: "Roon", zoneName: "Den", state: "playing", hqplayer: null, output: "" }), null);
+  assert.equal(shell.signalChain({ transport: "Roon", zoneName: "Den", state: "playing", hqplayer: { ...HQP, rate: 0 }, output: "" }), null);
 });
 
 test("the signal chain strip sits below the seek bar across the player and its pills keep their text inside", () => {
@@ -491,7 +491,6 @@ test("the signal chain strip sits below the seek bar across the player and its p
 });
 
 test("the strip follows roon-signal and draws the host health with its warning levels", () => {
-  assert.match(source, /addEventListener\("roon-signal", \(\{ detail \}\) => renderSignalChain\(detail\)\)/);
   assert.match(source, /output: hqplayerRows\(detail\.hqplayer\)\[0\]\?\.\[1\] \|\| ""/);
   assert.match(source, /hqpHostParts\(detail\.hqplayer\)/);
   assert.match(source, /if \(part\.level\) span\.dataset\.level = part\.level;/);
@@ -519,7 +518,8 @@ test("the app shares every Now Playing format change, including the reset, as a 
 
 test("Modern puts the format line under the playback status and hides it when empty", () => {
   assert.match(source, /\$\("nowPlaybackChain"\)\?\.after\(formatLineNode\)/);
-  assert.match(source, /addEventListener\("roon-format", \(\{ detail \}\) => \{\s*formatLineNode\.textContent = formatLine\(detail\);\s*formatLineNode\.hidden = !formatLineNode\.textContent;\s*\}\)/);
+  assert.match(source, /const showFormat = \(node, detail\) => \{\s*node\.textContent = formatLine\(detail\);\s*node\.hidden = !node\.textContent;\s*\};/);
+  assert.match(source, /addEventListener\("roon-format", \(\{ detail \}\) => showFormat\(formatLineNode, detail\)\)/);
   const rule = css.slice(css.indexOf("body.layoutModern .modernFormatLine {")).split("}")[0];
   assert.match(rule, /color: var\(--muted\);/);
   assert.match(rule, /text-align: center;/);
@@ -539,4 +539,24 @@ test("Modern refits the cover area on resize and only in the regular player", ()
   assert.match(source, /player\.style\.removeProperty\("--rh-regular-stage-height"\)/);
   assert.match(source, /addEventListener\("resize", fitStage\)/);
   assert.match(source, /trailing: shellNode\.getBoundingClientRect\(\)\.bottom - box\.bottom/);
+});
+
+test("the signal chain names the transport, so Lyrion zones read Lyrion rather than Roon", () => {
+  const stages = shell.signalChain({ transport: "Lyrion", zoneName: "HQPlayer (HQPlayerEmbedded)", state: "play", hqplayer: HQP, output: "DSD512 · 22.5792 MHz / 1-bit SDM" });
+  assert.deepEqual(stages[1], { label: "Lyrion", value: "HQPlayer (HQPlayerEmbedded) · play" });
+});
+
+test("Lyrion shares its HQPlayer reading and its format as events for the Modern strip and format line", () => {
+  const lyrion = fs.readFileSync(require.resolve("../public/lyrion.js"), "utf8");
+  assert.match(lyrion, /\$\("lyrionNow"\)\.dispatchEvent\(new CustomEvent\("lyrion-signal", \{ detail: \{ zoneName: status\?\.playerName \|\| "", state: status\?\.connected \? status\.state : "", hqplayer: h \|\| null \} \}\)\);/);
+  assert.match(lyrion, /renderHqplayer\(s\.hqplayer, s\);/);
+  assert.match(lyrion, /\$\("lyrionNow"\)\.dispatchEvent\(new CustomEvent\("lyrion-format", \{ detail: \{ text: format\?\.\[1\] \|\| "", note: format\?\.\[2\] \|\| "" \} \}\)\);/);
+});
+
+test("Modern draws the Lyrion format line and signal chain from those events and hides Lyrion's old HQPlayer lines", () => {
+  assert.match(source, /\$\("lyrionChain"\)\?\.after\(lyrionFormatNode\)/);
+  assert.match(source, /addEventListener\("lyrion-format", \(\{ detail \}\) => showFormat\(lyrionFormatNode, detail\)\)/);
+  assert.match(source, /addEventListener\("lyrion-signal", \(\{ detail \}\) => renderSignalChain\(lyrionChainStrip, detail, "Lyrion"\)\)/);
+  assert.match(source, /addEventListener\("roon-signal", \(\{ detail \}\) => renderSignalChain\(chainStrip, detail, "Roon"\)\)/);
+  assert.match(css, /body\.layoutModern :is\(#lyrionHqplayer, #lyrionPlayback > \.hqpHostLine\) \{\s*display: none !important;/);
 });

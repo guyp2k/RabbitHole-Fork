@@ -672,3 +672,7 @@ body.layoutModern .modernFormatLine {
 body.layoutModern .modernFormatLine[hidden] {
   display: none;
 }
+
+body.layoutModern :is(#lyrionHqplayer, #lyrionPlayback > .hqpHostLine) {
+  display: none !important;
+}
