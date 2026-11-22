@@ -17,6 +17,9 @@ locations, albums and counts.*
 | Playback > Library: albums, search, paging | Yes (`roon_library`) |
 | Library, Genre, Decade and Stars lists, with Roon's counts | Yes (`roon_focus`) |
 | Album details | Yes (`roon_album`) |
+| Show > Recently Played: the last 60 library albums you played, newest first | Yes (`roon_history`); streams not in your library are left out |
+| Show > Most Played: your 30 most played albums with Roon's play counts | Yes (`roon_top`, then `roon_library` to find each album; remembered for 10 minutes) |
+| Show > Daily Picks: Roon's boxes for today, titled by why Roon picked them | Yes (`roon_daily_picks`); albums not in your library show "Not In Your Library" instead of play buttons |
 | Play, Play Next, Queue and Start Radio from the Library | Finds the album with `roon_album`, then plays it through **Rabbit Hole's own Roon extension** on the selected zone |
 | Covers on the Library page | Served through Rabbit Hole |
 | Now Playing, zones, transport, volume, the rest of the app | No |

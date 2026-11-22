@@ -20,8 +20,12 @@ function filtersFrom(params) {
   return args;
 }
 
-function createRoonLibraryApi({ deepRoon, roon, readJson, sendJson, fetchImpl = fetch }) {
+const TOP_CACHE_MS = 10 * 60 * 1000;
+const norm = (value) => String(value || "").normalize("NFKC").replace(/\s+/g, " ").trim().toLowerCase();
+
+function createRoonLibraryApi({ deepRoon, roon, readJson, sendJson, fetchImpl = fetch, clock = Date.now }) {
   let imageOrigin = "";
+  let topCache = null;
 
   const learnImage = (url) => {
     try {
@@ -34,6 +38,49 @@ function createRoonLibraryApi({ deepRoon, roon, readJson, sendJson, fetchImpl = 
   };
   const album = (row = {}) => ({ key: String(row.key || ""), title: row.title || "", artist: row.artist || "", year: row.year || null,
     format: row.format || "", stars: row.stars ?? null, image: learnImage(row.image_url) });
+
+  async function recent() {
+    const result = await deepRoon.call("roon_history", { limit: 500 });
+    const seen = new Map();
+    for (const play of result.plays || []) {
+      const key = String(play.album_key || "");
+      if (!/^\d+$/.test(key) || seen.has(key)) continue;
+      seen.set(key, { ...album({ key, title: play.album, artist: play.artist, image_url: play.image_url }), inLibrary: true, lastPlayed: play.at || "" });
+      if (seen.size >= PAGE) break;
+    }
+    return { sections: [{ title: "", albums: [...seen.values()] }] };
+  }
+
+  async function findInLibrary(row) {
+    const found = await deepRoon.call("roon_library", { text: String(row.album || "").slice(0, 120), limit: 20 });
+    const exact = (found.rows || []).filter((item) => norm(item.title) === norm(row.album) && norm(item.artist) === norm(row.artist));
+    return exact[0] || null;
+  }
+
+  async function top() {
+    if (topCache && clock() - topCache.at < TOP_CACHE_MS) return topCache.payload;
+    const result = await deepRoon.call("roon_top", { what: "albums", limit: 30 });
+    const rows = result.rows || [];
+    const albums = [];
+    for (const row of rows) {
+      const match = row.album ? await findInLibrary(row) : null;
+      albums.push({ ...album(match || { title: row.album, artist: row.artist }),
+        inLibrary: Boolean(match), plays: row.plays ?? null, lastPlayed: row.last_played || "" });
+    }
+    const payload = { since: result.from || "", sections: [{ title: "", albums }] };
+    topCache = { at: clock(), payload };
+    return payload;
+  }
+
+  async function picks() {
+    const result = await deepRoon.call("roon_daily_picks", { limit: 12 });
+    const sections = (result.boxes || []).filter((box) => box.rows?.length).map((box) => ({
+      title: box.reason === "new_release" ? "New Releases" : `Because You Played ${box.because_you_played?.title || "Recently"}`,
+      albums: box.rows.map((row) => ({ ...album(row), inLibrary: row.in_library === true }))
+    }));
+    return { day: result.day || "", sections };
+  }
+  const VIEWS = { recent, top, picks };
 
   async function image(res, id) {
     if (!imageOrigin || !IMAGE_ID.test(id)) return sendJson(res, 404, { error: "Cover unavailable" });
@@ -64,6 +111,11 @@ function createRoonLibraryApi({ deepRoon, roon, readJson, sendJson, fetchImpl = 
         args.limit = PAGE;
         const result = await deepRoon.call("roon_library", args);
         return sendJson(res, 200, { total: result.total ?? 0, offset: result.offset ?? args.offset ?? 0, limit: PAGE, albums: (result.rows || []).map(album) });
+      }
+      if (req.method === "GET" && route.startsWith("view/")) {
+        const name = route.slice(5);
+        if (!Object.hasOwn(VIEWS, name)) return sendJson(res, 404, { error: "Unknown Roon Library view." });
+        return sendJson(res, 200, await VIEWS[name]());
       }
       if (req.method === "GET" && route === "focus") {
         const result = await deepRoon.call("roon_focus", filtersFrom(url.searchParams));

@@ -586,6 +586,13 @@
         <header class="dbHeader">
           <div><p class="eyebrow">Your Roon Library</p><h2 id="roonLibraryHeading">Library</h2><p id="rlStatus" class="dbMuted" aria-live="polite">Albums in Roon, filtered with Roon's own Focus.</p></div>
         </header>
+        <div class="rlShow" role="group" aria-label="Show">
+          <span>Show</span>
+          <button type="button" data-rl-view="library" aria-pressed="true">Library</button>
+          <button type="button" data-rl-view="recent" aria-pressed="false">Recently Played</button>
+          <button type="button" data-rl-view="top" aria-pressed="false">Most Played</button>
+          <button type="button" data-rl-view="picks" aria-pressed="false">Daily Picks</button>
+        </div>
         <form id="rlFilters" class="rlFilters">
           <label class="dbSearch">Search Your Library<input name="text" type="search" placeholder="Album or artist" autocomplete="off"></label>
           <label>Library<select name="storage"><option value="">All Libraries</option></select></label>
@@ -601,6 +608,7 @@
           </div>
         </form>
         <ul id="rlResults" class="dbGrid rlGrid" aria-label="Roon library albums"></ul>
+        <div id="rlSections" class="rlSections" hidden></div>
         <div class="rlMore"><button id="rlMore" type="button" hidden>Load More</button></div>
       </section>
 
