@@ -264,6 +264,54 @@ body.layoutModern .modernTransport {
   min-width: 0;
 }
 
+body.layoutModern.modernOnNowPlaying .modernTransport {
+  display: none;
+}
+
+body.layoutModern .modernPlayerBar .modernVolumeStep {
+  display: inline-grid;
+  place-items: center;
+  width: 44px;
+  padding: 0;
+  border-radius: 50% !important;
+  font-size: 18px;
+}
+
+body.layoutModern :is(#playerView .controls, #lyrionNow .lyrionActions):has(.modernPageVolume) {
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+body.layoutModern .modernPageVolume {
+  display: flex;
+  flex-basis: 100%;
+  align-items: center;
+  justify-content: center;
+  margin-top: 10px;
+}
+
+body.layoutModern .modernPageVolume .volumeStep {
+  flex: 0 0 44px;
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  padding: 0 !important;
+  border-radius: 50% !important;
+}
+
+body.layoutModern.modernOnNowPlaying .modernBarTools {
+  grid-column: 3;
+}
+
+body.layoutModern .modernPageVolume .volumeLabel {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
 body.layoutModern .modernTransportButtons {
   display: flex;
   align-items: center;
@@ -456,6 +504,7 @@ body.layoutModern .modernMenuPanel a {
 body.layoutModern .modernVolume {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
   min-height: 44px;
   color: var(--muted);

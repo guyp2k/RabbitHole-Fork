@@ -77,9 +77,23 @@
     target.dispatchEvent(new Event(type));
   }
 
+  function nowPlayingOnScreen(system, { playerViewActive, lyrionNowSelected }) {
+    return system === "lyrion" ? Boolean(lyrionNowSelected) : Boolean(playerViewActive);
+  }
+
+  function pageVolumeHomes() {
+    return [{ volume: "nowVolume", row: "#playerView .controls" }, { volume: "lyrionVolume", row: "#lyrionNow .lyrionActions" }];
+  }
+
+  function volumeStepButton(root, direction) {
+    const label = direction === "down" ? "volume down" : "volume up";
+    return [...(root?.querySelectorAll(".volumeStep") || [])].find((button) => String(button.getAttribute("aria-label") || "").toLowerCase() === label) || null;
+  }
+
   window.RabbitHoleModernShell = {
     railSections, lyrionRailItems, systemChoices, chooseSystem: chooseValue, deviceMenu,
-    chooseDevice: chooseValue, openDeviceControls, menuLinks, splitTime, forwardRange
+    chooseDevice: chooseValue, openDeviceControls, menuLinks, splitTime, forwardRange,
+    nowPlayingOnScreen, pageVolumeHomes, volumeStepButton
   };
 
   if (!document.body.classList.contains("layoutModern")) return;
@@ -195,7 +209,14 @@
   const seekLength = make("span", { className: "modernSeekTime" });
   const seek = make("input", { type: "range", className: "modernSeek", "aria-label": "Seek Position", min: "0", max: "0", value: "0" });
   const volume = make("input", { type: "range", className: "modernVolumeSlider", "aria-label": "Volume" });
-  const volumeLabel = make("label", { className: "modernVolume" }, make("span", { text: "Volume" }), volume);
+  const volumeStep = (direction, label, text) => {
+    const button = make("button", { type: "button", className: "modernVolumeStep", "aria-label": label, title: label, text });
+    button.addEventListener("click", () => volumeStepButton(current().volume(), direction)?.click());
+    return button;
+  };
+  const volumeDown = volumeStep("down", "Volume Down", "−");
+  const volumeUp = volumeStep("up", "Volume Up", "+");
+  const volumeLabel = make("div", { className: "modernVolume", role: "group", "aria-label": "Volume" }, volumeDown, volume, volumeUp);
 
   const menuButton = (id, panelId) => make("button", { type: "button", id, className: "modernMenuButton", "aria-expanded": "false", "aria-controls": panelId });
   const zoneButton = menuButton("modernZoneMenuButton", "modernZoneMenu");
@@ -215,6 +236,14 @@
     make("div", { className: "modernBarTools" }, zoneMenu, linksMenu));
 
   document.body.append(rail, tabs, bar);
+
+  for (const home of pageVolumeHomes()) {
+    const control = $(home.volume);
+    const row = document.querySelector(home.row);
+    if (!control || !row) continue;
+    control.classList.add("modernPageVolume");
+    row.append(control);
+  }
 
   let lyrionState = "";
   $("lyrionNow")?.addEventListener("lyrion-playback", (event) => { lyrionState = event.detail?.state || ""; schedule(); });
@@ -287,6 +316,10 @@
     const slider = volumeSource();
     volumeLabel.hidden = !slider;
     mirrorRange(volume, slider, "volume");
+    for (const [button, direction] of [[volumeDown, "down"], [volumeUp, "up"]]) {
+      const target = volumeStepButton(source.volume(), direction);
+      button.disabled = !target || target.disabled;
+    }
   }
 
   function syncDevices() {
@@ -332,6 +365,10 @@
 
   function syncRail() {
     const kind = system();
+    document.body.classList.toggle("modernOnNowPlaying", nowPlayingOnScreen(kind, {
+      playerViewActive: Boolean($("playerView")?.classList.contains("isActive")),
+      lyrionNowSelected: $("lyrionTab-now")?.getAttribute("aria-selected") === "true"
+    }));
     for (const link of railLinks) {
       const active = link.attribute === "aria-selected" ? link.source?.getAttribute("aria-selected") === "true" : link.source?.getAttribute("aria-current") === "page";
       if (active) link.button.setAttribute("aria-current", "page");
