@@ -823,3 +823,32 @@ body.layoutModern #playerView .artStack > #nowPlayback {
     justify-self: center;
   }
 }
+
+@media (max-width: 1099px) {
+  body.layoutModern .modernChainStages {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 6px;
+    width: min(100%, 440px);
+  }
+
+  body.layoutModern .modernChainStage {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 12px;
+    padding: 8px 14px;
+  }
+
+  body.layoutModern .modernChainStage b {
+    flex: 0 0 auto;
+  }
+
+  body.layoutModern .modernChainStage span {
+    text-align: right;
+  }
+
+  body.layoutModern .modernChainWire {
+    display: none;
+  }
+}
