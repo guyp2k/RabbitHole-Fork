@@ -127,6 +127,21 @@
     return previous !== null && Boolean(next) && next !== previous;
   }
 
+  function signalChain({ zoneName, state, hqplayer, output }) {
+    if (!zoneName || !hqplayer?.rate || !output) return null;
+    const stages = [];
+    const source = hqplayer.source;
+    if (source?.rate) {
+      const rate = source.rate >= 1e6 ? `${+(source.rate / 1e6).toFixed(4)} MHz` : `${+(source.rate / 1000).toFixed(1)} kHz`;
+      stages.push({ label: "Source", value: source.bits ? `${rate} / ${source.bits}-bit` : rate });
+    }
+    stages.push({ label: "Roon", value: `${zoneName} · ${state}` });
+    const dsp = [hqplayer.filter, hqplayer.shaper].filter(Boolean).join(" · ");
+    if (dsp) stages.push({ label: "HQPlayer", value: dsp });
+    stages.push({ label: "Output", value: output });
+    return stages;
+  }
+
   function artworkFromCss(value) {
     const match = /url\(\s*["']?(.*?)["']?\s*\)/.exec(String(value || ""));
     return match && match[1] ? match[1] : null;
@@ -144,7 +159,7 @@
   window.RabbitHoleModernShell = {
     railSections, lyrionRailItems, systemChoices, chooseSystem: chooseValue, deviceMenu,
     chooseDevice: chooseValue, openDeviceControls, menuLinks, pageVolumeHomes, sectionOpen, toggleSection,
-    roonPanelGroups, readFolded, nowDetailsGroups, ambientPalette, artworkFromCss, trackChanged
+    roonPanelGroups, readFolded, nowDetailsGroups, ambientPalette, artworkFromCss, trackChanged, signalChain
   };
 
   if (!document.body.classList.contains("layoutModern")) return;
@@ -478,6 +493,33 @@
   new MutationObserver(syncAmbient).observe(document.body, { attributes: true, attributeFilter: ["style", "data-playback-system"] });
   const lyrionCoverNode = $("lyrionCover");
   if (lyrionCoverNode) new MutationObserver(syncAmbient).observe(lyrionCoverNode, { attributes: true, attributeFilter: ["src", "hidden"] });
+
+  const chainStrip = make("div", { className: "modernSignalChain", "aria-label": "Signal Chain", hidden: true });
+  document.querySelector("#playerView .seekBlock")?.after(chainStrip);
+  function renderSignalChain(detail) {
+    const stages = signalChain({ zoneName: detail.zoneName, state: detail.state, hqplayer: detail.hqplayer, output: hqplayerRows(detail.hqplayer)[0]?.[1] || "" });
+    if (!stages) {
+      chainStrip.replaceChildren();
+      chainStrip.hidden = true;
+      return;
+    }
+    const pills = make("div", { className: "modernChainStages" });
+    stages.forEach((stage, index) => {
+      if (index) pills.append(make("span", { className: "modernChainWire", "aria-hidden": "true" }));
+      pills.append(make("div", { className: "modernChainStage" }, make("b", { text: stage.label }), make("span", { text: stage.value })));
+    });
+    const parts = hqpHostParts(detail.hqplayer) || [];
+    const host = make("p", { className: "hqpHostLine modernChainHost", hidden: !parts.length }, make("span", { className: "hqpHostTag", text: "HQP host" }));
+    parts.forEach((part, index) => {
+      if (index) host.append(" · ");
+      const span = make("span", { text: part.text });
+      if (part.level) span.dataset.level = part.level;
+      host.append(span);
+    });
+    chainStrip.replaceChildren(pills, host);
+    chainStrip.hidden = false;
+  }
+  document.querySelector("#playerView .player")?.addEventListener("roon-signal", ({ detail }) => renderSignalChain(detail));
 
   const text = (node) => node.textContent.trim();
   const TRACK_WATCH = [

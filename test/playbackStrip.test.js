@@ -41,20 +41,31 @@ test("Roon and Lyrion share one HQPlayer summary line", () => {
 });
 
 function roonHarness(reply) {
-  const listeners = {}, fetched = [], timers = [];
+  const listeners = {}, fetched = [], timers = [], signals = [];
   const el = () => ({ textContent: "", hidden: true, className: "", dataset: {}, children: [], nextElementSibling: null,
     after(node) { this.nextElementSibling = node; }, replaceChildren(...nodes) { this.children = nodes; } });
   const nodes = { nowPlayback: el(), nowPlaybackChain: el(), nowPlaybackSignal: el() };
-  const stage = { addEventListener: (type, fn) => { listeners[type] = fn; } };
+  const stage = { addEventListener: (type, fn) => { listeners[type] = fn; }, dispatchEvent: (event) => { signals.push(event); return true; } };
   const context = {
+    CustomEvent: class { constructor(type, init) { this.type = type; this.detail = init.detail; } },
     document: { hidden: false, querySelector: s => s === "#playerView .player" ? stage : null, getElementById: id => nodes[id], createElement: el },
     fetch: async (url, options) => { fetched.push([url, options.cache]); return { ok: true, json: async () => ({ hqplayer: reply(url) }) }; },
     setInterval: (fn, ms) => timers.push([fn, ms]), encodeURIComponent
   };
   vm.runInNewContext(read("public/hqplayerSummary.js") + read("public/roonPlaybackStrip.js"), context);
   const emit = async detail => { listeners["roon-playback"]({ detail }); await new Promise(r => setImmediate(r)); };
-  return { nodes, fetched, timers, emit, context };
+  return { nodes, fetched, timers, emit, context, signals };
 }
+
+test("the Roon strip shares each HQPlayer reading as a roon-signal event so other views can draw the chain", async () => {
+  const h = roonHarness(url => url.includes("HQPd") ? parseHqplayerStatus(DSD) : null);
+  await h.emit({ zoneName: "HQPd", state: "playing", connected: true });
+  assert.equal(h.signals.map((event) => event.type).at(-1), "roon-signal");
+  const last = h.signals.at(-1);
+  assert.deepEqual(JSON.parse(JSON.stringify(last.detail)), { zoneName: "HQPd", state: "playing", hqplayer: JSON.parse(JSON.stringify(parseHqplayerStatus(DSD))) });
+  await h.emit({ zoneName: "", state: "stopped", connected: true });
+  assert.deepEqual(JSON.parse(JSON.stringify(h.signals.at(-1).detail)), { zoneName: "", state: "stopped", hqplayer: null });
+});
 
 test("the Roon strip names the zone and its state, and adds HQPlayer's output for a mapped zone", async () => {
   const h = roonHarness(url => url.includes("HQPd") ? parseHqplayerStatus(DSD) : null);
