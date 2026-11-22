@@ -577,3 +577,11 @@ body.layoutModern #playerView .player.player--regular:not(.isMaximized):not(.isF
   contain: size;
   overflow-y: auto;
 }
+
+@keyframes modernReveal { from { opacity: 0; transform: translateY(-6px); } }
+@keyframes modernTrackIn { from { opacity: 0.35; transform: scale(0.985); } }
+
+@media (prefers-reduced-motion: no-preference) {
+  body.layoutModern .modernReveal { animation: modernReveal 0.28s ease-out both; }
+  body.layoutModern .modernTrackIn { animation: modernTrackIn 0.6s ease-out both; }
+}
