@@ -659,3 +659,51 @@ test("under 1100px the signal chain is one aligned stack of equal-width rows, la
   assert.match(rule("body.layoutModern .modernChainStage span"), /text-align: right;/);
   assert.match(rule("body.layoutModern .modernChainWire"), /display: none;/);
 });
+
+test("the Now Playing extras are off unless the browser saved them on, and junk is ignored", () => {
+  assert.deepEqual(shell.readExtras(null), { upNext: false, spectrum: false });
+  assert.deepEqual(shell.readExtras("not json"), { upNext: false, spectrum: false });
+  assert.deepEqual(shell.readExtras('{"upNext":true,"spectrum":"yes"}'), { upNext: true, spectrum: false });
+  assert.deepEqual(shell.readExtras('{"upNext":true,"spectrum":true,"other":1}'), { upNext: true, spectrum: true });
+});
+
+test("each up-next cover names the track and its first artist, and covers without a queue id are left out", () => {
+  assert.deepEqual(shell.upNextCards([
+    { id: "11", title: "Layla", subtitle: "Derek and the Dominos - Layla And Other Assorted Love Songs", imageKey: "abc" },
+    { id: "", title: "No id", subtitle: "Someone", imageKey: "x" },
+    { id: "12", title: "Tumbling Dice", subtitle: "The Rolling Stones", imageKey: "" }
+  ]), [
+    { id: "11", title: "Layla", artist: "Derek and the Dominos", image: "/api/roon/image/abc?width=80&height=80" },
+    { id: "12", title: "Tumbling Dice", artist: "The Rolling Stones", image: "" }
+  ]);
+});
+
+test("the app shares the next five queue items and the queue summary as a roon-queue event", () => {
+  const app = fs.readFileSync(require.resolve("../public/app.js"), "utf8");
+  assert.match(app, /function shareQueue\(zone\) \{/);
+  assert.match(app, /new CustomEvent\("roon-queue", \{ detail: \{ info: zone && !isLiveRadioZone\(zone\) \? formatQueueInfo\(zone\) : "", items: zone \? displayQueueItems\(zone\)\.slice\(0, 5\)/);
+  assert.match(app, /liveQueue\.innerHTML = "";\n  \}\n  shareQueue\(zone\);/);
+});
+
+test("Modern adds Up next and Spectrum toggles before Maximize Player, and covers reuse the queue's Play from here menu", () => {
+  assert.match(source, /for \(const \[key, label, tip\] of \[\["upNext", "Up next", "Show the next covers in the queue"\], \["spectrum", "Spectrum", "Decorative: moves with playback, not live audio levels"\]\]\)/);
+  assert.match(source, /\$\("togglePlayerMax"\)\?\.before\(toggle\)/);
+  assert.match(source, /localStorage\.setItem\(EXTRAS_KEY, JSON\.stringify\(extras\)\)/);
+  assert.match(source, /className: "queueItemButton modernUpNextCard", "data-queue-item-id": card\.id, "aria-haspopup": "menu", "aria-controls": "queueActionMenu"/);
+  assert.match(source, /make\("strong", \{ className: "queueItemTitle", text: card\.title \}\)/);
+  assert.match(source, /const queueMenu = \$\("queueActionMenu"\);\s*if \(queueMenu\) document\.body\.append\(queueMenu\);/);
+});
+
+const narrowOrPhone = (selector) => {
+  const rules = cssRules(css).filter((r) => r.selector === selector && r.media.includes("@media (max-width: 699px)"));
+  assert.ok(rules.length, `${selector} has a phone rule`);
+  return rules.map((r) => r.block).join("\n");
+};
+
+test("the extras show only when switched on, the spectrum animates only while playing and with motion allowed, and the phone toolbar wraps", () => {
+  assert.match(css, /body\.layoutModern:not\(\.modernUpNextOn\) \.modernUpNextStrip,\s*body\.layoutModern:not\(\.modernSpectrumOn\) \.modernSpectrum \{\s*display: none !important;/);
+  assert.match(css, /body\.layoutModern\.modernUpNextOn #playerView \.player:has\(\.modernUpNextStrip:not\(\[hidden\]\)\) > \.nowUpNext \{\s*display: none !important;/);
+  const motion = css.slice(css.lastIndexOf("@media (prefers-reduced-motion: no-preference) {"));
+  assert.match(motion, /body\.layoutModern \.modernSpectrum\.isPlaying i \{ animation: modernSpectrum/);
+  assert.match(narrowOrPhone("body.layoutModern #playerView .playerViewControls"), /flex-wrap: wrap;/);
+});
