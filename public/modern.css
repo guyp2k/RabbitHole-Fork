@@ -1,0 +1,624 @@
+/* Modern layout: side rail and persistent player bar. Every rule is scoped to body.layoutModern so Classic is untouched. */
+
+body.layoutModern {
+  --modern-rail-width: 232px;
+  --modern-gutter: 24px;
+}
+
+body.layoutModern .playbackSystemBar,
+body.layoutModern #hqplayerLinks,
+body.layoutModern #roonZoneBar,
+body.layoutModern #lyrionPlayerBar,
+body.layoutModern .shell > .topbar,
+body.layoutModern .shell > .secondaryNav,
+body.layoutModern #lyrionView > .lyrionTabs,
+body.layoutModern #jumpTop,
+body.layoutModern[data-playback-system="lyrion"] .appHeader,
+body.layoutModern .appIdentityMark,
+body.layoutModern .appIdentityText {
+  display: none !important;
+}
+
+body.layoutModern:not(.playerFullWindow):not(.playerMaximized):not(.lyrionFullscreenOpen) .shell {
+  width: auto;
+  max-width: none;
+  margin: 0 var(--modern-gutter) 0 calc(var(--modern-rail-width) + var(--modern-gutter));
+  padding-bottom: calc(var(--modern-bar-height, 96px) + 24px);
+}
+
+body.layoutModern:is(.playerFullWindow, .playerMaximized, .lyrionFullscreenOpen) :is(.modernRail, .modernTabs, .modernPlayerBar) {
+  display: none;
+}
+
+body.layoutModern :is(.modernRail, .modernTabs, .modernPlayerBar, .modernMenuPanel) :is(button, a) {
+  min-height: 44px !important;
+  min-width: 44px;
+  box-sizing: border-box;
+  margin: 0;
+  border: 1px solid transparent !important;
+  border-radius: 10px !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  color: var(--text) !important;
+  font: inherit;
+  font-size: 14px;
+  letter-spacing: normal;
+  text-transform: none;
+  text-decoration: none;
+  transform: none;
+  cursor: pointer;
+}
+
+body.layoutModern :is(.modernRail, .modernTabs, .modernPlayerBar, .modernMenuPanel) :is(button, a):hover {
+  border-color: var(--line) !important;
+  background: var(--panel-2) !important;
+}
+
+body.layoutModern :is(.modernRail, .modernTabs, .modernPlayerBar, .modernMenuPanel) :is(button, a, input):focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+body.layoutModern :is(.modernRail, .modernTabs, .modernPlayerBar) button:disabled {
+  cursor: default;
+  opacity: 0.45;
+}
+
+body.layoutModern .modernRail {
+  position: fixed;
+  z-index: 40;
+  top: 0;
+  bottom: var(--modern-bar-height, 96px);
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  width: var(--modern-rail-width);
+  box-sizing: border-box;
+  padding: 20px 12px 14px;
+  overflow: hidden;
+  border-right: 1px solid var(--line);
+  background: var(--panel-3);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+body.layoutModern .modernBrand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 8px;
+}
+
+body.layoutModern .modernBrandMark {
+  flex: 0 0 auto;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: url("/assets/rabbit-hole-mark.png") center / cover no-repeat;
+}
+
+body.layoutModern .modernBrandName {
+  color: var(--text);
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+body.layoutModern .modernRailSections {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: 4px;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+body.layoutModern[data-playback-system="lyrion"] .modernRailSection:not([data-rail-section="lyrion"]),
+body.layoutModern:not([data-playback-system="lyrion"]) .modernRailSection[data-rail-section="lyrion"] {
+  display: none;
+}
+
+body.layoutModern .modernRailTitle {
+  margin: 0;
+  font-size: inherit;
+}
+
+body.layoutModern .modernRail .modernRailHeading {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  min-height: 44px;
+  padding: 0 10px;
+  color: var(--muted) !important;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-align: left;
+}
+
+body.layoutModern .modernRailSection:not(.isCurrent) .modernRailItems {
+  display: none;
+}
+
+body.layoutModern .modernRail .modernRailSection.isCurrent .modernRailHeading {
+  color: var(--accent) !important;
+}
+
+body.layoutModern .modernRailItems {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+body.layoutModern .modernRail .modernRailItem {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 0 10px 0 22px;
+  color: var(--muted) !important;
+  text-align: left;
+}
+
+body.layoutModern .modernRail .modernRailItem[aria-current="page"] {
+  border-color: var(--line) !important;
+  background: var(--panel-2) !important;
+  color: var(--text) !important;
+  font-weight: 600;
+  box-shadow: inset 3px 0 0 var(--accent) !important;
+}
+
+body.layoutModern .modernSystemSwitch {
+  display: flex;
+  gap: 4px;
+  flex: 0 0 auto;
+  padding: 4px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--panel);
+}
+
+body.layoutModern .modernSystemSwitch button {
+  flex: 1 1 0;
+  font-weight: 600;
+}
+
+body.layoutModern .modernRail .modernSystemSwitch button[aria-pressed="true"] {
+  border-color: var(--accent) !important;
+  background: var(--accent) !important;
+  color: var(--bg) !important;
+}
+
+body.layoutModern .modernTabs {
+  display: none;
+}
+
+body.layoutModern .modernPlayerBar {
+  position: fixed;
+  z-index: 45;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: grid;
+  grid-template-columns: minmax(200px, 1fr) minmax(320px, 2fr) minmax(200px, 1fr);
+  align-items: center;
+  gap: 12px 20px;
+  box-sizing: border-box;
+  padding: 10px 20px;
+  border-top: 1px solid var(--line);
+  background: var(--panel-3);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  color: var(--text);
+}
+
+body.layoutModern .modernNow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+body.layoutModern .modernArt {
+  flex: 0 0 auto;
+  width: 52px;
+  height: 52px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel-2) center / cover no-repeat;
+}
+
+body.layoutModern .modernNowText {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+body.layoutModern :is(.modernNowTitle, .modernNowArtist) {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+body.layoutModern .modernNowTitle {
+  color: var(--text);
+  font-size: 15px;
+}
+
+body.layoutModern .modernNowArtist {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+body.layoutModern .modernTransport {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+}
+
+body.layoutModern .modernTransportButtons {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+body.layoutModern .modernPlayerBar .modernTransportButton {
+  display: inline-grid;
+  place-items: center;
+  width: 44px;
+  padding: 0;
+  border-radius: 50% !important;
+}
+
+body.layoutModern .modernPlayerBar .modernPlayPause {
+  width: 48px;
+  height: 48px;
+  border-color: var(--text) !important;
+  background: var(--text) !important;
+  color: var(--bg) !important;
+}
+
+body.layoutModern .modernIcon {
+  width: 22px;
+  height: 22px;
+}
+
+body.layoutModern .modernSeekRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  max-width: 620px;
+}
+
+body.layoutModern .modernSeekTime {
+  flex: 0 0 auto;
+  min-width: 40px;
+  color: var(--muted);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+
+body.layoutModern .modernSeekTime:last-child {
+  text-align: right;
+}
+
+body.layoutModern .modernPlayerBar input[type="range"] {
+  flex: 1 1 auto;
+  min-width: 0;
+  height: 44px;
+  min-height: 44px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+
+body.layoutModern .modernPlayerBar input[type="range"]:disabled {
+  cursor: default;
+  opacity: 0.5;
+}
+
+body.layoutModern .modernBarTools {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  min-width: 0;
+}
+
+body.layoutModern .modernMenu {
+  position: relative;
+  min-width: 0;
+}
+
+body.layoutModern .modernMenu[hidden],
+body.layoutModern .modernVolume[hidden] {
+  display: none;
+}
+
+body.layoutModern .modernPlayerBar .modernMenuButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  max-width: 260px;
+  padding: 0 12px;
+  border-color: var(--line) !important;
+  background: var(--panel) !important;
+  font-weight: 600;
+}
+
+body.layoutModern .modernMenuText {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+body.layoutModern .modernCaret {
+  color: var(--muted);
+}
+
+body.layoutModern .modernMenuPanel {
+  position: absolute;
+  z-index: 50;
+  right: 0;
+  bottom: calc(100% + 8px);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: max-content;
+  min-width: 220px;
+  max-width: min(360px, calc(100vw - 32px));
+  max-height: min(420px, 60vh);
+  box-sizing: border-box;
+  padding: 8px;
+  overflow-y: auto;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: linear-gradient(var(--panel-3), var(--panel-3)), var(--bg);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+}
+
+body.layoutModern .modernMenuPanel[hidden] {
+  display: none;
+}
+
+body.layoutModern .modernMenuList {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+body.layoutModern .modernDeviceRow {
+  display: flex;
+  gap: 4px;
+}
+
+body.layoutModern .modernDeviceChoice {
+  flex: 1 1 auto;
+  min-width: 0;
+  padding: 0 12px;
+  overflow: hidden;
+  text-align: left;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+body.layoutModern .modernMenuPanel .modernDeviceChoice[aria-pressed="true"] {
+  border-color: var(--accent) !important;
+  background: var(--accent) !important;
+  color: var(--bg) !important;
+  font-weight: 600;
+}
+
+body.layoutModern .modernMenuPanel :is(.modernDeviceCard, .modernMenuAction) {
+  flex: 0 0 auto;
+  border-color: var(--line) !important;
+}
+
+body.layoutModern :is(.modernMenuHeading, .modernMenuEmpty) {
+  margin: 4px 10px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+body.layoutModern .modernLinkGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+body.layoutModern .modernMenuPanel a {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 12px;
+}
+
+body.layoutModern .modernVolume {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+body.layoutModern .modernVolume input[type="range"] {
+  width: 110px;
+}
+
+@media (max-width: 1100px) {
+  body.layoutModern .modernPlayerBar {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr);
+  }
+
+  body.layoutModern .modernBarTools {
+    grid-column: 1 / -1;
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 699px) {
+  body.layoutModern {
+    --modern-rail-width: 0px;
+    --modern-gutter: 12px;
+  }
+
+  body.layoutModern:not(.playerFullWindow):not(.playerMaximized):not(.lyrionFullscreenOpen) .shell {
+    margin: 0 var(--modern-gutter);
+    padding-top: calc(var(--modern-rail-height, 60px) + 8px);
+    padding-bottom: calc(var(--modern-bar-height, 140px) + var(--modern-tabs-height, 64px) + 16px);
+  }
+
+  body.layoutModern .modernRail {
+    top: 0;
+    right: 0;
+    bottom: auto;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+    width: auto;
+    padding: 8px 12px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    border-right: 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  body.layoutModern .modernBrand,
+  body.layoutModern .modernRailTitle,
+  body.layoutModern .modernRailSection:not(.isCurrent) {
+    display: none;
+  }
+
+  body.layoutModern .modernRailSections {
+    flex: 1 0 auto;
+    overflow: visible;
+  }
+
+  body.layoutModern .modernRailItems {
+    flex-direction: row;
+    gap: 6px;
+  }
+
+  body.layoutModern .modernRailItem {
+    width: auto;
+    padding: 0 12px;
+    white-space: nowrap;
+  }
+
+  body.layoutModern .modernRail .modernRailItem[aria-current="page"] {
+    box-shadow: inset 0 -3px 0 var(--accent) !important;
+  }
+
+  body.layoutModern .modernSystemSwitch {
+    flex: 0 0 auto;
+    order: -1;
+  }
+
+  body.layoutModern .modernTabs {
+    position: fixed;
+    z-index: 46;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    padding: 4px 6px max(4px, env(safe-area-inset-bottom));
+    border-top: 1px solid var(--line);
+    background: var(--panel-3);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+  }
+
+  body.layoutModern[data-playback-system="lyrion"] .modernTabs {
+    display: none;
+  }
+
+  body.layoutModern .modernTabs button {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    min-height: 56px !important;
+    color: var(--muted) !important;
+    font-size: 12px;
+  }
+
+  body.layoutModern .modernTabs button[aria-current="page"] {
+    color: var(--accent) !important;
+    font-weight: 600;
+  }
+
+  body.layoutModern .modernPlayerBar {
+    bottom: var(--modern-tabs-height, 64px);
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 4px 8px;
+    padding: 8px 12px;
+  }
+
+  body.layoutModern[data-playback-system="lyrion"] .modernPlayerBar {
+    bottom: 0;
+  }
+
+  body.layoutModern .modernArt {
+    width: 44px;
+    height: 44px;
+  }
+
+  body.layoutModern .modernTransport {
+    display: contents;
+  }
+
+  body.layoutModern .modernSeekRow {
+    grid-column: 1 / -1;
+    max-width: none;
+  }
+
+  body.layoutModern .modernBarTools {
+    grid-column: 1 / -1;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+  }
+
+  body.layoutModern .modernMenuButton {
+    max-width: 46vw;
+  }
+
+  body.layoutModern .modernVolume > span {
+    display: none;
+  }
+
+  body.layoutModern .modernVolume input[type="range"] {
+    width: 96px;
+  }
+
+  body.layoutModern .modernMenuPanel {
+    position: fixed;
+    right: 12px;
+    bottom: calc(var(--modern-bar-height, 140px) + var(--modern-tabs-height, 64px) + 8px);
+    left: 12px;
+    width: auto;
+    max-width: none;
+  }
+}
