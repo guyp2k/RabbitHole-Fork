@@ -1,0 +1,67 @@
+:root {
+  --bg: #101a2d;
+  --panel: rgba(23, 41, 67, 0.92);
+  --panel-2: rgba(29, 49, 79, 0.88);
+  --panel-3: rgba(16, 26, 45, 0.96);
+  --text: #edf2f8;
+  --muted: #b3c0d5;
+  --line: rgba(71, 102, 141, 0.55);
+  --glass-line: rgba(141, 185, 255, 0.16);
+  --accent: #8db9ff;
+  --accent-2: #6f9fe0;
+  --accent-3: #b5d1ff;
+  --accent-4: #3d75c4;
+  --theater-muted: #b3c0d5;
+}
+
+@layer pills {
+  :is(.lyrionChoices, .lyrionTabs, .viewTabs, .secondaryNavItems, .lyrionCenterViews, .dbViewSwitch, .tidalLibraryFilters) button:is(.active, [aria-pressed="true"], [aria-current="page"], [aria-selected="true"]) {
+    background: #3d75c4 !important;
+    border-color: #3d75c4 !important;
+    box-shadow: none !important;
+    color: #ffffff !important;
+    font-weight: 700 !important;
+  }
+
+  :is(.lyrionChoices, .lyrionTabs, .viewTabs, .secondaryNavItems, .lyrionCenterViews, .dbViewSwitch, .tidalLibraryFilters) button:is(.active, [aria-pressed="true"], [aria-current="page"], [aria-selected="true"]):hover {
+    background: #2f63ad !important;
+    border-color: #2f63ad !important;
+  }
+}
+
+html body.layoutModern .modernRail .modernSystemSwitch button[aria-pressed="true"],
+html body.layoutModern .modernMenuPanel .modernDeviceChoice[aria-pressed="true"] {
+  border-color: #3d75c4 !important;
+  background: #3d75c4 !important;
+  color: #ffffff !important;
+}
+
+html body.layoutModern .modernRail .modernSystemSwitch button[aria-pressed="true"]:hover,
+html body.layoutModern .modernMenuPanel .modernDeviceChoice[aria-pressed="true"]:hover {
+  border-color: #2f63ad !important;
+  background: #2f63ad !important;
+}
+
+html body :is(#playerView #nowTitle, #lyrionTitle) {
+  color: var(--text) !important;
+}
+
+html body :is(#playerView #nowSubtitle, #lyrionArtist) {
+  color: var(--accent) !important;
+}
+
+html body :is(#playerView .sourceLabel, #lyrionView .sourceLabel, #playerView .pcTempChip > span, #lyrionView .pcTempChip > span) {
+  color: var(--muted) !important;
+}
+
+html body :is(#playerView .sourceValue, #lyrionView .sourceValue, #playerView .fullscreenConnectionStatus .statusPill, #lyrionView .fullscreenConnectionStatus .statusPill) {
+  color: var(--text) !important;
+}
+
+html body :is(#playerView .seekBlock :is(.playerMeta, #playState, #queueInfo, .seekTimes)) {
+  color: var(--muted) !important;
+}
+
+html body :is(#playerView .feedbackButton, #playerView .nowDiscoveryActions button, #playerView .nowTidalPlaylistCreate button, #lyrionDiscoveryRail button):not(:disabled) {
+  color: var(--text) !important;
+}
