@@ -89,7 +89,8 @@ offered upstream as pull requests.
   unplayed, recently added and unidentified. Play, Play Next, Queue and Start
   Radio go to the selected zone. Needs a
   [Deep Roon MCP](https://github.com/renebouwmeester/deep-roon-mcp) server
-  (`DEEP_ROON_URL`); Rabbit Hole only uses its read tools.
+  (`DEEP_ROON_URL`); Rabbit Hole only uses its read tools. Setup and details are in the
+  [Deep Roon guide](docs/deep-roon.md).
 - **Player card:** a ▸ on every Roon zone and Lyrion player pill (or a tap on
   the album art) opens that room's card: art, track, seek, back / play-pause /
   stop / next, and volume with mute, without switching the page to that room.
@@ -192,7 +193,8 @@ not have; an access-tier error cannot be fixed by changing the search URL.
   server for Playback > Library (`DEEP_ROON_URL`). Naming each storage location
   in the Library list needs its storage-location change
   ([deep-roon-mcp#6](https://github.com/renebouwmeester/deep-roon-mcp/pull/6));
-  without it the list shows only Local and TIDAL.
+  without it the list shows only Local and TIDAL. See the
+  [Deep Roon guide](docs/deep-roon.md).
 - FFmpeg for optional SiriusXM on-demand/artist/Xtra audio and sonic analysis.
   The supplied Docker image includes FFmpeg and FFprobe.
 
@@ -318,6 +320,7 @@ Recoloured artwork lives in `public/themes/<id>/`; after adding a theme or chang
 ## Guides
 
 - [Feature tour of this fork](docs/FEATURES.md)
+- [Deep Roon MCP integration](docs/deep-roon.md)
 - [HQP host monitor](integrations/hqp-host-monitor/README.md)
 - [Lyrion players, plugin playback and HQPlayerBridge](docs/lyrion.md)
 - [Linux, Docker and Unraid](docs/linux-docker.md)
