@@ -35,6 +35,41 @@ test("the filters fold away under a Filters heading that is remembered per brows
   assert.match(source, /const fold = el\("button", \{ type: "button", className: "rlFiltersFold" \}\);\s*fold\.setAttribute\("aria-controls", "rlFilters"\);/);
   assert.match(source, /localStorage\.setItem\(FOLD_KEY, folded \? "1" : "0"\)/);
   assert.match(source, /fold\.setAttribute\("aria-expanded", String\(!folded\)\);\s*form\.hidden = folded;/);
-  assert.match(css, /#rlFilters\[hidden\] \{ display: none; \}/);
+  assert.match(css, /#roonLibraryView :is\(#rlFilters, \.rlFiltersFold, #rlResults, #rlSections\)\[hidden\] \{ display: none !important; \}/);
   assert.match(rule("#roonLibraryView .rlFiltersFold"), /border-left: 3px solid var\(--accent\) !important;/);
+});
+
+const { cardMeta, viewStatus } = context.RoonLibraryFilters;
+
+test("a card's second line adds Roon's play count or the day it was last played to artist, year and format", () => {
+  assert.equal(cardMeta({ artist: "Porcupine Tree", year: 2002, format: "FLAC 44/24" }), "Porcupine Tree · 2002 · FLAC 44/24");
+  assert.equal(cardMeta({ artist: "Roger Waters", plays: 83 }), "Roger Waters · 83 Plays");
+  assert.equal(cardMeta({ artist: "Someone", plays: 1 }), "Someone · 1 Play");
+  assert.equal(cardMeta({ artist: "Stargarden", lastPlayed: "2026-11-22 15:07" }), "Stargarden · Played Nov 22, 2026");
+});
+
+test("each Show view says what it lists, and an empty view says so instead of looking like a blank page", () => {
+  assert.equal(viewStatus("recent", { sections: [{ albums: [{}, {}] }] }), "The last 2 library albums played in Roon. Streams that are not in your library are left out.");
+  assert.equal(viewStatus("top", { since: "2024-12-27 09:21", sections: [{ albums: [{}] }] }), "Your 1 most played album in Roon since Dec 27, 2024.");
+  assert.equal(viewStatus("picks", { day: "2026-11-22", sections: [{ albums: [{}] }, { albums: [{}, {}] }] }), "Roon's Daily Picks for Nov 22, 2026. Albums not in your library can be played from Roon.");
+  assert.equal(viewStatus("recent", { sections: [{ albums: [] }] }), "Nothing to show here yet.");
+  assert.equal(viewStatus("picks", { sections: [] }), "Nothing to show here yet.");
+});
+
+test("the Show row swaps the filters for the chosen view and remembers it per browser, and albums outside the library get no play buttons", () => {
+  const html = fs.readFileSync(require.resolve("../public/index.html"), "utf8");
+  assert.deepEqual([...html.matchAll(/data-rl-view="(\w+)"/g)].map((m) => m[1]), ["library", "recent", "top", "picks"]);
+  assert.match(html, /<ul id="rlResults"[^>]*><\/ul>\s*<div id="rlSections" class="rlSections" hidden><\/div>/);
+  assert.match(source, /localStorage\.setItem\(VIEW_KEY, view\)/);
+  assert.match(source, /fetch\(`\/api\/roon-library\/view\/\$\{view\}`\)|getJson\(`\/api\/roon-library\/view\/\$\{view\}`\)/);
+  assert.match(source, /playable\(album\) \? actionsFor\(album\) : el\("span", \{ className: "rlNote", textContent: "Not In Your Library" \}\)/);
+  assert.match(rule(".rlNote"), /margin-top: auto;/);
+});
+
+test("only albums in the Roon library get play buttons, because Roon plays an album by finding it in the library", () => {
+  const { playable } = context.RoonLibraryFilters;
+  assert.equal(playable({ key: "72495", inLibrary: true }), true);
+  assert.equal(playable({ key: "106799" }), true);
+  assert.equal(playable({ key: "13215910", inLibrary: false }), false);
+  assert.equal(playable({ key: "", inLibrary: false }), false);
 });

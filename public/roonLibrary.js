@@ -11,14 +11,34 @@
     parts.push(...toggles);
     return parts.join(" · ");
   }
-  window.RoonLibraryFilters = { filterSummary };
+  const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  function day(stamp) {
+    const match = String(stamp || "").match(/^(\d{4})-(\d{2})-(\d{2})/);
+    return match ? `${MONTHS[Number(match[2]) - 1]} ${Number(match[3])}, ${match[1]}` : "";
+  }
+  function cardMeta(album) {
+    const parts = [album.artist, album.year, album.format];
+    if (Number.isInteger(album.plays)) parts.push(`${album.plays} ${album.plays === 1 ? "Play" : "Plays"}`);
+    else if (album.lastPlayed) parts.push(`Played ${day(album.lastPlayed)}`);
+    return parts.filter(Boolean).join(" · ");
+  }
+  function viewStatus(view, payload) {
+    const count = (payload.sections || []).reduce((sum, section) => sum + section.albums.length, 0);
+    if (!count) return "Nothing to show here yet.";
+    if (view === "recent") return `The last ${count} library ${count === 1 ? "album" : "albums"} played in Roon. Streams that are not in your library are left out.`;
+    if (view === "top") return `Your ${count} most played ${count === 1 ? "album" : "albums"} in Roon${payload.since ? ` since ${day(payload.since)}` : ""}.`;
+    return `Roon's Daily Picks${payload.day ? ` for ${day(payload.day)}` : ""}. Albums not in your library can be played from Roon.`;
+  }
+  const playable = (album) => Boolean(album.key) && album.inLibrary !== false;
+  window.RoonLibraryFilters = { filterSummary, cardMeta, viewStatus, playable };
 
   const $ = (selector) => document.querySelector(selector);
   const form = $("#rlFilters");
   const results = $("#rlResults");
   const status = $("#rlStatus");
   const more = $("#rlMore");
-  if (!form || !results) return;
+  const sections = $("#rlSections");
+  if (!form || !results || !sections) return;
   const ACTIONS = [["play", "Play"], ["next", "Play Next"], ["queue", "Queue"], ["radio", "Start Radio"]];
   const state = { loaded: false, offset: 0, total: 0, request: 0, debounce: 0 };
 
@@ -46,16 +66,20 @@
   function card(album) {
     const art = el("span", { className: "dbArtwork rlArtwork" });
     if (album.image) art.append(el("img", { src: album.image, alt: "", loading: "lazy", decoding: "async" }));
-    const meta = [album.artist, album.year, album.format].filter(Boolean).join(" · ");
-    const actions = el("div", { className: "rlActions" }, ACTIONS.map(([action, label]) =>
-      el("button", { type: "button", textContent: label, className: action === "play" ? "rlPrimary" : "" })));
-    actions.querySelectorAll("button").forEach((button, index) => { button.dataset.rlAction = ACTIONS[index][0]; button.dataset.rlKey = album.key; button.dataset.rlTitle = album.title; });
+    const meta = cardMeta(album);
     return el("li", { className: "rlCard" }, [
       el("div", { className: "dbMosaic dbAlbumCover" }, [art]),
       el("span", { className: "dbCollectionName", textContent: album.title, title: album.title }),
       el("span", { className: "dbCollectionMeta", textContent: meta, title: meta }),
-      actions
+      playable(album) ? actionsFor(album) : el("span", { className: "rlNote", textContent: "Not In Your Library" })
     ]);
+  }
+
+  function actionsFor(album) {
+    const actions = el("div", { className: "rlActions" }, ACTIONS.map(([action, label]) =>
+      el("button", { type: "button", textContent: label, className: action === "play" ? "rlPrimary" : "" })));
+    actions.querySelectorAll("button").forEach((button, index) => { button.dataset.rlAction = ACTIONS[index][0]; button.dataset.rlKey = album.key; button.dataset.rlTitle = album.title; });
+    return actions;
   }
 
   async function load({ append = false } = {}) {
@@ -155,18 +179,57 @@
     summarise();
     load();
   });
-  results.addEventListener("click", (event) => {
+  for (const list of [results, sections]) list.addEventListener("click", (event) => {
     const button = event.target.closest("[data-rl-action]");
     if (button) act(button);
   });
   more.addEventListener("click", () => load({ append: true }));
+
+  const VIEW_KEY = "rabbitHole.rlView";
+  const viewButtons = [...document.querySelectorAll("[data-rl-view]")];
+  let view = (() => { try { return localStorage.getItem(VIEW_KEY) || "library"; } catch { return "library"; } })();
+  if (!viewButtons.some((button) => button.dataset.rlView === view)) view = "library";
+
+  async function loadView() {
+    const request = ++state.request;
+    status.textContent = "Asking Roon…";
+    sections.replaceChildren();
+    try {
+      const payload = await getJson(`/api/roon-library/view/${view}`);
+      if (request !== state.request) return;
+      for (const section of payload.sections) {
+        if (!section.albums.length) continue;
+        const grid = el("ul", { className: "dbGrid rlGrid" }, section.albums.map(card));
+        sections.append(section.title ? el("section", { className: "rlSection" }, [el("h3", { textContent: section.title }), grid]) : grid);
+      }
+      status.textContent = viewStatus(view, payload);
+    } catch (error) {
+      if (request !== state.request) return;
+      status.textContent = error.message;
+    }
+  }
+
+  function showView() {
+    const library = view === "library";
+    for (const button of viewButtons) button.setAttribute("aria-pressed", String(button.dataset.rlView === view));
+    fold.hidden = !library;
+    form.hidden = !library || folded;
+    results.hidden = !library;
+    sections.hidden = library;
+    if (library) { more.hidden = state.offset >= state.total; load(); } else { more.hidden = true; loadView(); }
+  }
+  for (const button of viewButtons) button.addEventListener("click", () => {
+    view = button.dataset.rlView;
+    try { localStorage.setItem(VIEW_KEY, view); } catch {}
+    showView();
+  });
 
   window.RoonLibraryUi = {
     show() {
       if (state.loaded) return;
       state.loaded = true;
       loadFocus();
-      load();
+      showView();
     }
   };
 })();
