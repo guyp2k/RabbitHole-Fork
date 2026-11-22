@@ -216,6 +216,20 @@ body.layoutModern .modernPageVolume .volumeReadout {
   white-space: nowrap;
 }
 
+body.layoutModern #nowDiscoveryTools {
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+body.layoutModern #lyrionDiscoveryRail {
+  border-left: 0 !important;
+}
+
+body.layoutModern #lyrionSystem {
+  grid-template-columns: max-content minmax(0, 1fr);
+}
+
 body.layoutModern #nowDiscoveryTools > :is(#nowFeedback, .nowDiscoveryActions, .nowTidalPlaylistGroup)::before {
   content: none !important;
   display: none !important;
@@ -254,15 +268,21 @@ body.layoutModern .modernFoldButton {
   justify-content: space-between;
   width: 100%;
   min-height: 44px !important;
-  padding: 0 4px !important;
+  padding: 0 12px !important;
   border: 0 !important;
-  background: transparent !important;
-  box-shadow: none !important;
-  color: var(--muted) !important;
+  border-left: 3px solid var(--accent) !important;
+  border-radius: 10px !important;
+  background: linear-gradient(90deg, color-mix(in srgb, var(--accent) 24%, transparent), color-mix(in srgb, var(--accent) 6%, transparent)) !important;
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent) 22%, transparent) !important;
+  color: var(--text) !important;
   font-size: 12px !important;
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
+}
+
+body.layoutModern .modernFoldButton:hover {
+  background: linear-gradient(90deg, color-mix(in srgb, var(--accent) 34%, transparent), color-mix(in srgb, var(--accent) 10%, transparent)) !important;
 }
 
 body.layoutModern .modernPageVolume {

@@ -340,3 +340,27 @@ test("the left column's System block folds from a System heading, on Roon and Ly
   assert.match(css, /body\.layoutModern #pcTempOverlay::before\s*\{\s*content: none !important;/);
   assert.match(source, /document\.querySelectorAll\("#lyrionDiscoveryRail > section > h3, #lyrionSystem > h3"\)/);
 });
+
+test("fold headings stand out from the page with a theme-coloured gradient and an accent edge", () => {
+  const rule = css.slice(css.indexOf("body.layoutModern .modernFoldButton {")).split("}")[0];
+  assert.match(rule, /background: linear-gradient\(90deg, color-mix\(in srgb, var\(--accent\) 24%, transparent\), color-mix\(in srgb, var\(--accent\) 6%, transparent\)\) !important;/);
+  assert.match(rule, /border-left: 3px solid var\(--accent\) !important;/);
+  assert.match(rule, /color: var\(--text\) !important;/);
+});
+
+test("the right-hand discovery column has no framed outline in Modern so it matches the left column", () => {
+  const rule = css.slice(css.indexOf("body.layoutModern #nowDiscoveryTools {")).split("}")[0];
+  assert.match(rule, /border: 0 !important;/);
+  assert.match(rule, /background: transparent !important;/);
+  assert.match(rule, /box-shadow: none !important;/);
+});
+
+test("the Lyrion right-hand rail drops its divider line in Modern", () => {
+  const rule = css.slice(css.indexOf("body.layoutModern #lyrionDiscoveryRail {")).split("}")[0];
+  assert.match(rule, /border-left: 0 !important;/);
+});
+
+test("the Lyrion System pill spans the full column like Now Playing", () => {
+  const rule = css.slice(css.indexOf("body.layoutModern #lyrionSystem {")).split("}")[0];
+  assert.match(rule, /grid-template-columns: max-content minmax\(0, 1fr\);/);
+});
