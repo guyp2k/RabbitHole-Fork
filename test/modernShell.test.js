@@ -566,3 +566,9 @@ test("Lyrion's chain uses the HQPlayer reading only while that Lyrion player is 
   for (const state of ["stopped", "paused", ""]) assert.deepEqual(shell.lyrionChainDetail(detail(state)), { ...detail(state), hqplayer: null }, state);
   assert.match(source, /addEventListener\("lyrion-signal", \(\{ detail \}\) => renderSignalChain\(lyrionChainStrip, lyrionChainDetail\(detail\), "Lyrion"\)\)/);
 });
+
+test("a connector between pills that wrap onto different rows is hidden instead of dangling at a row end", () => {
+  assert.match(source, /wire\.style\.visibility = next\.getBoundingClientRect\(\)\.top >= previous\.getBoundingClientRect\(\)\.bottom \? "hidden" : "";/);
+  assert.match(source, /for \(const strip of \[chainStrip, lyrionChainStrip\]\) new ResizeObserver\(\(\) => tidyWires\(strip\)\)\.observe\(strip\);/);
+  assert.match(source, /strip\.replaceChildren\(pills, host\);\s*strip\.hidden = false;\s*tidyWires\(strip\);/);
+});
