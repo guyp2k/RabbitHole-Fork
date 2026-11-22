@@ -172,7 +172,7 @@ function cssRules(text) {
     if (body[i] === "{") {
       const prelude = body.slice(start, i).trim();
       stack.push(prelude);
-      if (!prelude.startsWith("@")) rules.push({ selector: prelude, media: stack.slice(0, -1).join(" "), at: i });
+      if (!prelude.startsWith("@") && !stack.some((entry) => entry.startsWith("@keyframes"))) rules.push({ selector: prelude, media: stack.slice(0, -1).join(" "), at: i });
       start = i + 1;
     } else if (body[i] === "}") {
       const open = rules.findLast((r) => r.at < i && r.end === undefined);
@@ -423,4 +423,31 @@ test("the Now Playing side columns run the full player height so their panels ar
   assert.match(rule, /height: auto;/);
   assert.match(rule, /contain: size;/);
   assert.match(rule, /overflow-y: auto;/);
+});
+
+test("a track change animates only when a shown value is replaced by a different one", () => {
+  assert.equal(shell.trackChanged(null, "Birds"), false);
+  assert.equal(shell.trackChanged("Birds", "Birds"), false);
+  assert.equal(shell.trackChanged("Birds", "Fever"), true);
+  assert.equal(shell.trackChanged("Birds", ""), false);
+});
+
+test("Modern motion runs only when the viewer has not asked for reduced motion", () => {
+  const motion = css.slice(css.indexOf("@media (prefers-reduced-motion: no-preference) {"));
+  assert.ok(css.includes("@media (prefers-reduced-motion: no-preference) {"), "motion is gated");
+  assert.match(motion, /body\.layoutModern \.modernReveal \{ animation: modernReveal 0\.28s ease-out both; \}/);
+  assert.match(motion, /body\.layoutModern \.modernTrackIn \{ animation: modernTrackIn 0\.6s ease-out both; \}/);
+  assert.match(css, /@keyframes modernReveal \{ from \{ opacity: 0; transform: translateY\(-6px\); \} \}/);
+  assert.match(css, /@keyframes modernTrackIn \{ from \{ opacity: 0\.35; transform: scale\(0\.985\); \} \}/);
+});
+
+test("folds animate the panel they open, and only on a click that opens it", () => {
+  assert.match(source, /const shown = apply\(fold\);\s*if \(!fold\) replay\(shown, "modernReveal"\);/);
+});
+
+test("the cover, title and artist animate when the Roon or Lyrion track changes", () => {
+  for (const id of ["cover", "nowTitle", "nowSubtitle", "lyrionCover", "lyrionTitle", "lyrionArtist"]) {
+    assert.match(source, new RegExp(`\\["${id}", `), `${id} is watched`);
+  }
+  assert.match(source, /replay\(\[node\], "modernTrackIn"\)/);
 });

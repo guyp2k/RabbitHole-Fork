@@ -123,6 +123,10 @@
     return [lift(first), lift(second)];
   }
 
+  function trackChanged(previous, next) {
+    return previous !== null && Boolean(next) && next !== previous;
+  }
+
   function artworkFromCss(value) {
     const match = /url\(\s*["']?(.*?)["']?\s*\)/.exec(String(value || ""));
     return match && match[1] ? match[1] : null;
@@ -140,7 +144,7 @@
   window.RabbitHoleModernShell = {
     railSections, lyrionRailItems, systemChoices, chooseSystem: chooseValue, deviceMenu,
     chooseDevice: chooseValue, openDeviceControls, menuLinks, pageVolumeHomes, sectionOpen, toggleSection,
-    roonPanelGroups, readFolded, nowDetailsGroups, ambientPalette, artworkFromCss
+    roonPanelGroups, readFolded, nowDetailsGroups, ambientPalette, artworkFromCss, trackChanged
   };
 
   if (!document.body.classList.contains("layoutModern")) return;
@@ -258,6 +262,16 @@
     row.append(control);
   }
 
+  const replay = (nodes, name) => {
+    if (window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) return;
+    for (const node of nodes) {
+      node.classList.remove(name);
+      void node.offsetWidth;
+      node.classList.add(name);
+      node.addEventListener("animationend", () => node.classList.remove(name), { once: true });
+    }
+  };
+
   const FOLDED_KEY = "rabbitHole.modernFolded";
   let foldedKeys = readFolded((() => { try { return localStorage.getItem(FOLDED_KEY); } catch { return null; } })());
   const foldButton = (label, key, apply) => {
@@ -270,7 +284,8 @@
       try { localStorage.setItem(FOLDED_KEY, JSON.stringify(foldedKeys)); } catch {}
       button.setAttribute("aria-expanded", String(!fold));
       caret.textContent = fold ? "▸" : "▾";
-      apply(fold);
+      const shown = apply(fold);
+      if (!fold) replay(shown, "modernReveal");
     });
     apply(folded);
     return button;
@@ -278,17 +293,17 @@
   for (const group of roonPanelGroups()) {
     const target = document.querySelector(group.selector);
     if (!target) continue;
-    target.before(make("h3", { className: "modernPanelHeading" }, foldButton(group.label, `roon:${group.key}`, (fold) => target.classList.toggle("modernFolded", fold))));
+    target.before(make("h3", { className: "modernPanelHeading" }, foldButton(group.label, `roon:${group.key}`, (fold) => { target.classList.toggle("modernFolded", fold); return [target]; })));
   }
   for (const group of nowDetailsGroups()) {
     const container = document.querySelector(group.container);
     if (!container) continue;
-    container.prepend(make("h3", { className: "modernPanelHeading" }, foldButton("Now Playing", group.key, (fold) => container.classList.toggle("modernNowFolded", fold))));
+    container.prepend(make("h3", { className: "modernPanelHeading" }, foldButton("Now Playing", group.key, (fold) => { container.classList.toggle("modernNowFolded", fold); return [...container.children].filter((child) => !child.classList.contains("modernPanelHeading")); })));
   }
   for (const heading of document.querySelectorAll("#lyrionDiscoveryRail > section > h3, #lyrionSystem > h3")) {
     const label = heading.textContent.trim();
     const section = heading.parentElement;
-    heading.replaceChildren(foldButton(label, `lyrion:${label.toLowerCase()}`, (fold) => section.classList.toggle("modernSectionFolded", fold)));
+    heading.replaceChildren(foldButton(label, `lyrion:${label.toLowerCase()}`, (fold) => { section.classList.toggle("modernSectionFolded", fold); return [...section.children].filter((child) => child !== heading); }));
   }
 
   const sources = {
@@ -463,6 +478,26 @@
   new MutationObserver(syncAmbient).observe(document.body, { attributes: true, attributeFilter: ["style", "data-playback-system"] });
   const lyrionCoverNode = $("lyrionCover");
   if (lyrionCoverNode) new MutationObserver(syncAmbient).observe(lyrionCoverNode, { attributes: true, attributeFilter: ["src", "hidden"] });
+
+  const text = (node) => node.textContent.trim();
+  const TRACK_WATCH = [
+    ["cover", (node) => node.style.backgroundImage],
+    ["nowTitle", text],
+    ["nowSubtitle", text],
+    ["lyrionCover", (node) => node.getAttribute("src") || ""],
+    ["lyrionTitle", text],
+    ["lyrionArtist", text]
+  ];
+  for (const [id, read] of TRACK_WATCH) {
+    const node = $(id);
+    if (!node) continue;
+    let previous = read(node) || null;
+    new MutationObserver(() => {
+      const next = read(node);
+      if (trackChanged(previous, next)) replay([node], "modernTrackIn");
+      if (next) previous = next;
+    }).observe(node, { attributes: true, attributeFilter: ["style", "src"], childList: true, subtree: true, characterData: true });
+  }
 
   syncLinks();
   syncRail();
