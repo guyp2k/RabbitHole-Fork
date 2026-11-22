@@ -12,6 +12,31 @@ The original project's thread is [here](https://community.roonlabs.com/t/321144)
 
 ## Screenshots
 
+### Modern layout
+
+Settings > **Layout** > **Modern**. Roon Now Playing (Obsidian & Copper theme), with a left
+menu, the Roon | Lyrion switch, Zone and Links, foldable panels and the HQPlayer signal chain:
+
+![Modern Roon Now Playing: a left menu with Listen, Discover, You and System, the Roon and Lyrion switch, Zone and Links; track details and System on the left; album art in the centre with the playback status and file format under it, transport buttons, volume and seek bar; Rating, Actions and Playlists panels on the right; and the signal chain pills Source, Roon, HQPlayer and Output with the HQP host line along the bottom](docs/screenshots/modern-roon.png)
+
+Lyrion in the Modern layout:
+
+![Modern Lyrion Now Playing: the Lyrion menu on the left with the player picker, track details, album art with transport and volume in the centre, Rating, TIDAL and SoundCloud, and Add to playlist on the right](docs/screenshots/modern-lyrion.png)
+
+On a phone and on a foldable or tablet in portrait, the player becomes one column and the
+signal chain stacks into aligned rows:
+
+<p>
+  <img src="docs/screenshots/modern-phone.png" alt="Modern layout on a phone: Roon, Lyrion, Zone and Links on the top row with the page tabs below, then track details, album art, transport, volume, seek bar, the stacked signal chain, and the Rating, Actions and Playlists panels" width="220">
+  <img src="docs/screenshots/modern-fold.png" alt="Modern layout at 840 pixels wide: the left menu beside a one-column player with track details, album art, transport, volume, seek bar, the stacked signal chain and the panels" width="300">
+</p>
+
+The Mindshovel Blue theme in the Modern layout:
+
+![Modern Roon Now Playing in Mindshovel Blue: navy surfaces, white titles and values, grey-blue labels, the artist line in sky blue and mid-blue filled buttons](docs/screenshots/modern-blue.png)
+
+### Classic layout
+
 Roon Now Playing (Obsidian & Copper theme):
 
 ![Roon Now Playing: track details on the left, album art in the centre with Up next, transport buttons and a waveform seek bar below it, rating and playlist tools on the right](docs/screenshots/roon-now-playing.png)
@@ -74,6 +99,15 @@ offered upstream as pull requests.
 - **Discovery fixes:** artist-led searches are checked against the planned
   artists, bare descriptor echoes and karaoke backing tracks are rejected, and
   Last.fm relatives of the searched artist are kept.
+- **Modern layout:** an optional layout (Settings > Layout) with a left menu, a
+  Roon | Lyrion switch, Zone and Links menus, and panels that fold. Now Playing
+  has the file format under the album art, the HQPlayer signal chain as
+  Source, Roon, HQPlayer and Output pills with the host line, and a cover that
+  sizes itself so the whole player fits the window. The page is tinted from the
+  album art, and cover, title and panel changes animate (off when the system
+  asks for reduced motion). Phones get a two-row top bar and a one-column
+  player; foldables and tablets in portrait (700 to 1099px wide) get the
+  one-column player beside the menu. Classic stays the default.
 - **Layout:** foldable cards and panels, a header logo in the theme's colours,
   and a favicon.
 - **Unraid:** a published image and an Unraid template. The image hands its data
@@ -255,6 +289,13 @@ AI_MODE=local
 Use a reachable LAN address when the model runs on another computer. Optional
 provider keys, TIDAL OAuth, Synapse model tiers and limits are documented in
 `.env.example` and available in Settings. Controls do not require a running LLM.
+
+## Layouts
+
+Settings has a **Layout** picker: **Classic** (the default) or **Modern**. The choice is
+saved per browser in the `rh_layout` cookie. Modern only adds styles under
+`body.layoutModern` and builds its menu from the existing navigation, so Classic is
+unchanged. Folded panels are remembered per browser.
 
 ## Colour themes
 

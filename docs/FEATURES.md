@@ -14,6 +14,7 @@ commits after upstream `f0b1e81`.
 - [Roon Library](#roon-library)
 - [Lyrion](#lyrion)
 - [On a phone](#on-a-phone)
+- [Modern layout](#modern-layout)
 - [Themes](#themes)
 - [Changes you cannot see](#changes-you-cannot-see)
 
@@ -149,6 +150,36 @@ it.
 <p>
   <img src="screenshots/phone-roon.png" alt="Roon Now Playing on a phone: Maximize Player and Full Window buttons, then track details, volume and System, then the album art" width="260">
   <img src="screenshots/phone-lyrion.png" alt="Lyrion Now Playing on a phone: player pills, the Lyrion tabs, a Fullscreen button, then track and file details, volume and System" width="260">
+</p>
+
+## Modern layout
+
+**Settings > Layout > Modern** swaps the stacked top rows for a left menu: Listen,
+Discover, You and System, with the Roon | Lyrion switch, Zone and Links at the bottom.
+Classic stays the default, and the choice is saved per browser.
+
+![Modern Roon Now Playing with the left menu, foldable panels, the file format under the album art and the HQPlayer signal chain along the bottom](screenshots/modern-roon.png)
+
+- **Folding panels:** Now Playing, System, Rating, Actions and Playlists fold from
+  their headings, on Roon and Lyrion. What you fold is remembered.
+- **Under the album art:** the playback status, the file format for every zone
+  (HQPlayer input, Library file or TIDAL catalogue) and the rating stars.
+- **Signal chain:** for HQPlayer zones, Source, Roon (or Lyrion), HQPlayer and
+  Output as pills, with the HQP host line under them. Lyrion shows them only while
+  its HQPlayer player is playing.
+- **Fits the window:** the cover sizes itself so the whole player, chain included,
+  fits without scrolling, up to the old 660px cap on tall windows.
+- **Album-art tint and motion:** the page is tinted from the cover's colours, and
+  the cover, title and opened panels animate. Both stop when the system asks for
+  reduced motion.
+
+On a phone the top bar has two rows (Roon | Lyrion, Zone and Links, then the page
+tabs). From 700 to 1099px wide (a foldable opened, a tablet in portrait) the player is
+one column beside the menu. On both, the signal chain stacks into aligned rows.
+
+<p>
+  <img src="screenshots/modern-phone.png" alt="Modern layout on a phone: two-row top bar, then track details, album art, transport, volume, seek bar, the stacked signal chain and the panels" width="220">
+  <img src="screenshots/modern-fold.png" alt="Modern layout at 840 pixels wide: the left menu beside a one-column player" width="300">
 </p>
 
 ## Themes
