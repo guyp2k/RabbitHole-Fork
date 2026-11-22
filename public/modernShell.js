@@ -147,6 +147,10 @@
     return Math.round(Math.min(max, Math.max(min, stage + viewport - playerBottom - trailing)));
   }
 
+  function lyrionChainDetail(detail) {
+    return detail.state === "playing" ? detail : { ...detail, hqplayer: null };
+  }
+
   function formatLine(detail) {
     return detail?.text ? [detail.text, detail.note].filter(Boolean).join(" · ") : "";
   }
@@ -168,7 +172,7 @@
   window.RabbitHoleModernShell = {
     railSections, lyrionRailItems, systemChoices, chooseSystem: chooseValue, deviceMenu,
     chooseDevice: chooseValue, openDeviceControls, menuLinks, pageVolumeHomes, sectionOpen, toggleSection,
-    roonPanelGroups, readFolded, nowDetailsGroups, ambientPalette, artworkFromCss, trackChanged, signalChain, formatLine, fitStageHeight
+    roonPanelGroups, readFolded, nowDetailsGroups, ambientPalette, artworkFromCss, trackChanged, signalChain, formatLine, fitStageHeight, lyrionChainDetail
   };
 
   if (!document.body.classList.contains("layoutModern")) return;
@@ -562,7 +566,7 @@
   const playback = $("nowPlayback"), artStack = document.querySelector("#playerView .player > .artStack");
   if (playback && artStack) new ResizeObserver(() => artStack.style.setProperty("--modern-strip-height", `${playback.offsetHeight}px`)).observe(playback);
   document.querySelector("#playerView .player")?.addEventListener("roon-signal", ({ detail }) => renderSignalChain(chainStrip, detail, "Roon"));
-  $("lyrionNow")?.addEventListener("lyrion-signal", ({ detail }) => renderSignalChain(lyrionChainStrip, detail, "Lyrion"));
+  $("lyrionNow")?.addEventListener("lyrion-signal", ({ detail }) => renderSignalChain(lyrionChainStrip, lyrionChainDetail(detail), "Lyrion"));
 
   const text = (node) => node.textContent.trim();
   const TRACK_WATCH = [
