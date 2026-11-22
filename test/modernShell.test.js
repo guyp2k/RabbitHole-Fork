@@ -364,3 +364,52 @@ test("the Lyrion System pill spans the full column like Now Playing", () => {
   const rule = css.slice(css.indexOf("body.layoutModern #lyrionSystem {")).split("}")[0];
   assert.match(rule, /grid-template-columns: max-content minmax\(0, 1fr\);/);
 });
+
+const pixels = (...runs) => runs.flatMap(([count, rgba]) => Array.from({ length: count }, () => rgba)).flat();
+
+test("the ambient palette leads with the dominant colour of the cover", () => {
+  const palette = shell.ambientPalette(pixels([60, [200, 40, 40, 255]], [40, [120, 120, 120, 255]]));
+  assert.equal(palette[0], "rgb(200, 40, 40)");
+});
+
+test("the ambient palette takes a clearly different second colour when the cover has one", () => {
+  const palette = shell.ambientPalette(pixels([60, [200, 40, 40, 255]], [3, [205, 45, 42, 255]], [30, [30, 60, 200, 255]]));
+  assert.deepEqual(palette, ["rgb(200, 40, 40)", "rgb(30, 60, 200)"]);
+});
+
+test("the ambient palette favours colour over grey of similar area", () => {
+  const palette = shell.ambientPalette(pixels([50, [128, 128, 128, 255]], [40, [40, 170, 90, 255]]));
+  assert.equal(palette[0], "rgb(40, 170, 90)");
+});
+
+test("the ambient palette lifts very dark colours so the tint stays visible", () => {
+  assert.deepEqual(shell.ambientPalette(pixels([10, [0, 0, 40, 255]])), ["rgb(0, 0, 140)", "rgb(0, 0, 140)"]);
+});
+
+test("the ambient palette is unknown when the cover has no opaque pixels", () => {
+  assert.equal(shell.ambientPalette(pixels([10, [255, 0, 0, 0]])), null);
+  assert.equal(shell.ambientPalette([]), null);
+});
+
+test("the artwork address is read from a CSS url value and is unknown when empty", () => {
+  assert.equal(shell.artworkFromCss('url("/api/image/abc?x=1")'), "/api/image/abc?x=1");
+  assert.equal(shell.artworkFromCss(""), null);
+  assert.equal(shell.artworkFromCss("none"), null);
+});
+
+test("the ambient backdrop sits behind the page, fades between covers and holds still for reduced motion", () => {
+  assert.match(css, /@property --ambient-1 \{ syntax: "<color>"; inherits: true; initial-value: transparent; \}/);
+  const layer = css.slice(css.indexOf("body.layoutModern .modernAmbient {")).split("}")[0];
+  assert.match(layer, /position: fixed;/);
+  assert.match(layer, /z-index: 1;/);
+  assert.match(layer, /pointer-events: none;/);
+  assert.match(layer, /transition: --ambient-1 1\.6s ease, --ambient-2 1\.6s ease;/);
+  assert.match(css, /@media \(prefers-reduced-motion: reduce\) \{\s*body\.layoutModern \.modernAmbient \{ transition: none; \}/);
+});
+
+test("the ambient colours follow the Roon artwork backdrop and the Lyrion cover", () => {
+  assert.match(source, /getPropertyValue\("--now-artwork-backdrop"\)/);
+  assert.match(source, /\$\("lyrionCover"\)/);
+  assert.match(source, /documentElement\.style\.setProperty\("--ambient-1"/);
+  assert.match(source, /document\.body\.prepend\(make\("div", \{ className: "modernAmbient", "aria-hidden": "true" \}\)\)/);
+});
