@@ -657,3 +657,18 @@ body.layoutModern .modernChainHost {
   margin: 0;
   text-align: center;
 }
+
+body.layoutModern #playerView .player > .artStack > .cover:has(+ #nowPlayback:not([hidden])) {
+  width: min(100cqw, calc(100cqh - var(--modern-strip-height, 52px) - 8px)) !important;
+}
+
+body.layoutModern .modernFormatLine {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+  text-align: center;
+}
+
+body.layoutModern .modernFormatLine[hidden] {
+  display: none;
+}

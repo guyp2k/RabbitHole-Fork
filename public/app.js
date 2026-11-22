@@ -1611,17 +1611,23 @@ function playbackQualityInfoFromTrack(track = null) {
   };
 }
 
+function shareNowFormat() {
+  document.querySelector("#playerView .player")?.dispatchEvent(new CustomEvent("roon-format", { detail: { text: state.nowFormat.text, note: NOW_FORMAT_NOTES[state.nowFormat.from] || "" } }));
+}
+
 function updateNowFormat(zone, track) {
   const trackKey = track ? nowQualityKeyFor(track) : "";
   const key = zone && trackKey ? [zone.zone_id, trackKey, zone.state === "playing"].join("|") : "";
   if (key === state.nowFormat.key) return;
   state.nowFormat = { key, text: "", from: "" };
+  shareNowFormat();
   if (!key) return;
   fetch(`/api/roon/source-format?zone_id=${encodeURIComponent(zone.zone_id)}`, { cache: "no-store" })
     .then((response) => (response.ok ? response.json() : null))
     .then((result) => {
       if (state.nowFormat.key !== key || !result?.format) return;
       state.nowFormat = { key, text: result.format, from: result.from || "" };
+      shareNowFormat();
       renderNowSourceQuality(state.nowQualityInfo, state.nowTrack);
     })
     .catch(() => {});

@@ -142,6 +142,10 @@
     return stages;
   }
 
+  function formatLine(detail) {
+    return detail?.text ? [detail.text, detail.note].filter(Boolean).join(" · ") : "";
+  }
+
   function artworkFromCss(value) {
     const match = /url\(\s*["']?(.*?)["']?\s*\)/.exec(String(value || ""));
     return match && match[1] ? match[1] : null;
@@ -159,7 +163,7 @@
   window.RabbitHoleModernShell = {
     railSections, lyrionRailItems, systemChoices, chooseSystem: chooseValue, deviceMenu,
     chooseDevice: chooseValue, openDeviceControls, menuLinks, pageVolumeHomes, sectionOpen, toggleSection,
-    roonPanelGroups, readFolded, nowDetailsGroups, ambientPalette, artworkFromCss, trackChanged, signalChain
+    roonPanelGroups, readFolded, nowDetailsGroups, ambientPalette, artworkFromCss, trackChanged, signalChain, formatLine
   };
 
   if (!document.body.classList.contains("layoutModern")) return;
@@ -519,6 +523,14 @@
     chainStrip.replaceChildren(pills, host);
     chainStrip.hidden = false;
   }
+  const formatLineNode = make("p", { className: "modernFormatLine", hidden: true });
+  $("nowPlaybackChain")?.after(formatLineNode);
+  document.querySelector("#playerView .player")?.addEventListener("roon-format", ({ detail }) => {
+    formatLineNode.textContent = formatLine(detail);
+    formatLineNode.hidden = !formatLineNode.textContent;
+  });
+  const playback = $("nowPlayback"), artStack = document.querySelector("#playerView .player > .artStack");
+  if (playback && artStack) new ResizeObserver(() => artStack.style.setProperty("--modern-strip-height", `${playback.offsetHeight}px`)).observe(playback);
   document.querySelector("#playerView .player")?.addEventListener("roon-signal", ({ detail }) => renderSignalChain(detail));
 
   const text = (node) => node.textContent.trim();
