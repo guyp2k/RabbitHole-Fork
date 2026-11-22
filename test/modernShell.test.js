@@ -736,6 +736,8 @@ test("maximized and Full Window keep the transport as one centred row of round b
   const button = rule("body.layoutModern #playerView .player:is(.isMaximized, .isFullWindow) > .controls > .transportButton");
   assert.match(button, /width: 52px !important;/);
   assert.match(button, /border-radius: 50% !important;/);
+  assert.match(button, /display: grid !important;/);
+  assert.match(button, /place-items: center;/);
   assert.match(rule("body.layoutModern #playerView .player:is(.isMaximized, .isFullWindow) > .controls > .nowVolume"), /flex: 1 0 100%;/);
   assert.match(rule("body.layoutModern #playerView .player:is(.isMaximized, .isFullWindow) .seekBlock :is(.playerMeta, #playState, #queueInfo)"), /display: none !important;/);
 });

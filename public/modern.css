@@ -1038,7 +1038,8 @@ body.layoutModern #playerView .player:is(.isMaximized, .isFullWindow) > .control
   min-height: 52px;
   padding: 0 !important;
   border-radius: 50% !important;
-  justify-content: center;
+  display: grid !important;
+  place-items: center;
 }
 
 body.layoutModern #playerView .player:is(.isMaximized, .isFullWindow) > .controls > .nowVolume {
