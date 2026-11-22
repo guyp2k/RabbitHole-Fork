@@ -141,8 +141,8 @@ test("the host line is drawn once after the HQPlayer line, reused on refresh, an
 test("Roon draws the host line for a zone on a monitored HQPlayer and clears it for any other zone", async () => {
   const listeners = {}, dom = fakeDom();
   const nodes = { nowPlayback: dom.make("div"), nowPlaybackChain: dom.make("p"), nowPlaybackSignal: dom.make("p") };
-  const stage = { addEventListener: (type, fn) => { listeners[type] = fn; } };
-  const context = { document: { ...dom.document, hidden: false, querySelector: (s) => (s === "#playerView .player" ? stage : null), getElementById: (id) => nodes[id] },
+  const stage = { addEventListener: (type, fn) => { listeners[type] = fn; }, dispatchEvent: () => true };
+  const context = { CustomEvent: class { constructor(type, init) { this.type = type; this.detail = init.detail; } }, document: { ...dom.document, hidden: false, querySelector: (s) => (s === "#playerView .player" ? stage : null), getElementById: (id) => nodes[id] },
     fetch: async (url) => ({ ok: true, json: async () => ({ hqplayer: url.includes("HQPd") ? H() : url.includes("HQP-WIN11") ? parseHqplayerStatus(PLAYING) : null }) }),
     setInterval: () => {}, encodeURIComponent };
   vm.runInNewContext(read("public/hqplayerSummary.js") + read("public/roonPlaybackStrip.js"), context);

@@ -451,3 +451,48 @@ test("the cover, title and artist animate when the Roon or Lyrion track changes"
   }
   assert.match(source, /replay\(\[node\], "modernTrackIn"\)/);
 });
+
+const HQP = { state: 2, mode: "SDM (DSD)", rate: 22579200, bits: 1, filter: "poly-sinc-ext2-xla", shaper: "ASDM7ECv3", source: { rate: 96000, bits: 24 } };
+
+test("the signal chain runs source, Roon, HQPlayer and output from the HQPlayer reading", () => {
+  assert.deepEqual(shell.signalChain({ zoneName: "HQPd", state: "playing", hqplayer: HQP, output: "DSD512 · 22.5792 MHz / 1-bit SDM" }), [
+    { label: "Source", value: "96 kHz / 24-bit" },
+    { label: "Roon", value: "HQPd · playing" },
+    { label: "HQPlayer", value: "poly-sinc-ext2-xla · ASDM7ECv3" },
+    { label: "Output", value: "DSD512 · 22.5792 MHz / 1-bit SDM" }
+  ]);
+});
+
+test("the signal chain formats CD and DSD sources and leaves out a source HQPlayer did not report", () => {
+  const source = (src) => shell.signalChain({ zoneName: "HQPd", state: "playing", hqplayer: { ...HQP, source: src }, output: "x" })[0];
+  assert.deepEqual(source({ rate: 44100, bits: 16 }), { label: "Source", value: "44.1 kHz / 16-bit" });
+  assert.deepEqual(source({ rate: 2822400, bits: 1 }), { label: "Source", value: "2.8224 MHz / 1-bit" });
+  assert.deepEqual(source(undefined), { label: "Roon", value: "HQPd · playing" });
+});
+
+test("there is no signal chain without a zone or an HQPlayer output", () => {
+  assert.equal(shell.signalChain({ zoneName: "", state: "stopped", hqplayer: HQP, output: "x" }), null);
+  assert.equal(shell.signalChain({ zoneName: "Den", state: "playing", hqplayer: null, output: "" }), null);
+  assert.equal(shell.signalChain({ zoneName: "Den", state: "playing", hqplayer: { ...HQP, rate: 0 }, output: "" }), null);
+});
+
+test("the signal chain strip sits below the seek bar across the player and its pills keep their text inside", () => {
+  const strip = css.slice(css.indexOf("body.layoutModern .modernSignalChain {")).split("}")[0];
+  assert.match(strip, /grid-column: 1 \/ -1;/);
+  const pills = css.slice(css.indexOf("body.layoutModern .modernChainStages {")).split("}")[0];
+  assert.match(pills, /flex-wrap: wrap;/);
+  const value = css.slice(css.indexOf("body.layoutModern .modernChainStage span {")).split("}")[0];
+  assert.match(value, /white-space: normal;/);
+  assert.match(value, /overflow-wrap: anywhere;/);
+  const stage = css.slice(css.indexOf("body.layoutModern .modernChainStage {")).split("}")[0];
+  assert.match(stage, /min-width: 0;/);
+  assert.match(stage, /max-width: 100%;/);
+  assert.match(css, /body\.layoutModern :is\(#nowPlaybackSignal, #nowPlayback \.hqpHostLine\) \{\s*display: none !important;/);
+});
+
+test("the strip follows roon-signal and draws the host health with its warning levels", () => {
+  assert.match(source, /addEventListener\("roon-signal", \(\{ detail \}\) => renderSignalChain\(detail\)\)/);
+  assert.match(source, /output: hqplayerRows\(detail\.hqplayer\)\[0\]\?\.\[1\] \|\| ""/);
+  assert.match(source, /hqpHostParts\(detail\.hqplayer\)/);
+  assert.match(source, /if \(part\.level\) span\.dataset\.level = part\.level;/);
+});
