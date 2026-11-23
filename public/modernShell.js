@@ -249,14 +249,9 @@
       railLinks.push({ button, source: item.source, section: section.id, attribute });
       list.append(make("li", {}, button));
     }
-    let heading;
-    if (attribute === "aria-current") {
-      heading = make("button", { type: "button", className: "modernRailHeading", "aria-expanded": "false", "aria-controls": listId },
-        make("span", { text: section.label }), make("span", { className: "modernCaret", "aria-hidden": "true", text: "▸" }));
-      heading.addEventListener("click", () => { railState = { ...railState, ...toggleSection(section.id, { ...railState, current: currentRailSection() }) }; syncRail(); });
-    } else {
-      heading = make("span", { className: "modernRailHeading", text: section.label });
-    }
+    const heading = make("button", { type: "button", className: "modernRailHeading", "aria-expanded": "false", "aria-controls": listId },
+      make("span", { text: section.label }), make("span", { className: "modernCaret", "aria-hidden": "true", text: "▸" }));
+    heading.addEventListener("click", () => { railState = { ...railState, ...toggleSection(section.id, { ...railState, current: currentRailSection() }) }; syncRail(); });
     return make("section", { className: "modernRailSection", "data-rail-section": section.id, "aria-label": section.label }, make("h2", { className: "modernRailTitle" }, heading), list);
   };
 
@@ -415,7 +410,7 @@
     }
     for (const section of railBody.children) {
       const id = section.dataset.railSection;
-      const open = id === "lyrion" || sectionOpen(id, { ...railState, current: currentSection });
+      const open = sectionOpen(id, { ...railState, current: currentSection });
       section.classList.toggle("isCurrent", id === currentSection);
       section.classList.toggle("isOpen", open);
       const heading = section.querySelector("button.modernRailHeading");
