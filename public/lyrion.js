@@ -434,7 +434,7 @@
   }
   function queueRow(t,playing){
     const row=document.createElement("li"),b=document.createElement("button"),pos=document.createElement("span"),text=document.createElement("span"),title=document.createElement("strong"),sub=document.createElement("small");
-    b.type="button";b.className="queueItemButton";b.title="Play from here";if(playing)b.setAttribute("aria-current","true");
+    b.type="button";b.className="queueItemButton";b.title="Play from here";b.dataset.queueIndex=String(t.index);if(playing)b.setAttribute("aria-current","true");
     pos.className="queueItemPosition";pos.setAttribute("aria-hidden","true");pos.textContent=String(t.index+1).padStart(2,"0");
     const art=artCell(t.artwork);
     text.className="queueText";title.className="queueItemTitle";title.textContent=t.title;sub.textContent=[playing?"Playing":"",[t.artist,t.album].filter(Boolean).join(" - ")].filter(Boolean).join(" · ");text.append(title,sub);
@@ -646,6 +646,7 @@
     renderLyrionSeek(s);
     $("lyrionQueueCount").textContent=`${s.queueCount} items${s.queueCount?` · showing ${queueOffset+1}-${queueOffset+s.queue.length}`:""}`;
     $("lyrionQueue").replaceChildren(...s.queue.map(t=>queueRow(t,t.index===s.queueIndex)));
+    stage.dispatchEvent(new CustomEvent('lyrion-queue',{detail:{items:s.queue,index:s.queueIndex,count:s.queueCount}}));
     $("lyrionQueueMore").hidden=s.queueCount<=50;
     $("lyrionQueueMore").textContent=queueOffset+50>=s.queueCount?"Back to queue start":"Next queue page";
     $("lyrionQueueMore").onclick=run(async()=>{queueOffset=queueOffset+50>=s.queueCount?0:queueOffset+50;await refreshStatus();});

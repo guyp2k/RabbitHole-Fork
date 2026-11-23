@@ -687,7 +687,7 @@ test("the app shares the next five queue items and the queue summary as a roon-q
 
 test("Modern adds Up next and Spectrum toggles before Maximize Player, and covers reuse the queue's Play from here menu", () => {
   assert.match(source, /for \(const \[key, label, tip\] of \[\["upNext", "Up next", "Show the next covers in the queue"\], \["spectrum", "Spectrum", "Decorative: moves with playback, not live audio levels"\]\]\)/);
-  assert.match(source, /\$\("togglePlayerMax"\)\?\.before\(toggle\)/);
+  assert.match(source, /for \(const home of \[\$\("togglePlayerMax"\), \$\("lyrionFullscreen"\)\]\)[\s\S]*?home\.before\(toggle\);/);
   assert.match(source, /localStorage\.setItem\(EXTRAS_KEY, JSON\.stringify\(extras\)\)/);
   assert.match(source, /className: "queueItemButton modernUpNextCard", "data-queue-item-id": card\.id, "aria-haspopup": "menu", "aria-controls": "queueActionMenu"/);
   assert.match(source, /make\("strong", \{ className: "queueItemTitle", text: card\.title \}\)/);
@@ -761,4 +761,40 @@ test("the Lyrion rail section folds from its heading like Listen, Discover, You 
   assert.match(source, /const heading = make\("button", \{ type: "button", className: "modernRailHeading", "aria-expanded": "false", "aria-controls": listId \}/);
   assert.equal(shell.sectionOpen("lyrion", { current: "lyrion", expanded: [], collapsed: [] }), true);
   assert.deepEqual(shell.toggleSection("lyrion", { current: "lyrion", expanded: [], collapsed: [] }), { expanded: [], collapsed: ["lyrion"] });
+});
+
+const lyrionSource = fs.readFileSync(require.resolve("../public/lyrion.js"), "utf8");
+
+test("Lyrion's Up next cards are the next five tracks after the one playing, with Lyrion's own artwork", () => {
+  const queue = [0, 1, 2, 3, 4, 5, 6, 7, 8].map((index) => ({ index, title: `T${index}`, artist: `A${index}`, album: "X", artwork: index === 4 ? "" : `/api/lyrion/artwork?u=${index}` }));
+  assert.deepEqual(shell.lyrionUpNextCards(queue, 2), [
+    { index: 3, title: "T3", artist: "A3", image: "/api/lyrion/artwork?u=3" },
+    { index: 4, title: "T4", artist: "A4", image: "" },
+    { index: 5, title: "T5", artist: "A5", image: "/api/lyrion/artwork?u=5" },
+    { index: 6, title: "T6", artist: "A6", image: "/api/lyrion/artwork?u=6" },
+    { index: 7, title: "T7", artist: "A7", image: "/api/lyrion/artwork?u=7" }
+  ]);
+  assert.deepEqual(shell.lyrionUpNextCards(queue, 8), []);
+  assert.deepEqual(shell.lyrionUpNextCards(undefined, 0), []);
+  assert.equal(shell.lyrionUpNextInfo(9, 2), "6 remaining");
+  assert.equal(shell.lyrionUpNextInfo(3, 2), "");
+});
+
+test("Lyrion shares its queue with the Modern shell, and each queue row can be found by its position", () => {
+  assert.match(lyrionSource, /stage\.dispatchEvent\(new CustomEvent\('lyrion-queue',\{detail:\{items:s\.queue,index:s\.queueIndex,count:s\.queueCount\}\}\)\);/);
+  assert.match(lyrionSource, /b\.dataset\.queueIndex=String\(t\.index\);/);
+});
+
+test("Lyrion Now Playing gets the same Up next and Spectrum toggles as Roon, sharing one saved setting", () => {
+  assert.match(source, /for \(const home of \[\$\("togglePlayerMax"\), \$\("lyrionFullscreen"\)\]\)/);
+  assert.match(source, /for \(const other of extraToggles\) if \(other\.dataset\.extra === key\) other\.setAttribute\("aria-pressed", String\(extras\[key\]\)\);/);
+  assert.match(source, /\$\("lyrionNow"\)\?\.addEventListener\("lyrion-playback", \(\{ detail \}\) => lyrionSpectrum\.classList\.toggle\("isPlaying", detail\.state === "playing"\)\);/);
+  assert.match(source, /\$\("lyrionNow"\)\?\.addEventListener\("lyrion-queue", \(\{ detail \}\) =>/);
+  assert.match(source, /\$\("lyrionQueue"\)\?\.querySelector\(`\[data-queue-index="\$\{card\.index\}"\]`\)\?\.click\(\)/);
+  assert.match(css, /body\.layoutModern\.modernUpNextOn #lyrionNow:has\(\.modernUpNextStrip:not\(\[hidden\]\)\) #lyrionStageQueue \{\s*display: none !important;/);
+});
+
+test("Lyrion's Up next row scrolls inside the cover column instead of widening it past a phone screen", () => {
+  assert.match(css, /body\.layoutModern #lyrionNow :is\(\.lyrionArtworkLane, #lyrionPlayback, \.modernUpNextStrip\) \{\s*min-width: 0;\s*max-width: 100%;/);
+  assert.match(css, /body\.layoutModern \.modernUpNextList \{[^}]*overflow-x: auto;/);
 });
