@@ -864,6 +864,15 @@ body.layoutModern.modernUpNextOn #playerView .player:has(.modernUpNextStrip:not(
   display: none !important;
 }
 
+body.layoutModern.modernUpNextOn #lyrionNow:has(.modernUpNextStrip:not([hidden])) #lyrionStageQueue {
+  display: none !important;
+}
+
+body.layoutModern #lyrionNow :is(.lyrionArtworkLane, #lyrionPlayback, .modernUpNextStrip) {
+  min-width: 0;
+  max-width: 100%;
+}
+
 body.layoutModern .modernUpNextStrip[hidden] {
   display: none;
 }
