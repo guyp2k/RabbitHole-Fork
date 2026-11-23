@@ -753,3 +753,12 @@ test("on desktop, maximized and Full Window size the controls row to its content
   assert.match(wide("body.layoutModern #playerView .player.player--maximized.isMaximized:not(.isFullWindow)"), /grid-template-rows: 46px minmax\(0, 1fr\) 14px auto 46px !important;/);
   assert.match(wide("body.layoutModern #playerView .player.isFullWindow"), /grid-template-rows: 46px minmax\(0, 1fr\) 12px auto 46px !important;/);
 });
+
+test("the Lyrion rail section folds from its heading like Listen, Discover, You and System, open while you are in it", () => {
+  assert.doesNotMatch(source, /make\("span", \{ className: "modernRailHeading"/);
+  assert.doesNotMatch(source, /id === "lyrion" \|\| sectionOpen/);
+  assert.match(source, /const open = sectionOpen\(id, \{ \.\.\.railState, current: currentSection \}\);/);
+  assert.match(source, /const heading = make\("button", \{ type: "button", className: "modernRailHeading", "aria-expanded": "false", "aria-controls": listId \}/);
+  assert.equal(shell.sectionOpen("lyrion", { current: "lyrion", expanded: [], collapsed: [] }), true);
+  assert.deepEqual(shell.toggleSection("lyrion", { current: "lyrion", expanded: [], collapsed: [] }), { expanded: [], collapsed: ["lyrion"] });
+});
