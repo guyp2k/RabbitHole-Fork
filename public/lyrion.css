@@ -36,6 +36,8 @@ body[data-playback-system="lyrion"] #jumpTop { display:none !important; }
 .lyrionFavorites h2 { margin:0; }
 .lyrionFavorites .lyrionToolbar { justify-content:space-between; }
 .lyrionToolbar { display:flex; flex-wrap:wrap; gap:12px; align-items:center; }
+#lyrionView :is(.lyrionToolbar, .lyrionChoices) + :is(.lyrionToolbar, .lyrionChoices), #lyrionView .lyrionFavoriteList + p:empty + .lyrionToolbar { margin-top:12px; }
+#lyrionView .lyrionChoices + p { margin-top:10px; }
 .lyrionToolbar select,.lyrionToolbar input { width:auto; min-width:160px; flex:1; }
 #lyrionView button:focus-visible,.playbackSystemBar select:focus-visible { outline:2px solid var(--accent); outline-offset:3px; }
 .lyrionColumns { display:grid; grid-template-columns:minmax(0,3fr) minmax(0,2fr); gap:16px; align-items:start; }
