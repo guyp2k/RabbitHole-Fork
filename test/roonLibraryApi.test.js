@@ -116,21 +116,43 @@ test("the Focus answer carries every Roon storage location by name with its albu
 
 const img = (id) => `http://192.168.60.10:9330/image/${id}.jpg`;
 
-test("Recently Played lists each library album once, newest first, and leaves out streams with no album key", async () => {
-  const h = harness({ deepRoon: { roon_history: () => ({ total: 4, plays: [
-    { at: "2026-11-22 15:07", title: "Nitro Dub", artist: "Stargarden", album: "Ambient Excursions", album_key: "857135", image_url: img("sjygaaaa") },
-    { at: "2026-11-22 15:00", title: "Chenrezig", artist: "Stargarden", album: "Ambient Excursions", album_key: "857135", image_url: img("sjygaaaa") },
-    { at: "2026-11-22 14:00", title: "A Stream", artist: "Someone", album: "Only On TIDAL" },
-    { at: "2026-11-21 22:02", title: "Blackest Eyes", artist: "Porcupine Tree", album: "In Absentia", album_key: "106799", image_url: img("jeibaaaa") }
-  ] }) } });
+test("Recently Played lists each library album once, newest first, and leaves out albums that are only streamed", async () => {
+  const h = harness({ clock: () => Date.parse("2026-11-23T12:00:00"), deepRoon: {
+    roon_history: () => ({ total: 5, plays: [
+      { at: "2026-11-22 15:07", title: "Nitro Dub", artist: "Stargarden", album: "Ambient Excursions", album_key: "857135", image_url: img("sjygaaaa") },
+      { at: "2026-11-22 15:00", title: "Chenrezig", artist: "Stargarden", album: "Ambient Excursions", album_key: "857135", image_url: img("sjygaaaa") },
+      { at: "2026-11-22 14:00", title: "Silent Folk - Crussen Remix", artist: "Groupa", album: "Silent Folk - Crussen Remix", album_key: "9695654", image_url: img("leqmaaaa") },
+      { at: "2026-11-22 13:00", title: "A Stream", artist: "Someone", album: "No Key At All" },
+      { at: "2026-11-21 22:02", title: "Blackest Eyes", artist: "Porcupine Tree", album: "In Absentia", album_key: "5550001", image_url: img("tidalaaa") }
+    ] }),
+    roon_library: () => ({ total: 2, rows: [
+      { key: "857135", title: "Ambient Excursions", artist: "Stargarden", format: "FLAC 44/16", image_url: img("sjygaaaa") },
+      { key: "106799", title: "In Absentia", artist: "Porcupine Tree", format: "FLAC 44/24", year: 2002, image_url: img("jeibaaaa") }
+    ] })
+  } });
   await h.get("/api/roon-library/view/recent");
-  assert.deepEqual(h.calls, [{ name: "roon_history", args: { limit: 500 } }]);
+  assert.deepEqual(h.calls, [
+    { name: "roon_history", args: { limit: 500 } },
+    { name: "roon_library", args: { played_within_days: 3, limit: 100 } }
+  ]);
   const { sections } = h.replies[0].payload;
   assert.equal(sections.length, 1);
-  assert.deepEqual(sections[0].albums.map((a) => [a.key, a.title, a.artist, a.lastPlayed, a.image]), [
-    ["857135", "Ambient Excursions", "Stargarden", "2026-11-22 15:07", "/api/roon-library/image/sjygaaaa"],
-    ["106799", "In Absentia", "Porcupine Tree", "2026-11-21 22:02", "/api/roon-library/image/jeibaaaa"]
+  assert.deepEqual(sections[0].albums.map((a) => [a.key, a.title, a.artist, a.format, a.lastPlayed, a.image]), [
+    ["857135", "Ambient Excursions", "Stargarden", "FLAC 44/16", "2026-11-22 15:07", "/api/roon-library/image/sjygaaaa"],
+    ["106799", "In Absentia", "Porcupine Tree", "FLAC 44/24", "2026-11-21 22:02", "/api/roon-library/image/jeibaaaa"]
   ]);
+});
+
+test("Recently Played pages through every library album played in the window before deciding what is a stream", async () => {
+  const pages = [];
+  const rows = Array.from({ length: 150 }, (_, i) => ({ key: String(1000 + i), title: `Album ${i}`, artist: "A" }));
+  const h = harness({ clock: () => Date.parse("2026-11-23T12:00:00"), deepRoon: {
+    roon_history: () => ({ plays: [{ at: "2026-11-23 10:00", album: "Album 140", artist: "A", album_key: "1140" }] }),
+    roon_library: (args) => { pages.push(args.offset || 0); return { total: 150, rows: rows.slice(args.offset || 0, (args.offset || 0) + 100) }; }
+  } });
+  await h.get("/api/roon-library/view/recent");
+  assert.deepEqual(pages, [0, 100]);
+  assert.deepEqual(h.replies[0].payload.sections[0].albums.map((a) => a.key), ["1140"]);
 });
 
 test("Most Played keeps Roon's play counts and finds each album in the library by its exact title and artist", async () => {
