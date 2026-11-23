@@ -40,12 +40,31 @@ function createRoonLibraryApi({ deepRoon, roon, readJson, sendJson, fetchImpl = 
     format: row.format || "", stars: row.stars ?? null, image: learnImage(row.image_url) });
 
   async function recent() {
-    const result = await deepRoon.call("roon_history", { limit: 500 });
+    const history = await deepRoon.call("roon_history", { limit: 500 });
+    const plays = (history.plays || []).filter((play) => play.album);
+    if (!plays.length) return { sections: [{ title: "", albums: [] }] };
+    const oldest = Date.parse(String(plays.at(-1).at || "").replace(" ", "T"));
+    const days = Number.isFinite(oldest) ? Math.min(36500, Math.max(1, Math.ceil((clock() - oldest) / 86400000)) + 1) : 36500;
+    const byKey = new Map();
+    const byName = new Map();
+    for (let offset = 0, total = Infinity, page = 0; offset < total && page < 10; page += 1) {
+      const args = { played_within_days: days, limit: 100 };
+      if (offset) args.offset = offset;
+      const result = await deepRoon.call("roon_library", args);
+      const rows = result.rows || [];
+      for (const row of rows) {
+        byKey.set(String(row.key), row);
+        byName.set(`${norm(row.title)}\u0000${norm(row.artist)}`, row);
+      }
+      total = result.total ?? 0;
+      if (!rows.length) break;
+      offset += rows.length;
+    }
     const seen = new Map();
-    for (const play of result.plays || []) {
-      const key = String(play.album_key || "");
-      if (!/^\d+$/.test(key) || seen.has(key)) continue;
-      seen.set(key, { ...album({ key, title: play.album, artist: play.artist, image_url: play.image_url }), inLibrary: true, lastPlayed: play.at || "" });
+    for (const play of plays) {
+      const match = byKey.get(String(play.album_key || "")) || byName.get(`${norm(play.album)}\u0000${norm(play.artist)}`);
+      if (!match || seen.has(String(match.key))) continue;
+      seen.set(String(match.key), { ...album(match), inLibrary: true, lastPlayed: play.at || "" });
       if (seen.size >= PAGE) break;
     }
     return { sections: [{ title: "", albums: [...seen.values()] }] };
