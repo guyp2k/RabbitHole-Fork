@@ -224,3 +224,59 @@ test("MusicBrainz public fallback can be disabled", async () => {
   assert.deepEqual(rows, []);
   assert.equal(publicCalls, 0);
 });
+
+async function tidalSearchUrls(options) {
+  const resolver = new RadioMetadataResolver({ tidalArtworkEnabled: true, ...options });
+  const urls = [];
+  resolver.fetchTidalSearchJson = async (url) => { urls.push(String(url)); return {}; };
+  const result = await resolver.searchTidal({ artist: "The Temper Trap", title: "These Arms" }, "probe");
+  return { result, urls };
+}
+
+test("with a client ID and secret, TIDAL's old v1 search is never called, because it refuses client-credential tokens with 401", async () => {
+  const { result, urls } = await tidalSearchUrls({ tidalClientId: "id", tidalClientSecret: "secret" });
+  assert.equal(result, null);
+  assert.ok(urls.some((url) => url.startsWith("https://openapi.tidal.com/v2/")));
+  assert.deepEqual(urls.filter((url) => url.startsWith("https://api.tidal.com/v1/")), []);
+});
+
+test("with only a pasted TIDAL access token, the old v1 search is still tried after the current API finds nothing", async () => {
+  const { urls } = await tidalSearchUrls({ tidalAccessToken: "pasted-token" });
+  assert.ok(urls.some((url) => url.startsWith("https://api.tidal.com/v1/search/tracks")));
+});
+
+test("when TIDAL's track details confirm the title and artist but carry no cover, the album's cover is fetched", async () => {
+  const resolver = new RadioMetadataResolver({ tidalClientId: "id", tidalClientSecret: "secret" });
+  resolver.fetchTidalSearchJson = async () => ({
+    data: { id: "512594480", type: "tracks", attributes: { title: "These Arms" },
+      relationships: { albums: { data: [{ id: "album-9", type: "albums" }] }, artists: { data: [{ id: "artist-1", type: "artists" }] } } },
+    included: [
+      { id: "album-9", type: "albums", attributes: { title: "These Arms" } },
+      { id: "artist-1", type: "artists", attributes: { name: "The Temper Trap" } }
+    ]
+  });
+  const albums = [];
+  resolver.fetchTidalAlbum = async (id) => { albums.push(id); return { data: { id, type: "albums", attributes: { title: "These Arms" } } }; };
+  resolver.fetchTidalAlbumCoverImage = async () => "https://resources.tidal.com/images/aa/bb/1280x1280.jpg";
+
+  const result = await resolver.lookupTidalTrackDetails({ id: "512594480", title: "These Arms" }, { artist: "The Temper Trap", title: "These Arms" });
+
+  assert.deepEqual(albums, ["album-9"]);
+  assert.equal(result.coverImage, "https://resources.tidal.com/images/aa/bb/1280x1280.jpg");
+  assert.equal(result.album, "These Arms");
+});
+
+test("TIDAL track details by a different artist still get no album cover", async () => {
+  const resolver = new RadioMetadataResolver({ tidalClientId: "id", tidalClientSecret: "secret" });
+  resolver.fetchTidalSearchJson = async () => ({
+    data: { id: "1", type: "tracks", attributes: { title: "These Arms" },
+      relationships: { albums: { data: [{ id: "album-1", type: "albums" }] }, artists: { data: [{ id: "artist-2", type: "artists" }] } } },
+    included: [{ id: "artist-2", type: "artists", attributes: { name: "Someone Else" } }]
+  });
+  let fetched = 0;
+  resolver.fetchTidalAlbum = async () => { fetched += 1; return {}; };
+  resolver.fetchTidalAlbumCoverImage = async () => "https://resources.tidal.com/images/x/1280x1280.jpg";
+
+  assert.equal(await resolver.lookupTidalTrackDetails({ id: "1", title: "These Arms" }, { artist: "The Temper Trap", title: "These Arms" }), null);
+  assert.equal(fetched, 0);
+});
