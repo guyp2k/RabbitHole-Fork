@@ -1046,7 +1046,8 @@ class RadioMetadataResolver extends EventEmitter {
       };
     }
 
-    const legacyResult = await this.searchTidalLegacy(track, key);
+    const usesClientCredentials = Boolean(this.tidalClientId && this.tidalClientSecret);
+    const legacyResult = usesClientCredentials ? null : await this.searchTidalLegacy(track, key);
     if (legacyResult) return legacyResult;
 
     this.logger?.info?.("TIDAL artwork not found; trying non-TIDAL fallback sources: " + (track.artist ? track.artist + " - " : "") + track.title);
@@ -1150,10 +1151,10 @@ class RadioMetadataResolver extends EventEmitter {
 
     const detailJson = await this.fetchTidalSearchJson(detailUrl.toString());
     const result = chooseTidalTrack(detailJson, track);
-    if (result) return result;
-    if (hasArtistForLookup(track)) return null;
+    if (result?.coverImage) return result;
 
     const trackResource = findTidalIncluded(detailJson, { id: trackId, type: "tracks" }, "tracks") || detailJson?.data || candidate;
+    if (hasArtistForLookup(track) && !isTidalTrackMatch(trackResource, track, detailJson)) return null;
     return this.lookupTidalAlbumCoverArt(trackResource, detailJson, track, getTidalTrackUrl(candidate));
   }
 
