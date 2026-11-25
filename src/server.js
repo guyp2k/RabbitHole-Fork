@@ -130,6 +130,7 @@ const { createLlmHealthStatus } = require("./llmHealthStatus");
 const { createCurrentTrackMetadataEnrichment } = require("./currentTrackMetadataEnrichment");
 const { LiveSonicAnalysisService } = require("./liveSonicAnalysisService");
 const { createRadioEnrichmentService } = require("./radioEnrichmentService");
+const { createRadioParadise } = require("./radioParadise");
 const { createSimilarArtistExpansion } = require("./similarArtistExpansion");
 const {
   diversifyCandidates,
@@ -483,6 +484,7 @@ const {
   radioEnrichmentKey,
   radioEnrichmentResultKey,
   radioMetadataResolver,
+  radioParadise: createRadioParadise({ fetchJsonWithTimeout, matches: tidalEnrichmentMatches }),
   radioTrackFromZone,
   scheduleBroadcast,
   tidal,
