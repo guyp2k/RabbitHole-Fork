@@ -866,7 +866,8 @@ function formatUpNext(zone) {
 }
 
 function shareQueue(zone) {
-  document.querySelector("#playerView .player")?.dispatchEvent(new CustomEvent("roon-queue", { detail: { info: zone && !isLiveRadioZone(zone) ? formatQueueInfo(zone) : "", items: zone ? displayQueueItems(zone).slice(0, 5).map((item) => ({ id: String(item.id ?? "").trim(), title: item.title || "", subtitle: item.subtitle || "", imageKey: item.imageKey || "" })) : [] } }));
+  const queued = Boolean(zone) && !isLiveRadioZone(zone);
+  document.querySelector("#playerView .player")?.dispatchEvent(new CustomEvent("roon-queue", { detail: { info: queued ? formatQueueInfo(zone) : "", items: queued ? displayQueueItems(zone).slice(0, 5).map((item) => ({ id: String(item.id ?? "").trim(), title: item.title || "", subtitle: item.subtitle || "", imageKey: item.imageKey || "" })) : [] } }));
 }
 
 function roonPlayerCardState(zone) {
