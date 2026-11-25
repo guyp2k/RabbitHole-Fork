@@ -1,5 +1,7 @@
 "use strict";
 
+const { isRadioParadiseZone } = require("./radioParadise");
+
 function createRadioEnrichmentService({
   cleanArtworkUrl,
   cleanHttpUrl,
@@ -11,6 +13,7 @@ function createRadioEnrichmentService({
   radioEnrichmentKey,
   radioEnrichmentResultKey,
   radioMetadataResolver,
+  radioParadise,
   radioTrackFromZone,
   scheduleBroadcast,
   tidal,
@@ -119,7 +122,7 @@ function createRadioEnrichmentService({
     };
   }
 
-  async function resolveRadioEnrichment(lookup, key) {
+  async function resolveRadioEnrichment(lookup, key, { onRadioParadise = false } = {}) {
     if (lookup?.catalogEnrichmentAllowed === false) return null;
     const roonPresence = await lookupRoonPresenceRadioArtwork(lookup, key);
     if (roonPresence) return radioMetadataToEnrichment(lookup, roonPresence, null);
@@ -138,7 +141,10 @@ function createRadioEnrichmentService({
       : Promise.resolve(null);
 
     const [metadata, tidalResult] = await Promise.all([metadataPromise, tidalPromise]);
-    return radioMetadataToEnrichment(lookup, metadata, tidalResult);
+    const result = radioMetadataToEnrichment(lookup, metadata, tidalResult);
+    if (result?.imageUrl || !onRadioParadise || !radioParadise) return result;
+    const paradise = await radioParadise.lookup(lookup).catch(() => null);
+    return paradise ? radioMetadataToEnrichment(lookup, paradise, tidalResult) : result;
   }
 
   function scheduleRadioEnrichment(state = {}) {
@@ -169,7 +175,7 @@ function createRadioEnrichmentService({
         updatedAt: Date.now()
       });
 
-      resolveRadioEnrichment(lookup, key)
+      resolveRadioEnrichment(lookup, key, { onRadioParadise: isRadioParadiseZone(zone) })
         .then((result) => {
           const nextResult = result || cachedResult || null;
           radioEnrichmentCache.set(key, {

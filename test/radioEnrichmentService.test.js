@@ -33,6 +33,7 @@ function createService(overrides = {}) {
       isConfigured: () => false,
       verify: async () => null
     },
+    radioParadise: overrides.radioParadise,
     tidalEnrichmentMatches: overrides.tidalEnrichmentMatches || ((lookup = {}, candidate = {}) => (
       keyFor(lookup) === keyFor(candidate)
     ))
@@ -144,4 +145,36 @@ test("scheduleRadioEnrichment does nothing when metadata and TIDAL are disabled"
   service.scheduleRadioEnrichment({ zones: [{ lookup: { artist: "A", title: "T" } }] });
   await new Promise((resolve) => setImmediate(resolve));
   assert.equal(lookups, 0);
+});
+
+const rpZone = (lookup) => ({ lookup, now_playing: { two_line: { line1: "Radio Paradise: Main Mix", line2: `${lookup.artist} - ${lookup.title}` } } });
+const settle = () => new Promise((resolve) => setImmediate(resolve));
+
+test("a Radio Paradise station's own cover fills in when TIDAL and the metadata lookups find no artwork", async () => {
+  const asked = [];
+  const service = createService({
+    tidal: { isConfigured: () => true, verify: async () => ({ artist: "MO3 & Morray", title: "Fragile Hearts", tidalUrl: "https://tidal.com/x" }) },
+    radioParadise: { lookup: async (track) => { asked.push(track.title); return { artist: "MO3 & Morray", title: "Fragile Hearts", album: "Fragile Hearts", albumArtUrl: "https://img.radioparadise.com/covers/l/24126.jpg", source: "paradise" }; } }
+  });
+  const lookup = { artist: "MO3 & Morray", title: "Fragile Hearts" };
+  service.scheduleRadioEnrichment({ zones: [rpZone(lookup)] });
+  await settle(); await settle();
+  const attached = service.attachRadioEnrichment({ zones: [rpZone(lookup)] }).zones[0].now_playing.radio_enrichment;
+  assert.deepEqual(asked, ["Fragile Hearts"]);
+  assert.equal(attached.imageUrl, "https://img.radioparadise.com/covers/l/24126.jpg");
+  assert.equal(attached.source, "radio-paradise");
+});
+
+test("TIDAL's cover still wins on Radio Paradise, and other stations never ask Radio Paradise", async () => {
+  const asked = [];
+  const radioParadise = { lookup: async (track) => { asked.push(track.title); return { artist: track.artist, title: track.title, albumArtUrl: "https://img.radioparadise.com/covers/l/1.jpg" }; } };
+  const tidal = { isConfigured: () => true, verify: async (lookup) => (lookup.title === "Has Art" ? { ...lookup, imageUrl: "https://resources.tidal.com/images/a/1280x1280.jpg" } : null) };
+  const service = createService({ tidal, radioParadise });
+  const withArt = { artist: "A", title: "Has Art" };
+  const otherStation = { artist: "B", title: "No Art" };
+  service.scheduleRadioEnrichment({ zones: [rpZone(withArt), { lookup: otherStation, now_playing: { two_line: { line1: "KEXP 90.3", line2: "B - No Art" } } }] });
+  await settle(); await settle();
+  const zones = service.attachRadioEnrichment({ zones: [rpZone(withArt), { lookup: otherStation, now_playing: {} }] }).zones;
+  assert.equal(zones[0].now_playing.radio_enrichment.imageUrl, "https://resources.tidal.com/images/a/1280x1280.jpg");
+  assert.deepEqual(asked, []);
 });
