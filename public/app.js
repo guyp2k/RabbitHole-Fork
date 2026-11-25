@@ -825,6 +825,7 @@ function isLiveRadioZone(zone = {}) {
   const now = currentZoneNowPlaying(zone) || {};
   if (Number(now.length || 0) > 0) return false;
   if (zone?.is_seek_allowed) return false;
+  if (now.radio_lookup) return true;
   const text = [
     zone?.display_name,
     now.two_line?.line1,
