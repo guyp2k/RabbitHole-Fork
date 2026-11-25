@@ -681,7 +681,7 @@ test("each up-next cover names the track and its first artist, and covers withou
 test("the app shares the next five queue items and the queue summary as a roon-queue event", () => {
   const app = fs.readFileSync(require.resolve("../public/app.js"), "utf8");
   assert.match(app, /function shareQueue\(zone\) \{/);
-  assert.match(app, /new CustomEvent\("roon-queue", \{ detail: \{ info: zone && !isLiveRadioZone\(zone\) \? formatQueueInfo\(zone\) : "", items: zone \? displayQueueItems\(zone\)\.slice\(0, 5\)/);
+  assert.match(app, /new CustomEvent\("roon-queue", \{ detail: \{ info: queued \? formatQueueInfo\(zone\) : "", items: queued \? displayQueueItems\(zone\)\.slice\(0, 5\)/);
   assert.match(app, /liveQueue\.innerHTML = "";\n  \}\n  shareQueue\(zone\);/);
 });
 
@@ -797,4 +797,11 @@ test("Lyrion Now Playing gets the same Up next and Spectrum toggles as Roon, sha
 test("Lyrion's Up next row scrolls inside the cover column instead of widening it past a phone screen", () => {
   assert.match(css, /body\.layoutModern #lyrionNow :is\(\.lyrionArtworkLane, #lyrionPlayback, \.modernUpNextStrip\) \{\s*min-width: 0;\s*max-width: 100%;/);
   assert.match(css, /body\.layoutModern \.modernUpNextList \{[^}]*overflow-x: auto;/);
+});
+
+test("live radio shares no Up next covers, because the tracks queued behind a stream that never ends will not play", () => {
+  const app = fs.readFileSync(require.resolve("../public/app.js"), "utf8");
+  const body = app.slice(app.indexOf("function shareQueue(zone) {"), app.indexOf("\n}\n", app.indexOf("function shareQueue(zone) {")));
+  assert.match(body, /const queued = Boolean\(zone\) && !isLiveRadioZone\(zone\);/);
+  assert.doesNotMatch(body, /items: zone \?/);
 });
