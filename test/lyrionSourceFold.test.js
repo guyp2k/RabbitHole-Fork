@@ -23,8 +23,9 @@ test("the fold is remembered per browser and survives storage that throws", () =
 });
 
 test("the source pills, the search box and Back start on the same column after the toggles", () => {
-  assert.match(css, /#lyrionView \{--lyrion-label-col:48px;\}/);
-  assert.match(css, /:is\(#lyrionSourceToggle,#lyrionResultsToggle\) \{margin-right:14px;\}/);
+  assert.match(css, /#lyrionView \{--lyrion-label-col:96px;\}/);
+  assert.match(css, /#lyrionView :is\(#lyrionSourceToggle, #lyrionResultsToggle\)\.resultsToggle\.panelFold \{\s*flex: 0 0 var\(--lyrion-label-col\) !important;\s*width: var\(--lyrion-label-col\) !important;/);
+  assert.match(css, /:is\(#lyrionSourceToggle,#lyrionResultsToggle\) \{margin-right:0;\}/);
   assert.match(css, /#lyrionSearch \{padding-left:calc\(var\(--lyrion-label-col\) \+ 12px\);\}/);
 });
 
@@ -41,6 +42,5 @@ test("setPanelFolded can flip a toggle without hiding a body", () => {
 
 test("on phones the source pills wrap beside the toggle instead of dropping below it", () => {
   assert.match(css, /\.lyrionSourceRow \{align-items:flex-start;flex-wrap:nowrap;\}/);
-  assert.match(css, /#lyrionSourceToggle \{margin-top:5px;\}/);
   assert.match(css, /@media\(max-width:600px\)\{#lyrionSearch [^\n]* \.lyrionSourceRow #lyrionSourceChoices \{flex:1 1 0;\}\}/);
 });

@@ -179,12 +179,11 @@ body.lyrionFullscreenOpen {overflow:hidden;}
 body[data-playback-system="lyrion"] #roonZoneBar,#roonZoneBar[hidden] {display:none;}
 .roonZoneLabel {color:var(--muted);font-size:16px;}
 #lyrionSourceChoices.isFolded button:not([aria-pressed="true"]) {display:none;}
-#lyrionView {--lyrion-label-col:48px;}
-:is(#lyrionSourceToggle,#lyrionResultsToggle) {margin-right:14px;}
+#lyrionView {--lyrion-label-col:96px;}
+:is(#lyrionSourceToggle,#lyrionResultsToggle) {margin-right:0;}
 #lyrionSearch {padding-left:calc(var(--lyrion-label-col) + 12px);}
 #lyrionSearch #lyrionQuery {flex:1 1 320px;max-width:640px;}
 .lyrionSourceRow {align-items:flex-start;flex-wrap:nowrap;}
-#lyrionSourceToggle {margin-top:5px;}
 @media(max-width:600px){#lyrionSearch {padding-left:0;} #lyrionSearch #lyrionQuery {flex-basis:100%;max-width:none;} .lyrionSourceRow #lyrionSourceChoices {flex:1 1 0;}}
 /* Lyrion's Now Playing rail uses the Roon player's type scale, row grid and System block. */
 #lyrionView .lyrionNow {--rh-rail-surface:linear-gradient(180deg,rgba(8,3,16,.72),rgba(3,1,8,.82));--rh-rail-border:rgba(217,179,255,.11);--rh-control-surface:rgba(4,1,10,.28);--rh-control-border:rgba(217,179,255,.13);--rh-section-rule:rgba(217,179,255,.1);}
@@ -260,3 +259,46 @@ body[data-playback-system="lyrion"] #roonZoneBar,#roonZoneBar[hidden] {display:n
 #lyrionView .lyrionQueueFoldHead {display:flex;align-items:center;justify-content:space-between;gap:12px;margin:12px 0 8px;}
 #lyrionView .lyrionQueueCount {color:var(--muted);font-size:12px;}
 #lyrionView .lyrionSourceRow > .panelFold,#lyrionView .lyrionToolbar > #lyrionResultsToggle {flex:0 0 auto;}
+
+#lyrionView .lyrionHomeHead {display:grid;grid-template-columns:minmax(0,1fr) auto;column-gap:16px;align-items:start;}
+#lyrionView .lyrionHomeHead > :not(.viewSwitch) {grid-column:1;}
+#lyrionView .lyrionHomeHead > .viewSwitch {grid-column:2;grid-row:1 / span 3;align-self:start;}
+#lyrionView .lyrionHomeListView .lyrionShelfRow {grid-auto-flow:row;grid-auto-columns:auto;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:8px;overflow:visible;scroll-snap-type:none;padding:2px;}
+#lyrionView .lyrionHomeListView .lyrionCard {grid-template-columns:48px minmax(0,1fr);grid-template-rows:auto auto;column-gap:12px;row-gap:2px;align-items:center;padding:6px;border:1px solid var(--lyrion-line);border-radius:8px;}
+#lyrionView .lyrionHomeListView .lyrionCardArt {grid-row:1 / span 2;width:48px;margin:0;}
+#lyrionView .lyrionHomeListView .lyrionExploreGrid {grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:8px;}
+#lyrionView .lyrionHomeListView .lyrionExploreTile {grid-template-columns:32px minmax(0,1fr);justify-items:start;align-items:center;min-height:0;padding:8px 12px;text-align:left;}
+#lyrionView .lyrionHomeListView .lyrionExploreTile img {width:32px;height:32px;}
+#lyrionView #lyrionBrowseTitle + .viewSwitch {margin-left:auto;}
+#lyrionView .lyrionResultsCardsView .lyrionResultList {grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:12px;}
+#lyrionView .lyrionResultsCardsView .lyrionResultRow {grid-template-columns:minmax(0,1fr);align-content:start;gap:8px;padding:8px;}
+#lyrionView .lyrionResultsCardsView .lyrionResultRow .queueArt {width:100%;height:auto;aspect-ratio:1;}
+#lyrionView .lyrionResultsCardsView .lyrionResultRow .queueArt img {width:100%;height:100%;object-fit:cover;}
+#lyrionView .lyrionResultsCardsView .lyrionResultRow .queueItemTitle {white-space:normal;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;}
+#lyrionView .lyrionResultsCardsView .lyrionResultRow .lyrionActions {grid-column:1;justify-content:flex-start;flex-wrap:wrap;}
+
+@layer folds {
+  #lyrionView :is(#lyrionSourceToggle, #lyrionResultsToggle).resultsToggle.panelFold {
+    flex: 0 0 var(--lyrion-label-col) !important;
+    width: var(--lyrion-label-col) !important;
+    min-height: 38px !important;
+    justify-content: flex-start !important;
+  }
+  #lyrionView #lyrionSetup > summary::before {
+    display: none !important;
+  }
+  #lyrionView #lyrionSetup > summary::after {
+    content: "\25BE" !important;
+    display: inline !important;
+    width: auto !important;
+    height: auto !important;
+    border: 0 !important;
+    transform: none !important;
+    font-size: 12px !important;
+  }
+  #lyrionView #lyrionSetup[open] > summary::after {
+    content: "\25B4" !important;
+  }
+}
+#lyrionView #lyrionSetup > summary {min-height:32px;font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;}
+@media(max-width:600px){#lyrionView {--lyrion-label-col:84px;}}
