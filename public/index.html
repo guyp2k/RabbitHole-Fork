@@ -528,7 +528,7 @@
               <h2 id="standbyTitle">0/25 standby tracks</h2>
               <p class="pageIntro">Discovery tracks Rabbit Hole keeps ready in the background, already checked against TIDAL and Roon, so Queue gives you something new straight away. The pool refreshes itself; Refresh starts a new search now.</p>
               <p id="standbyStatus" class="muted">Waiting for background search.</p>
-              <details id="standbyDetails" class="standbyDetails" hidden><summary>Details</summary><p id="standbyDetailText"></p></details>
+              <details id="standbyDetails" class="pageDetails" hidden><summary>Details</summary><p id="standbyDetailText"></p></details>
             </div>
             <div class="resultActions standbyActions">
               <button type="button" id="standbyRefresh">Refresh</button>
@@ -547,12 +547,14 @@
         <section class="panel reportHero pageHero">
           <div>
             <p class="eyebrow">Taste Profile</p>
-            <h2 id="tasteProfileHeading">Current music taste</h2>
+            <h2 id="tasteProfileHeading">Current Music Taste</h2>
+            <p class="pageIntro">What Rabbit Hole has learned about your taste from what you play in Roon and how you rate tracks. Discovery uses it to choose and rank suggestions; Use Taste as Prompt starts a Rabbit Hole search from it.</p>
             <p id="tasteNarrative" class="tasteNarrative">Listening history will appear after Roon starts playing.</p>
+            <details id="tasteDetails" class="pageDetails" hidden><summary>Details</summary><ul id="tasteDetailList"></ul></details>
           </div>
           <div class="resultActions">
-            <button type="button" id="refreshHistory">Refresh taste profile</button>
-            <button type="button" id="tastePrompt">Use taste as prompt</button>
+            <button type="button" id="refreshHistory">Refresh Taste Profile</button>
+            <button type="button" id="tastePrompt">Use Taste as Prompt</button>
           </div>
         </section>
 
