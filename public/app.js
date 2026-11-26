@@ -2018,6 +2018,19 @@ function standbyTrackMeta(track = {}) {
   ].filter(Boolean).join(" - ");
 }
 
+let standbySort = "original";
+let beatportSort = "original";
+let tidalMixSort = "original";
+
+function sortedTrackEntries(tracks = [], sort = "original") {
+  const entries = tracks.map((track, index) => ({ track, index }));
+  const compare = (a, b) => String(a || "").localeCompare(String(b || ""), undefined, { sensitivity: "base", numeric: true });
+  if (sort === "title" || sort === "artist") entries.sort((a, b) => compare(a.track[sort], b.track[sort]) || a.index - b.index);
+  else if (sort === "longest") entries.sort((a, b) => Number(b.track.durationMs || 0) - Number(a.track.durationMs || 0) || a.index - b.index);
+  else if (sort === "bpm") entries.sort((a, b) => (Number(a.track.bpm) || Infinity) - (Number(b.track.bpm) || Infinity) || a.index - b.index);
+  return entries;
+}
+
 function standbyTrackHtml(track = {}, index = 0) {
   const tidalUrl = safeHttpUrl(track.tidal?.tidalUrl || track.tidalUrl);
   const payload = trackPayload(track);
@@ -2092,7 +2105,7 @@ function renderStandbyPool(standby = state.standby) {
   $("#standbyClear").disabled = !hasTracks && !standby?.lastError;
 
   list.innerHTML = hasTracks
-    ? `<ol>${state.standbyTracks.map(standbyTrackHtml).join("")}</ol>`
+    ? `<ol>${sortedTrackEntries(state.standbyTracks, standbySort).map((entry) => standbyTrackHtml(entry.track, entry.index)).join("")}</ol>`
     : "<p class=\"muted\">No standby tracks cached yet.</p>";
   cleanRenderedArtifacts(list);
 }
@@ -2688,7 +2701,7 @@ function renderPrimaryNowTidalPlaylistControl(track = state.nowTrack) {
   }
 
   if (!state.tidalPlaylistsLoaded) {
-    setSelectOptionsIfChanged(select, "<option value=\"\">Load TIDAL playlists...</option>", "not-loaded");
+    setSelectOptionsIfChanged(select, "<option value=\"\">Load TIDAL Playlists...</option>", "not-loaded");
     select.disabled = true;
     button.disabled = true;
     status.textContent = "";
@@ -2795,7 +2808,7 @@ function renderTidalPlaylistSeedControl() {
   }
 
   if (!state.tidalPlaylistsLoaded) {
-    setSelectOptionsIfChanged(select, "<option value=\"\">Load TIDAL playlists...</option>", "not-loaded");
+    setSelectOptionsIfChanged(select, "<option value=\"\">Load TIDAL Playlists...</option>", "not-loaded");
     select.disabled = false;
     button.disabled = true;
     status.textContent = "Refresh TIDAL to load playlists.";
@@ -4176,7 +4189,7 @@ function emptyResultHtml(reason, verification = {}) {
   const tips = [
     contextLimitHit ? "The local model likely hit its context/token limit. Reduce seed playlist text, lower requested tracks, or start a fresh Generate run with less reference data." : "",
     verification.yearRange ? "Strict year ranges need reliable TIDAL release-year metadata." : "",
-    verification.minScore ? "Try lowering Minimum match one step if you want more output." : "",
+    verification.minScore ? "Try lowering Minimum Match one step if you want more output." : "",
     "Try a broader seed artist, label, or year range if the run was too narrow."
   ].filter(Boolean);
 
@@ -4307,7 +4320,7 @@ function renderResults(result = {}) {
     : strictRoon
       ? "TIDAL found candidates, but none passed strict Roon verification for the selected output zone. Broaden the prompt or try a different Roon zone."
       : minScore
-        ? `No queueable tracks were close enough to the request. Lower the Minimum match picker or broaden the seed/year range.`
+        ? `No queueable tracks were close enough to the request. Lower the Minimum Match picker or broaden the seed/year range.`
         : `No tracks survived ${verifierLabel} catalogue filters. Try a broader year range or seed around a known artist/label.`;
 
   const titleCount = state.resultArtistConfirmedOnly
@@ -5581,7 +5594,7 @@ function beatportChartSourceLabel(source = "") {
     hype_tracks: "Hype Tracks",
     releases: "New Releases",
     hype_releases: "Hype Releases",
-    genre: "DJ / latest charts"
+    genre: "DJ / Latest Charts"
   }[source] || "Beatport collections";
 }
 
@@ -5710,7 +5723,7 @@ function renderBeatportChart() {
     title.textContent = chart.title || `Beatport chart ${chart.id || ""}`.trim();
     meta.textContent = beatportChartMetaParts(chart, pagination).join(" - ");
     tracks.innerHTML = list.length
-      ? list.map(beatportChartTrackHtml).join("")
+      ? sortedTrackEntries(list, beatportSort).map((entry) => beatportChartTrackHtml(entry.track)).join("")
       : "<div class=\"playlistBrowserEmpty\">This chart did not return tracks.</div>";
   }
   const canQueue = Boolean(list.length && !state.beatportChartLoading);
@@ -6388,11 +6401,11 @@ function tidalMixCardHtml(mix = {}, index = 0) {
         <button type="button" data-tidal-mix-play="${index}">Play Roon</button>
         <button type="button" data-tidal-mix-next="${index}">Add Next</button>
         <button type="button" data-tidal-mix-queue="${index}">Queue</button>
-        <button type="button" data-tidal-mix-prompt="${escapeHtml(prompt)}">Use as prompt</button>
+        <button type="button" data-tidal-mix-prompt="${escapeHtml(prompt)}">Use as Prompt</button>
         <a class="buttonLink" href="${escapeHtml(tidalExportHref(mix, "m3u"))}" download>Download .m3u</a>
         <a class="buttonLink" href="${escapeHtml(tidalExportHref(mix, "csv"))}" download title="Track list for ChatGPT recommendations">Download .csv</a>
         ${externalUrl ? `<a class="buttonLink" href="${escapeHtml(externalUrl)}" target="_blank" rel="noreferrer">Open TIDAL</a>` : ""}
-        ${mix.pinned && pinnedKey ? `<button type="button" data-tidal-pinned-remove="${escapeHtml(pinnedKey)}">Remove pin</button>` : ""}
+        ${mix.pinned && pinnedKey ? `<button type="button" data-tidal-pinned-remove="${escapeHtml(pinnedKey)}">Remove Pin</button>` : ""}
       </div>
     </article>
   `;
@@ -6459,7 +6472,7 @@ function renderTidalMixes(result = state.tidalMixes) {
         <h3>Pinned TIDAL</h3>
         <span>${pinnedMixes.length} imported</span>
       </div>
-      ${pinnedMixes.map((mix, index) => tidalMixCardHtml(mix, index)).join("")}
+      ${sortedTrackEntries(pinnedMixes, tidalMixSort).map((entry) => tidalMixCardHtml(entry.track, entry.index)).join("")}
     </section>
   ` : "";
   const officialHtml = mixes.length ? `
@@ -6468,7 +6481,7 @@ function renderTidalMixes(result = state.tidalMixes) {
         <h3>Official Profile Mixes</h3>
         <span>${mixes.length} available</span>
       </div>
-      ${mixes.map((mix, index) => tidalMixCardHtml(mix, index + pinnedMixes.length)).join("")}
+      ${sortedTrackEntries(mixes, tidalMixSort).map((entry) => tidalMixCardHtml(entry.track, entry.index + pinnedMixes.length)).join("")}
     </section>
   ` : "";
   grid.innerHTML = total || pinnedErrorHtml
@@ -6522,7 +6535,7 @@ async function removePinnedTidalMix(key, button) {
   } finally {
     if (button) {
       button.disabled = false;
-      button.textContent = originalText || "Remove pin";
+      button.textContent = originalText || "Remove Pin";
     }
   }
 }
@@ -6545,7 +6558,7 @@ async function refreshTidalMixes({ force = false } = {}) {
     renderTidalMixes(state.tidalMixes);
   } finally {
     if (button) {
-      button.textContent = originalText || "Refresh mixes";
+      button.textContent = originalText || "Refresh Mixes";
       button.disabled = false;
     }
   }
@@ -8210,6 +8223,11 @@ $("#refreshPlaylistBrowser")?.addEventListener("click", () => {
 });
 
 $("#playlistView .playlistHero .resultActions")?.append(window.RabbitHoleViewControls.layoutSwitch({ key: "rabbitHole.layout.playlists", name: "Playlist", onChange: (layout) => { playlistLayout = layout; renderPlaylistBrowser(); } }));
+$("#beatportChartsView .beatportChartPanel .resultActions")?.append(window.RabbitHoleViewControls.layoutSwitch({ key: "rabbitHole.layout.beatport", name: "Track", defaultLayout: "list", onChange: (layout) => $("#beatportChartsView")?.classList.toggle("beatportCardsView", layout === "cards") }));
+$("#tidalView .tidalMixHero .resultActions")?.append(window.RabbitHoleViewControls.layoutSwitch({ key: "rabbitHole.layout.tidalMixes", name: "Mix", onChange: (layout) => $("#tidalView")?.classList.toggle("tidalMixListView", layout === "list") }));
+if ($("#standbySort")) standbySort = window.RabbitHoleViewControls.bindSort($("#standbySort"), "rabbitHole.sort.standby", (value) => { standbySort = value; renderStandbyPool(); });
+if ($("#beatportChartSort")) beatportSort = window.RabbitHoleViewControls.bindSort($("#beatportChartSort"), "rabbitHole.sort.beatport", (value) => { beatportSort = value; renderBeatportChart(); });
+if ($("#tidalMixSort")) tidalMixSort = window.RabbitHoleViewControls.bindSort($("#tidalMixSort"), "rabbitHole.sort.tidalMixes", (value) => { tidalMixSort = value; renderTidalMixes(); });
 $("#radioView .radioHero .resultActions")?.append(window.RabbitHoleViewControls.layoutSwitch({ key: "rabbitHole.layout.radio", name: "Station", onChange: (layout) => $("#radioView")?.classList.toggle("radioListView", layout === "list") }));
 const radioSortSelect = $("#radioSort");
 if (radioSortSelect) {
@@ -8704,7 +8722,7 @@ $("#copyList").addEventListener("click", async () => {
   await navigator.clipboard.writeText(plainList(state.displayedTracks.map(trackPayload)));
   $("#copyList").textContent = "Copied";
   setTimeout(() => {
-    $("#copyList").textContent = "Copy list";
+    $("#copyList").textContent = "Copy List";
   }, 1200);
 });
 

@@ -2877,6 +2877,72 @@ input {
   max-width: 90ch;
 }
 
+.beatportCardsView .beatportChartTracks {
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 12px;
+}
+
+.beatportCardsView .beatportChartTrack {
+  position: relative;
+  grid-template-columns: minmax(0, 1fr);
+  align-content: start;
+  align-items: start;
+  gap: 8px;
+  padding: 8px;
+}
+
+.beatportCardsView .beatportChartArt {
+  width: 100%;
+}
+
+.beatportCardsView .beatportChartPosition {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  z-index: 1;
+  background: rgba(0, 0, 0, 0.62);
+}
+
+.tidalMixListView .tidalMixSection {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 6px;
+}
+
+.tidalMixListView .tidalMixCard {
+  grid-template-columns: 56px minmax(0, 1fr) auto;
+  grid-template-rows: auto;
+  align-items: center;
+  gap: 12px;
+  min-height: 0;
+  padding: 8px 12px;
+}
+
+.tidalMixListView .tidalMixArt {
+  width: 56px;
+}
+
+.tidalMixListView .tidalMixActions :is(button, .buttonLink) {
+  white-space: nowrap;
+}
+
+.tidalMixListView .tidalMixActions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
+@media (max-width: 899px) {
+  .tidalMixListView .tidalMixCard {
+    grid-template-columns: 56px minmax(0, 1fr);
+  }
+
+  .tidalMixListView .tidalMixActions {
+    grid-column: 1 / -1;
+    justify-content: flex-start;
+  }
+}
+
 .pageIntro {
   max-width: 72ch;
   margin: 4px 0 6px;
