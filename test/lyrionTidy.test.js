@@ -107,3 +107,21 @@ test("the browse count reads as a number of items in words", () => {
   assert.equal(vm.runInNewContext(line, { result: { count: 63795 } }), "63,795 Items");
   assert.equal(vm.runInNewContext(line, { result: { count: 1 } }), "1 Item");
 });
+
+test("Sources, its search box and Browse share one label column, and Setup reads as a small menu with its own arrow", () => {
+  const css = fs.readFileSync(require.resolve("../public/lyrion.css"), "utf8");
+  assert.match(css, /#lyrionView \{--lyrion-label-col:96px;\}/);
+  assert.match(css, /#lyrionSearch \{padding-left:calc\(var\(--lyrion-label-col\) \+ 12px\);\}/);
+  assert.match(css, /#lyrionView #lyrionSetup > summary::before \{\s*display: none !important;/);
+  assert.match(css, /#lyrionView #lyrionSetup > summary::after \{\s*content: "\\25BE" !important;/);
+});
+
+test("Lyrion Home and the Browse results have the shared Thumbnails | List switch, remembered per browser", () => {
+  assert.match(lyrion, /\$\("lyrionHomeView"\)\.querySelector\("\.lyrionHomeHead"\)\.append\(window\.RabbitHoleViewControls\.layoutSwitch\(\{ key: "rabbitHole\.layout\.lyrionHome", name: "Lyrion Home", onChange: \(layout\) => \$\("lyrionHomeView"\)\.classList\.toggle\("lyrionHomeListView", layout === "list"\) \}\)\);/);
+  assert.match(lyrion, /\$\("lyrionBrowseTitle"\)\.after\(window\.RabbitHoleViewControls\.layoutSwitch\(\{ key: "rabbitHole\.layout\.lyrionBrowse", name: "Browse Results", defaultLayout: "list", onChange: \(layout\) => \$\("lyrionResultsBody"\)\.classList\.toggle\("lyrionResultsCardsView", layout === "cards"\) \}\)\);/);
+  const css = fs.readFileSync(require.resolve("../public/lyrion.css"), "utf8");
+  assert.match(css, /#lyrionView \.lyrionHomeListView \.lyrionShelfRow \{grid-auto-flow:row;[^}]*grid-template-columns:repeat\(auto-fill,minmax\(280px,1fr\)\);/);
+  assert.match(css, /#lyrionView \.lyrionHomeListView \.lyrionCardArt \{grid-row:1 \/ span 2;width:48px;/);
+  assert.match(css, /#lyrionView \.lyrionResultsCardsView \.lyrionResultList \{grid-template-columns:repeat\(auto-fill,minmax\(170px,1fr\)\);/);
+  assert.match(css, /#lyrionView \.lyrionResultsCardsView \.lyrionResultRow \.queueArt \{width:100%;height:auto;aspect-ratio:1;\}/);
+});
