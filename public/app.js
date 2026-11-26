@@ -2115,7 +2115,7 @@ function renderStandbyPool(standby = state.standby) {
 
   list.innerHTML = hasTracks
     ? `<ol>${sortedTrackEntries(state.standbyTracks, standbySort).map((entry) => standbyTrackHtml(entry.track, entry.index)).join("")}</ol>`
-    : "<p class=\"muted\">No standby tracks cached yet.</p>";
+    : "<p class=\"muted\">No Standby Tracks Cached Yet.</p>";
   cleanRenderedArtifacts(list);
 }
 
@@ -2422,7 +2422,7 @@ function rabbitSectionHtml(section = {}) {
           ...visible.map((item) => rabbitNodeHtml(item)),
           ...extra.map((item) => rabbitNodeHtml(item, true)),
           extra.length ? `<button type="button" class="rabbitMore" data-rabbit-more="${extra.length}">Show ${extra.length} more</button>` : ""
-        ].join("") : "<p class=\"muted\">No concrete entities found yet.</p>"}
+        ].join("") : "<p class=\"muted\">No Concrete Entities Found Yet.</p>"}
       </div>
     </section>
   `;
@@ -2543,7 +2543,7 @@ async function loadRabbitHole(track, { force = false } = {}) {
     return;
   }
 
-  content.innerHTML = "<p class=\"muted\">Building Rabbit Hole graph...</p>";
+  content.innerHTML = "<p class=\"muted\">Building Rabbit Hole Graph...</p>";
   try {
     const graph = await api("/api/rabbit-hole", {
       track,
@@ -5487,8 +5487,8 @@ function renderMusicMemory() {
   const results = $("#musicMemoryResults");
   if (!status || !results) return;
   if (state.musicMemoryLoading && !state.musicMemoryTracks.length) {
-    status.textContent = "Searching music memory...";
-    results.innerHTML = "<div class=\"playlistBrowserEmpty\">Searching music memory...</div>";
+    status.textContent = "Searching Music Memory...";
+    results.innerHTML = "<div class=\"playlistBrowserEmpty\">Searching Music Memory...</div>";
     return;
   }
   const payload = state.musicMemory || {};
@@ -5506,7 +5506,7 @@ function renderMusicMemory() {
   const cards = state.musicMemoryTracks.map(musicMemoryTrackHtml).join("");
   const hasMore = shown < total;
   results.innerHTML = `
-    ${cards || "<div class=\"playlistBrowserEmpty\">No matching tracks found.</div>"}
+    ${cards || "<div class=\"playlistBrowserEmpty\">No Matching Tracks Found.</div>"}
     ${hasMore ? `<button type="button" id="musicMemoryLoadMore" class="musicMemoryLoadMore"${state.musicMemoryLoading ? " disabled" : ""}>${state.musicMemoryLoading ? "Loading..." : "Load more"}</button>` : ""}
   `;
 }
@@ -5716,15 +5716,15 @@ function renderBeatportChart() {
   const chart = payload.chart || null;
   const list = state.beatportChartTracks || [];
   if (state.beatportChartLoading && !chart) {
-    status.textContent = "Loading Beatport chart...";
+    status.textContent = "Loading Beatport Chart...";
     title.textContent = "Loading Chart";
     meta.textContent = "";
-    tracks.innerHTML = "<div class=\"playlistBrowserEmpty\">Loading Beatport chart...</div>";
+    tracks.innerHTML = "<div class=\"playlistBrowserEmpty\">Loading Beatport Chart...</div>";
   } else if (!chart) {
     status.textContent = "Load a Beatport chart, then queue through Rabbit Hole's TIDAL/Roon resolver.";
     title.textContent = "No Chart Loaded";
     meta.textContent = "";
-    tracks.innerHTML = "<div class=\"playlistBrowserEmpty\">No chart loaded.</div>";
+    tracks.innerHTML = "<div class=\"playlistBrowserEmpty\">No Chart Loaded.</div>";
   } else {
     const pagination = payload.pagination || {};
     status.textContent = pagination.complete === false
@@ -6655,7 +6655,7 @@ function renderHistoryReport(report = {}) {
 
   $("#topTracks").innerHTML = report.topTracks?.length
     ? report.topTracks.map((track, index) => reportRowHtml(track, index, "track")).join("")
-    : "<p class=\"muted\">No track history yet.</p>";
+    : "<p class=\"muted\">No Track History Yet.</p>";
 
   const dna = report.tasteDna || {};
   const confidence = dna.confidence || {};

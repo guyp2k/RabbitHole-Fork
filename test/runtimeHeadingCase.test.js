@@ -52,3 +52,9 @@ test("the browser layout check loads headingCase with the results renderer that 
   const harness = fs.readFileSync(require.resolve("../scripts/check-rabbit-hole-browser.cjs"), "utf8");
   assert.match(harness, /"headingCase",/);
 });
+
+test("short empty-state headlines are Title Case too", () => {
+  for (const text of ["No Chart Loaded.", "No Standby Tracks Cached Yet.", "Loading Beatport Chart...", "No Matching Tracks Found.", "Searching Music Memory...", "No Track History Yet."]) {
+    assert.ok(app.includes(`>${text}<`), text);
+  }
+});
