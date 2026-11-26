@@ -80,7 +80,7 @@
             <button type="button" data-nav-group="system" data-nav-item="synapse-memory" data-view="memory">Synapse Memory</button>
             <button type="button" data-nav-group="system" data-nav-item="diagnostics" data-view="diagnostics">Diagnostics</button>
             <button type="button" data-nav-group="system" data-nav-item="database" data-view="database">Database</button>
-            <button type="button" data-nav-group="system" data-nav-item="sonic-review" data-view="sonicReview">Sonic Review</button>
+            <button type="button" data-nav-group="system" data-nav-item="sonic-review" data-view="sonicReview" data-requires="sonic" hidden>Sonic Review</button>
             <button type="button" data-nav-group="system" data-nav-item="settings" data-view="settings">Settings</button>
           </div>
         </div>
@@ -183,7 +183,7 @@
           <div class="settingsHeader">
             <p class="eyebrow">System</p>
             <h2>Settings</h2>
-            <p class="pageIntro">How Rabbit Hole thinks, plays and looks: which AI answers requests, which Roon zone plays, the theme and the layout. The Sonic sections control the sound-similarity model: whether it may reorder recommendations, and the background job that fingerprints your tracks so it has something to compare.</p>
+            <p class="pageIntro">How Rabbit Hole thinks, plays and looks: which AI answers requests, which Roon zone plays, the theme and the layout.<span data-requires="sonic" hidden> The Sonic sections control the sound-similarity model: whether it may reorder recommendations, and the background job that fingerprints your tracks so it has something to compare.</span></p>
           </div>
           <h3 class="panelFoldHeading"><button type="button" class="panelFold" data-fold-key="settings.general" aria-controls="settingsGeneralBody" aria-expanded="true"><span class="panelFoldCaret" aria-hidden="true">▾</span>AI, Zone and Appearance</button></h3>
           <div id="settingsGeneralBody">
@@ -220,7 +220,7 @@
             </label>
           </div>
           </div>
-          <section class="settingsSection sonicProductionSettings" aria-labelledby="sonicProductionHeading">
+          <section class="settingsSection sonicProductionSettings" aria-labelledby="sonicProductionHeading" data-requires="sonic" hidden>
             <div class="settingsSectionHeader">
               <div>
                 <p class="eyebrow">Recommendations</p>
@@ -241,7 +241,7 @@
             <p id="sonicProductionHelp" class="muted">Blend is capped at the configured maximum (8 points by default) and applies immediately to new discovery requests until restart.</p>
             </div>
           </section>
-          <section id="sonicCoveragePanel" class="settingsSection sonicCoverageSettings" aria-labelledby="sonicCoverageHeading">
+          <section id="sonicCoveragePanel" class="settingsSection sonicCoverageSettings" aria-labelledby="sonicCoverageHeading" data-requires="sonic" hidden>
             <div class="settingsSectionHeader">
               <div>
                 <h3 id="sonicCoverageHeading" class="panelFoldHeading"><button type="button" class="panelFold" data-fold-key="settings.sonicCoverage" aria-controls="sonicCoverageBody" aria-expanded="true"><span class="panelFoldCaret" aria-hidden="true">▾</span>Sonic Audio Coverage</button></h3>

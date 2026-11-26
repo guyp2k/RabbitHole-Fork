@@ -13289,3 +13289,7 @@ dialog.playerCard .playerCardMute {
 .sonicReviewAnchorToolsHead button {
   white-space: nowrap;
 }
+
+[data-requires][hidden] {
+  display: none;
+}

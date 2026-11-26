@@ -1217,7 +1217,8 @@ function appSnapshot(musicMemoryStatus) {
     radioMetadata: radioMetadataResolver.status(), metadataEnrichment: metadataEnrichment.status({ musicMemoryStatus }),
     llm: llmSnapshot(), ai: modelStatus,
     mcp: { endpoint: "/mcp", connected: true, toolCount: modelStatus ? modelStatus.tools.count : 0 },
-    beatport: beatportAvailability(beatport.status())
+    beatport: beatportAvailability(beatport.status()),
+    sonic: { available: Boolean(recommendationEngineV2.enabled && sonicCoverage) }
   };
 }
 

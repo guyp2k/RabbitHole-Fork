@@ -118,6 +118,27 @@ offered upstream as pull requests.
 The full list is in the commit history after `f0b1e81`. New settings are
 documented in `.env.example`.
 
+## Disabled features (revisit if wanted)
+
+Two upstream features are switched off in this fork's deployment. Their pages
+and controls stay hidden until the server reports them as working, so nothing
+shows up that cannot be used. To turn either one on, revisit it as its own
+piece of work.
+
+- **Beatport** (Discover > Beatport charts, plus BPM, key and label lookups).
+  Beatport's API is partner-gated: it needs an access token from Beatport.
+  Set `BEATPORT_ENABLED=true` with `BEATPORT_ACCESS_TOKEN` (or
+  `BEATPORT_TOKEN_FILE`). The menu item appears once Beatport is both enabled
+  and configured.
+- **Sonic** (System > Sonic Review, the two Sonic sections in Settings and the
+  Sonic profile on Now Playing). It compares how tracks sound using
+  Discogs-EffNet audio fingerprints from Essentia. Upstream runs that model in
+  a WSL worker on Windows; the Linux Docker image does not include it. Turning
+  it on needs `RABBIT_HOLE_RECOMMENDATION_V2_ENABLED=true`, the Essentia
+  Discogs-EffNet worker and model available to the container, and a first
+  fingerprinting pass over the library (Settings > Sonic Audio Coverage). The
+  Sonic pages appear once the engine and its coverage service are running.
+
 ## Install on Unraid
 
 The image is published to `ghcr.io/guyp2k/rabbithole-fork` after every green CI

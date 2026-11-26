@@ -6,7 +6,7 @@
   const query = selector => panel.querySelector(selector);
   const form = query("#sonicCoverageLimits");
   let snapshot = null, busy = false, error = "", dirty = false, timer;
-  const visible = () => view.classList.contains("isActive") && !document.hidden;
+  const visible = () => view.classList.contains("isActive") && !panel.hidden && !document.hidden;
   const number = value => Number(value || 0).toLocaleString();
 
   function render() {
@@ -90,6 +90,7 @@
   });
   const shown = () => { if (visible()) request(); else clearTimeout(timer); };
   new MutationObserver(shown).observe(view,{attributes:true,attributeFilter:["class"]});
+  new MutationObserver(shown).observe(panel,{attributes:true,attributeFilter:["hidden"]});
   document.addEventListener("visibilitychange",shown);
   shown();
 })();
