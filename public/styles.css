@@ -2993,6 +2993,120 @@ input {
   background: rgba(239, 118, 122, 0.14);
 }
 
+.playlistBrowserItems[hidden] {
+  display: none;
+}
+
+#playlistView .playlistBrowserHeader {
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.playlistBrowserHeader h3 {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+#playlistView .playlistBrowserFold {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  background: none !important;
+  box-shadow: none !important;
+  color: inherit !important;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+#playlistView .playlistBrowserCaret {
+  width: 1em;
+  color: var(--accent);
+  font-size: 0.8em;
+}
+
+.playlistBrowserSort {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.playlistBrowserSort select {
+  width: auto;
+  max-width: 200px;
+  min-height: 32px;
+}
+
+.playlistBrowserView {
+  display: inline-flex;
+  gap: 6px;
+}
+
+#playlistView .playlistBrowserView button[aria-pressed="true"] {
+  border-color: var(--accent) !important;
+  color: var(--text) !important;
+  background: color-mix(in srgb, var(--accent) 30%, transparent) !important;
+}
+
+.playlistBrowserCards.isList {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 6px;
+}
+
+.playlistBrowserCards.isList .playlistBrowserCard {
+  grid-template-columns: 44px minmax(0, 1fr) auto;
+  grid-template-areas: "art body actions";
+  gap: 12px;
+  padding: 8px 12px;
+}
+
+.playlistBrowserCards.isList .playlistBrowserArt {
+  width: 44px;
+}
+
+.playlistBrowserCards.isList .playlistBrowserArt span {
+  font-size: 14px;
+}
+
+.playlistBrowserCards.isList :is(.playlistBrowserType, .playlistBrowserBody small) {
+  display: none;
+}
+
+.playlistBrowserCards.isList .playlistBrowserBody h3 {
+  font-size: 15px;
+}
+
+.playlistBrowserCards.isList .playlistBrowserActions {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 6px;
+}
+
+.playlistBrowserCards.isList .playlistBrowserActions :is(button, .buttonLink) {
+  flex: 0 0 auto;
+  min-height: 30px;
+  padding: 0 10px;
+  font-size: 12px;
+}
+
+@media (max-width: 899px) {
+  .playlistBrowserCards.isList .playlistBrowserCard {
+    grid-template-columns: 44px minmax(0, 1fr);
+    grid-template-areas:
+      "art body"
+      "actions actions";
+  }
+
+  .playlistBrowserCards.isList .playlistBrowserActions {
+    flex-wrap: wrap;
+  }
+}
+
 .playlistBrowserEmpty {
   padding: 14px;
   border: 1px solid rgba(217, 179, 255, 0.14);

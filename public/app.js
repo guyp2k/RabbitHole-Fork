@@ -5256,7 +5256,40 @@ function playlistBrowserStatusText() {
   return parts.join(" - ");
 }
 
-function playlistBrowserCardHtml(playlist = {}, source = "roon", index = 0) {
+const PLAYLIST_BROWSER_KEY = "rabbitHole.playlistBrowser";
+const PLAYLIST_SORTS = [["original", "Original Order"], ["name", "Name A-Z"], ["name-desc", "Name Z-A"], ["most", "Most Tracks"], ["fewest", "Fewest Tracks"]];
+
+function readPlaylistBrowserPrefs(saved) {
+  let value = {};
+  try { value = JSON.parse(saved || "{}") || {}; } catch { value = {}; }
+  const sorts = ["original", "name", "name-desc", "most", "fewest"];
+  const sortFor = (source) => sorts.includes(value.sort?.[source]) ? value.sort[source] : "original";
+  return {
+    view: value.view === "list" ? "list" : "cards",
+    folded: { tidal: value.folded?.tidal === true, roon: value.folded?.roon === true },
+    sort: { tidal: sortFor("tidal"), roon: sortFor("roon") }
+  };
+}
+
+function sortedPlaylistEntries(playlists = [], sort = "original") {
+  const entries = playlists.map((playlist, index) => ({ playlist, index }));
+  const name = (entry) => String(entry.playlist.title || "");
+  const count = (entry) => Number(entry.playlist.itemCount || entry.playlist.count || 0);
+  const byName = (a, b) => name(a).localeCompare(name(b), undefined, { sensitivity: "base", numeric: true }) || a.index - b.index;
+  if (sort === "name") entries.sort(byName);
+  else if (sort === "name-desc") entries.sort((a, b) => byName(b, a));
+  else if (sort === "most") entries.sort((a, b) => count(b) - count(a) || byName(a, b));
+  else if (sort === "fewest") entries.sort((a, b) => count(a) - count(b) || byName(a, b));
+  return entries;
+}
+
+let playlistBrowserPrefs = readPlaylistBrowserPrefs((() => { try { return localStorage.getItem(PLAYLIST_BROWSER_KEY); } catch { return null; } })());
+
+function savePlaylistBrowserPrefs() {
+  try { localStorage.setItem(PLAYLIST_BROWSER_KEY, JSON.stringify(playlistBrowserPrefs)); } catch {}
+}
+
+function playlistBrowserCardHtml(playlist = {}, source = "roon", index = 0, position = index) {
   const isTidal = source === "tidal";
   const title = playlist.title || "Untitled playlist";
   const count = Number(playlist.itemCount || playlist.count || 0);
@@ -5274,10 +5307,10 @@ function playlistBrowserCardHtml(playlist = {}, source = "roon", index = 0) {
   return `
     <article class="playlistBrowserCard">
       <div class="playlistBrowserArt">
-        ${imageUrl ? `<img src="${escapeHtml(imageUrl)}" alt="">` : `<span>${escapeHtml(String(index + 1).padStart(2, "0"))}</span>`}
+        ${imageUrl ? `<img src="${escapeHtml(imageUrl)}" alt="">` : `<span>${escapeHtml(String(position + 1).padStart(2, "0"))}</span>`}
       </div>
       <div class="playlistBrowserBody">
-        <span class="playlistBrowserType">${escapeHtml(isTidal ? "TIDAL playlist" : "Roon local playlist")}</span>
+        <span class="playlistBrowserType">${escapeHtml(isTidal ? "TIDAL Playlist" : "Roon Local Playlist")}</span>
         <h3>${escapeHtml(title)}</h3>
         ${meta ? `<p>${escapeHtml(meta)}</p>` : ""}
         ${playlist.description ? `<small>${escapeHtml(playlist.description)}</small>` : ""}
@@ -5304,15 +5337,18 @@ function playlistBrowserSectionHtml({ title = "", subtitle = "", source = "roon"
   else if (error) body = playlistBrowserEmptyHtml(error);
   else if (!loaded) body = playlistBrowserEmptyHtml(`Open this tab or refresh to load ${title}.`);
   else if (!playlists.length) body = playlistBrowserEmptyHtml(`No ${title} found.`);
-  else body = `<div class="playlistBrowserCards">${playlists.map((playlist, index) => playlistBrowserCardHtml(playlist, source, index)).join("")}</div>`;
+  else body = `<div class="playlistBrowserCards${playlistBrowserPrefs.view === "list" ? " isList" : ""}">${sortedPlaylistEntries(playlists, playlistBrowserPrefs.sort[source]).map((entry, position) => playlistBrowserCardHtml(entry.playlist, source, entry.index, position)).join("")}</div>`;
 
+  const folded = playlistBrowserPrefs.folded[source] === true;
+  const sortOptions = PLAYLIST_SORTS.map(([value, label]) => `<option value="${value}"${playlistBrowserPrefs.sort[source] === value ? " selected" : ""}>${label}</option>`).join("");
   return `
     <section class="playlistBrowserSection">
       <div class="playlistBrowserHeader">
-        <h3>${escapeHtml(title)}</h3>
+        <h3><button type="button" class="playlistBrowserFold" data-playlist-fold="${escapeHtml(source)}" aria-expanded="${String(!folded)}" aria-controls="playlistBrowserItems-${escapeHtml(source)}"><span class="playlistBrowserCaret" aria-hidden="true">${folded ? "▸" : "▾"}</span>${escapeHtml(title)}</button></h3>
         ${subtitle ? `<span>${escapeHtml(subtitle)}</span>` : ""}
+        <label class="playlistBrowserSort">Sort<select data-playlist-sort="${escapeHtml(source)}" aria-label="Sort ${escapeHtml(title)}">${sortOptions}</select></label>
       </div>
-      ${body}
+      <div class="playlistBrowserItems" id="playlistBrowserItems-${escapeHtml(source)}"${folded ? " hidden" : ""}>${body}</div>
     </section>
   `;
 }
@@ -5324,7 +5360,7 @@ function renderPlaylistBrowser() {
   status.textContent = playlistBrowserStatusText();
   grid.innerHTML = [
     playlistBrowserSectionHtml({
-      title: "TIDAL playlists",
+      title: "TIDAL Playlists",
       subtitle: state.tidalPlaylistsWarning || (state.tidalPlaylistsLoaded ? `${state.tidalPlaylists.length} available` : ""),
       source: "tidal",
       playlists: state.tidalPlaylists,
@@ -5333,7 +5369,7 @@ function renderPlaylistBrowser() {
       loaded: state.tidalPlaylistsLoaded
     }),
     playlistBrowserSectionHtml({
-      title: "Roon local playlists",
+      title: "Roon Local Playlists",
       subtitle: state.roonPlaylistsWarning || (state.roonPlaylistsLoaded ? `${state.playlists.length} available` : ""),
       source: "roon",
       playlists: state.playlists,
@@ -8324,7 +8360,33 @@ $("#refreshPlaylistBrowser")?.addEventListener("click", () => {
   });
 });
 
+for (const button of document.querySelectorAll("[data-playlist-view]")) {
+  button.setAttribute("aria-pressed", String(button.dataset.playlistView === playlistBrowserPrefs.view));
+  button.addEventListener("click", () => {
+    playlistBrowserPrefs = { ...playlistBrowserPrefs, view: button.dataset.playlistView === "list" ? "list" : "cards" };
+    for (const other of document.querySelectorAll("[data-playlist-view]")) other.setAttribute("aria-pressed", String(other.dataset.playlistView === playlistBrowserPrefs.view));
+    savePlaylistBrowserPrefs();
+    renderPlaylistBrowser();
+  });
+}
+
+$("#playlistBrowserGrid")?.addEventListener("change", (event) => {
+  const select = event.target.closest("[data-playlist-sort]");
+  if (!select) return;
+  playlistBrowserPrefs = { ...playlistBrowserPrefs, sort: { ...playlistBrowserPrefs.sort, [select.dataset.playlistSort]: select.value } };
+  savePlaylistBrowserPrefs();
+  renderPlaylistBrowser();
+});
+
 $("#playlistBrowserGrid")?.addEventListener("click", (event) => {
+  const fold = event.target.closest("[data-playlist-fold]");
+  if (fold) {
+    const source = fold.dataset.playlistFold;
+    playlistBrowserPrefs = { ...playlistBrowserPrefs, folded: { ...playlistBrowserPrefs.folded, [source]: !playlistBrowserPrefs.folded[source] } };
+    savePlaylistBrowserPrefs();
+    renderPlaylistBrowser();
+    return;
+  }
   const deleteButton = event.target.closest("[data-playlist-source][data-playlist-index][data-playlist-delete]");
   if (deleteButton) {
     deleteBrowserPlaylist(
