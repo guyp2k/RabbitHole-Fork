@@ -185,6 +185,21 @@
   });
   more.addEventListener("click", () => load({ append: true }));
 
+  const LAYOUT_KEY = "rabbitHole.rlLayout";
+  const layoutButtons = [...document.querySelectorAll("[data-rl-layout]")];
+  let layout = (() => { try { return localStorage.getItem(LAYOUT_KEY) === "list" ? "list" : "cards"; } catch { return "cards"; } })();
+  function applyLayout() {
+    const view = $("#roonLibraryView");
+    if (view) view.classList.toggle("rlListView", layout === "list");
+    for (const button of layoutButtons) button.setAttribute("aria-pressed", String(button.dataset.rlLayout === layout));
+  }
+  for (const button of layoutButtons) button.addEventListener("click", () => {
+    layout = button.dataset.rlLayout === "list" ? "list" : "cards";
+    try { localStorage.setItem(LAYOUT_KEY, layout); } catch {}
+    applyLayout();
+  });
+  applyLayout();
+
   const VIEW_KEY = "rabbitHole.rlView";
   const viewButtons = [...document.querySelectorAll("[data-rl-view]")];
   let view = (() => { try { return localStorage.getItem(VIEW_KEY) || "library"; } catch { return "library"; } })();

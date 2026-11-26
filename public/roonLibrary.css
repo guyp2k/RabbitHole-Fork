@@ -26,3 +26,17 @@
   .rlFilters label { flex: 1 1 45%; }
   .rlGrid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
+.rlLayoutSwitch { display: inline-flex; gap: var(--db-space-2); margin-left: auto; }
+#roonLibraryView .rlLayoutSwitch button[aria-pressed="true"] { border-color: var(--accent) !important; color: var(--text) !important; background: color-mix(in srgb, var(--accent) 30%, transparent) !important; }
+#roonLibraryView.rlListView .rlGrid { grid-template-columns: minmax(0, 1fr); gap: 6px; }
+#roonLibraryView.rlListView .rlCard { display: grid; grid-template-columns: 48px minmax(0, 1fr) auto; grid-template-areas: "art name actions" "art meta actions"; align-items: center; column-gap: 12px; row-gap: 2px; padding: 6px 10px; }
+#roonLibraryView.rlListView .rlCard .dbMosaic { grid-area: art; width: 48px; height: 48px; }
+#roonLibraryView.rlListView .rlCard .dbCollectionName { grid-area: name; -webkit-line-clamp: 1; }
+#roonLibraryView.rlListView .rlCard .dbCollectionMeta { grid-area: meta; -webkit-line-clamp: 1; }
+#roonLibraryView.rlListView .rlCard :is(.rlActions, .rlNote) { grid-area: actions; display: flex; gap: 6px; margin-top: 0; padding-top: 0; }
+#roonLibraryView.rlListView .rlCard .rlActions button { min-height: 30px; padding: 0 10px; white-space: nowrap; }
+@media (max-width: 899px) {
+  #roonLibraryView.rlListView .rlCard { grid-template-columns: 48px minmax(0, 1fr); grid-template-areas: "art name" "art meta" "actions actions"; }
+  #roonLibraryView.rlListView .rlCard .rlActions { flex-wrap: wrap; padding-top: 6px; }
+  #roonLibraryView.rlListView .rlCard .rlActions button { flex: 1 1 0; }
+}
