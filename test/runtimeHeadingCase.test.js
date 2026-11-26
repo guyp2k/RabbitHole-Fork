@@ -44,7 +44,7 @@ test("Audit Exact Artists is a toggle shaped like the buttons beside it, lit whe
   assert.match(html, /<span>Audit Exact Artists<\/span>/);
   assert.match(css, /\.resultFilterToggle \{[^}]*border-radius: 8px;[^}]*min-height: 38px|\.resultFilterToggle \{[^}]*min-height: 38px;[^}]*border-radius: 8px;/);
   assert.match(css, /\.resultFilterToggle input \{[^}]*opacity: 0;/);
-  assert.match(css, /\.resultFilterToggle:has\(input:checked\)::before \{[^}]*background: var\(--accent\);/);
+  assert.match(css, /\.resultFilterToggle:has\(input:checked\)::before \{[^}]*background: var\(--status-on\);/);
   assert.match(css, /\.resultFilterToggle:has\(input:focus-visible\) \{[^}]*outline: 2px solid var\(--accent\);/);
 });
 

@@ -933,7 +933,7 @@ function formatUpNext(zone) {
   if (!next?.title) return info || (summarizeNowPlaying(zone)?.title ? "Nothing queued after this" : "");
   const artist = String(next.subtitle || "").split(/\s+-\s+/)[0].trim();
   const label = artist && !next.title.includes(artist) ? `${next.title} - ${artist}` : next.title;
-  return [`Up next: ${label}`, info].filter(Boolean).join(" · ");
+  return [`Up Next: ${label}`, info].filter(Boolean).join(" · ");
 }
 
 function shareQueue(zone) {

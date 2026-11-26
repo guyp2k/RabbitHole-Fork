@@ -113,7 +113,7 @@ test("under the artwork Lyrion names the next track and how many remain, instead
   const context = {};
   vm.runInNewContext(section("  function upNext(s){", "  async function refreshStatus() {"), context);
   const queue = [{ index: 4, title: "Now" }, { index: 5, title: "Next one", artist: "Artist" }];
-  assert.equal(context.upNext({ queue, queueIndex: 4, queueCount: 12 }), "Up next: Next one - Artist · 7 remaining");
+  assert.equal(context.upNext({ queue, queueIndex: 4, queueCount: 12 }), "Up Next: Next one - Artist · 7 remaining");
   assert.equal(context.upNext({ queue: [{ index: 4, title: "Now" }], queueIndex: 4, queueCount: 12 }), "7 remaining");
   assert.equal(context.upNext({ queue: [{ index: 0, title: "Only" }], queueIndex: 0, queueCount: 1 }), "Nothing queued after this");
   assert.doesNotMatch(source, /items queued/);

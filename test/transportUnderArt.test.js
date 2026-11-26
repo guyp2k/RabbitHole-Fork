@@ -23,12 +23,12 @@ const stubs = (items, info = "12 queued - 1:14:02 left", live = false, nowTitle 
 
 test("Roon names the next queued track under the art, followed by the queue count and time left", () => {
   const upNext = formatUpNext(stubs([{ title: "The Piper's Call", subtitle: "David Gilmour - Live at the Circus Maximus" }]));
-  assert.equal(upNext(zone), "Up next: The Piper's Call - David Gilmour · 12 queued - 1:14:02 left");
+  assert.equal(upNext(zone), "Up Next: The Piper's Call - David Gilmour · 12 queued - 1:14:02 left");
 });
 
 test("Roon does not repeat the artist when the queued title already carries it", () => {
   const upNext = formatUpNext(stubs([{ title: "The Piper's Call - David Gilmour", subtitle: "David Gilmour" }]));
-  assert.equal(upNext(zone), "Up next: The Piper's Call - David Gilmour · 12 queued - 1:14:02 left");
+  assert.equal(upNext(zone), "Up Next: The Piper's Call - David Gilmour · 12 queued - 1:14:02 left");
 });
 
 test("Roon says nothing is queued after the current track instead of inventing a next one", () => {
