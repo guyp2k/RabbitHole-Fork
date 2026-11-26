@@ -106,10 +106,9 @@ test("regular navigation groups Playback, Discover, and Memory views and keeps s
   assert.match(app, /strict TIDAL and Roon verification/);
 });
 
-test("Synapse Memory keeps its existing route and identifies its Memory destination", () => {
-  const memoryHtml = fs.readFileSync(path.join(root, "public", "memory.html"), "utf8");
-  assert.match(memoryHtml, /<main data-memory-item="synapse-memory">/);
-  assert.match(memoryHtml, /<script src="\/memory\.js"><\/script>/);
+test("Synapse Memory is an in-app view under System", () => {
+  assert.match(html, /<section id="synapseMemoryView" class="view synapseMemoryView"/);
+  assert.match(html, /data-nav-group="system" data-nav-item="synapse-memory" data-view="memory"/);
 });
 
 test("Settings exposes the safe Sonic production mode selector", () => {
