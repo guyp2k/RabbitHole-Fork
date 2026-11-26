@@ -1203,6 +1203,10 @@ function decorateRoonFirstTimeoutFallback(roonResult = {}, options = {}, error =
   return roonFirstDecorator.decorateRoonFirstTimeoutFallback(roonResult, options, error);
 }
 
+function beatportAvailability({ enabled, configured } = {}) {
+  return { enabled: enabled === true, configured: configured === true };
+}
+
 function appSnapshot(musicMemoryStatus) {
   const modelStatus = modelRouter ? modelRouter.status() : null;
   return {
@@ -1212,7 +1216,8 @@ function appSnapshot(musicMemoryStatus) {
     lastfm: lastfm.status(), tidal: tidal.status(), tidalProfileMixes: tidalProfileMixes.status(),
     radioMetadata: radioMetadataResolver.status(), metadataEnrichment: metadataEnrichment.status({ musicMemoryStatus }),
     llm: llmSnapshot(), ai: modelStatus,
-    mcp: { endpoint: "/mcp", connected: true, toolCount: modelStatus ? modelStatus.tools.count : 0 }
+    mcp: { endpoint: "/mcp", connected: true, toolCount: modelStatus ? modelStatus.tools.count : 0 },
+    beatport: beatportAvailability(beatport.status())
   };
 }
 

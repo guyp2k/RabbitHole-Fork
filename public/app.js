@@ -4451,6 +4451,16 @@ async function recoverGeneratedSession(startedAt = Date.now()) {
   return false;
 }
 
+function beatportAvailable(app = {}) {
+  return app.beatport?.enabled === true && app.beatport?.configured === true;
+}
+
+function applyBeatportAvailability(app = {}) {
+  const available = beatportAvailable(app);
+  for (const button of document.querySelectorAll('[data-view="beatportCharts"]')) button.hidden = !available;
+  if (!available && $("#beatportChartsView")?.classList.contains("isActive")) setActiveView("discover");
+}
+
 function applyAppState(app = {}) {
   if (!app) return;
   // Compact updates deliberately omit the saved session. Retain omitted fields
@@ -4460,6 +4470,7 @@ function applyAppState(app = {}) {
     delete app.session;
   }
   state.appStatus = app;
+  applyBeatportAvailability(app);
   state.memory = app.memory || state.memory;
   if (app.standby) renderStandbyPool(app.standby);
   renderMemoryStatus();
