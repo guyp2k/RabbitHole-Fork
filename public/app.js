@@ -955,7 +955,7 @@ function hqplayerSignalHtml(zone, output) {
 
   return `
     <div class="outputMain hqOutputMain">
-      <strong>HQPlayer current filter and rate</strong>
+      <strong>HQPlayer Current Filter and Rate</strong>
       <div class="hqSignalRows">
         <p><span>Filter</span><b>${escapeHtml(filter || signalPath || "Waiting for HQPlayer filter")}</b></p>
         <p><span>Rate</span><b>${escapeHtml(rate || "Waiting for live rate")}</b></p>
@@ -1018,7 +1018,7 @@ function liveQueueHtml(zone = {}) {
 
   return `
     <div class="liveQueueHead">
-      <strong>Roon queue</strong>
+      <strong>Roon Queue</strong>
       ${suffix ? `<span>${escapeHtml(suffix)}</span>` : ""}
     </div>
     ${items.length ? `
@@ -1278,7 +1278,7 @@ function showBridgeSyncPopup(result = {}) {
     matchPolicy: "strict",
     bridgeSyncDelaysMs: [0, 3000, 7000]
   };
-  title.textContent = "Roon playlist refresh needed";
+  title.textContent = "Roon Playlist Refresh Needed";
   message.textContent = `${trackLabel || "A verified track"} was added to ${playlistTitle}, but Roon did not expose it within 10 seconds. Refresh TIDAL playlists in Roon, then confirm here to retry and add it to the queue.`;
   if (confirm) {
     confirm.disabled = !tracks.length && !trackIds.length;
@@ -2049,6 +2049,15 @@ function standbyTrackHtml(track = {}, index = 0) {
   `;
 }
 
+function headingCase(text = "") {
+  const small = new Set(["a", "an", "and", "or", "of", "to", "the", "in", "on", "for", "by", "with"]);
+  return String(text).split(/(\s+)/).map((word, index) => {
+    if (/^\s+$/.test(word) || !/^[(]?[a-z]/.test(word)) return word;
+    if (index > 0 && small.has(word.toLowerCase())) return word;
+    return word.replace(/[a-z]/, (letter) => letter.toUpperCase()).replace(/-([a-z])/g, (_, letter) => `-${letter.toUpperCase()}`);
+  }).join("");
+}
+
 function standbyStatusParts(standby = {}, count = 0) {
   const target = Number(standby?.targetCount || 25);
   const summary = [];
@@ -2087,7 +2096,7 @@ function renderStandbyPool(standby = state.standby) {
   state.standbyTracks = Array.isArray(standby?.tracks) ? applyFeedbackToTracks(standby.tracks) : [];
   const target = Number(standby?.targetCount || 25);
   const count = state.standbyTracks.length;
-  title.textContent = `${count}/${target} standby tracks`;
+  title.textContent = `${count}/${target} Standby Tracks`;
 
   const parts = standbyStatusParts(standby || {}, count);
   status.textContent = standby ? parts.summary.join(" · ") : "Waiting for background search.";
@@ -3589,7 +3598,7 @@ function recoveryDetailsHtml(recovery = {}) {
           <ol>${recoveryFamilyRowsHtml(families)}</ol>
         </section>
         <section>
-          <h3>Lane gaps</h3>
+          <h3>Lane Gaps</h3>
           ${shortfalls.length
             ? `<ol>${shortfalls.map((item) => `
               <li>
@@ -3639,11 +3648,11 @@ function capHeldDetailsHtml(diversityCaps = {}) {
       </summary>
       <div class="modelAuditGrid">
         <section>
-          <h3>Label cap</h3>
+          <h3>Label Cap</h3>
           <ol>${capHeldRowsHtml(labelItems, "No label-cap examples")}</ol>
         </section>
         <section>
-          <h3>Source cap</h3>
+          <h3>Source Cap</h3>
           <ol>${capHeldRowsHtml(sourceItems, "No source-cap examples")}</ol>
         </section>
       </div>
@@ -3708,11 +3717,11 @@ function poolDiagnosticsHtml(result = {}) {
       </div>
       <div class="poolDiagnosticsGrid">
         <section>
-          <h3>Top losses</h3>
+          <h3>Top Losses</h3>
           <ol>${poolBucketRowsHtml(diagnostics.buckets || [])}</ol>
         </section>
         <section>
-          <h3>Lane availability</h3>
+          <h3>Lane Availability</h3>
           <div class="sourceReportGrid">${poolLaneRowsHtml(diagnostics.lanes || {})}</div>
         </section>
       </div>
@@ -3793,7 +3802,7 @@ function modelReviewAuditHtml(audit = null) {
           <ol>${modelAuditItemsHtml(audit.downranked || [], "No downranked candidates")}</ol>
         </section>
         <section>
-          <h3>Rejected / warned</h3>
+          <h3>Rejected / Warned</h3>
           <ol>${modelAuditItemsHtml([...(audit.rejected || []), ...(audit.warnings || [])], "No model rejects or warnings")}</ol>
         </section>
       </div>
@@ -3857,7 +3866,7 @@ function feedbackCalibrationHtml(calibration = null) {
       </summary>
       <div class="feedbackCalibrationGrid">
         <section>
-          <h3>Calibration totals</h3>
+          <h3>Calibration Totals</h3>
           <div class="sourceReportGrid">
             ${sourceReportGridHtml([
               ["Feedback with context", calibration.total || 0],
@@ -3871,11 +3880,11 @@ function feedbackCalibrationHtml(calibration = null) {
           </div>
         </section>
         <section>
-          <h3>Sources / labels to watch</h3>
+          <h3>Sources / Labels to Watch</h3>
           <div class="sourceReportGrid">${calibrationSourcesHtml(watchedBuckets)}</div>
         </section>
         <section>
-          <h3>Recent mismatches</h3>
+          <h3>Recent Mismatches</h3>
           <ol>${calibrationRecentHtml(calibration.recent || [])}</ol>
         </section>
       </div>
@@ -3921,19 +3930,19 @@ function queryYieldHtml(queryYield = {}) {
       </summary>
       <div class="modelAuditGrid">
         <section>
-          <h3>Best this run</h3>
+          <h3>Best This Run</h3>
           <ol>${queryYieldRowsHtml(queryYield.best || [], "No accepted query patterns")}</ol>
         </section>
         <section>
-          <h3>Worst this run</h3>
+          <h3>Worst This Run</h3>
           <ol>${queryYieldRowsHtml(queryYield.worst || [], "No weak query patterns")}</ol>
         </section>
         <section>
-          <h3>Memory adjustments</h3>
+          <h3>Memory Adjustments</h3>
           <ol>${queryYieldRowsHtml(queryYield.adjustments || [], "No prior query memory used")}</ol>
         </section>
         <section>
-          <h3>Skipped before crawl</h3>
+          <h3>Skipped Before Crawl</h3>
           <ol>${queryYieldRowsHtml(queryYield.pruned || [], "No query families skipped")}</ol>
         </section>
       </div>
@@ -4005,15 +4014,15 @@ function sourceReportHtml(result = {}) {
       </div>
       <div class="sourceReportColumns">
         <section>
-          <h3>Kept sources</h3>
+          <h3>Kept Sources</h3>
           <div class="sourceReportGrid">${sourceReportGridHtml(report.sources, "No kept tracks")}</div>
         </section>
         <section>
-          <h3>Discovery lanes</h3>
+          <h3>Discovery Lanes</h3>
           <div class="sourceReportGrid">${sourceReportGridHtml(report.lanes, "No lanes")}</div>
         </section>
         <section>
-          <h3>Rejected buckets</h3>
+          <h3>Rejected Buckets</h3>
           <div class="sourceReportGrid">${sourceReportGridHtml(report.rejectionBuckets, "No discarded candidates")}</div>
         </section>
       </div>
@@ -4195,7 +4204,7 @@ function emptyResultHtml(reason, verification = {}) {
 
   return `
     <div class="emptyState">
-      <strong>No tracks returned for this run.</strong>
+      <strong>No Tracks Returned for This Run.</strong>
       <p>${escapeHtml(reason)}</p>
       ${issues.length ? `
         <div>
@@ -4332,9 +4341,9 @@ function renderResults(result = {}) {
   const filterSuffix = minScore && belowMinimumKept
     ? `, ${aboveMinimumKept} ${minimumLabel}, ${belowMinimumKept} below minimum kept`
     : (filteredByScore ? `, ${filteredByScore} below minimum considered` : "");
-  $("#resultTitle").textContent = discarded
+  $("#resultTitle").textContent = headingCase(discarded
     ? `${titlePrefix} (${discarded} discarded from ${generated}${filterSuffix})`
-    : titlePrefix;
+    : titlePrefix);
   showPoolDiagnostics(state.lastResult);
   $("#tracks").innerHTML = state.displayedTracks.length
     ? state.displayedTracks.map(trackCardHtml).join("")
@@ -4390,7 +4399,7 @@ function applySession(session = {}) {
     $("#sendTidalQueue").disabled = true;
     $("#copyList").disabled = true;
     $("#exportCsv").disabled = true;
-    $("#resultTitle").textContent = "Previous results need Roon verification";
+    $("#resultTitle").textContent = "Previous Results Need Roon Verification";
     showPoolDiagnostics(null);
     $("#tracks").innerHTML = "<p class=\"muted\">Generate again to rebuild this list with strict TIDAL plus Roon verification. Old TIDAL-only session results are hidden so they do not look playable.</p>";
     showQueueReport(null);
@@ -4804,9 +4813,9 @@ function markRabbitConnectionLost(error = {}) {
   const playState = $("#playState");
   if (playState) playState.textContent = "Connection lost";
   const title = $("#nowTitle");
-  if (title) title.textContent = "Connection lost";
+  if (title) title.textContent = "Connection Lost";
   const subtitle = $("#nowSubtitle");
-  if (subtitle) subtitle.textContent = "Rabbit Hole offline";
+  if (subtitle) subtitle.textContent = "Rabbit Hole Offline";
   const cover = $("#cover");
   if (cover) setCoverImage(cover, []);
   const tools = $("#nowDiscoveryTools");
@@ -4869,7 +4878,7 @@ function renderState(payload) {
   }
   const now = currentZoneNowPlaying(zone);
   const displayNow = summarizeNowPlaying(zone);
-  $("#nowTitle").textContent = displayNow?.title || (zone ? "Nothing Playing" : "No active zone");
+  $("#nowTitle").textContent = displayNow?.title || (zone ? "Nothing Playing" : "No Active Zone");
   $("#nowSubtitle").textContent = [displayNow?.artist, displayNow?.album].filter(Boolean).join(" - ") || zone?.state || "";
 
   const length = Math.max(0, Number(now?.length || 0));
@@ -5708,12 +5717,12 @@ function renderBeatportChart() {
   const list = state.beatportChartTracks || [];
   if (state.beatportChartLoading && !chart) {
     status.textContent = "Loading Beatport chart...";
-    title.textContent = "Loading chart";
+    title.textContent = "Loading Chart";
     meta.textContent = "";
     tracks.innerHTML = "<div class=\"playlistBrowserEmpty\">Loading Beatport chart...</div>";
   } else if (!chart) {
     status.textContent = "Load a Beatport chart, then queue through Rabbit Hole's TIDAL/Roon resolver.";
-    title.textContent = "No chart loaded";
+    title.textContent = "No Chart Loaded";
     meta.textContent = "";
     tracks.innerHTML = "<div class=\"playlistBrowserEmpty\">No chart loaded.</div>";
   } else {
@@ -5721,7 +5730,7 @@ function renderBeatportChart() {
     status.textContent = pagination.complete === false
       ? `${list.length}/${pagination.count || chart.trackCount || list.length} tracks loaded; more pages available.`
       : `${list.length}/${pagination.count || chart.trackCount || list.length} chart tracks loaded.`;
-    title.textContent = chart.title || `Beatport chart ${chart.id || ""}`.trim();
+    title.textContent = chart.title || `Beatport Chart ${chart.id || ""}`.trim();
     meta.textContent = beatportChartMetaParts(chart, pagination).join(" - ");
     tracks.innerHTML = list.length
       ? sortedTrackEntries(list, beatportSort).map((entry) => beatportChartTrackHtml(entry.track)).join("")
@@ -6436,7 +6445,7 @@ function renderTidalMixes(result = state.tidalMixes) {
     if (pinnedStatus) pinnedStatus.textContent = pinnedItems.length ? `${pinnedItems.length} pinned item${pinnedItems.length === 1 ? "" : "s"} could not be refreshed.` : "";
     grid.innerHTML = `
       <div class="panel tidalMixEmpty">
-        <strong>No TIDAL profile mixes loaded.</strong>
+        <strong>No TIDAL Profile Mixes Loaded.</strong>
         <p>Use Connect TIDAL to authorize Rabbit Hole and save a refreshable profile token locally. Catalog search credentials cannot read personal mixes.</p>
       </div>
     `;
@@ -6463,7 +6472,7 @@ function renderTidalMixes(result = state.tidalMixes) {
 
   const pinnedErrorHtml = pinnedErrors.length ? `
     <div class="panel tidalMixEmpty">
-      <strong>Pinned import warning</strong>
+      <strong>Pinned Import Warning</strong>
       <p>${escapeHtml(pinnedErrors.map((entry) => entry.error).filter(Boolean).join(" - "))}</p>
     </div>
   ` : "";
@@ -6489,7 +6498,7 @@ function renderTidalMixes(result = state.tidalMixes) {
     ? [pinnedErrorHtml, pinnedHtml, officialHtml].filter(Boolean).join("")
     : `
       <div class="panel tidalMixEmpty">
-        <strong>No mix or radio cards found in the TIDAL response.</strong>
+        <strong>No Mix or Radio Cards Found in the TIDAL Response.</strong>
         <p>The endpoint is reachable, but Rabbit Hole did not see My Mix, Daily Discovery, New Arrivals, Track Radio, or Artist Radio items.</p>
       </div>
     `;
@@ -7138,7 +7147,7 @@ function sonicProfileEditorHtml({ prefix = "sonicReview", anchor = {}, profileSt
       <div class="sonicProfileEditorHead">
         <div>
           <p class="eyebrow">Sonic profile</p>
-          <h3 id="${prefix}SonicProfileHeading">Describe this anchor</h3>
+          <h3 id="${prefix}SonicProfileHeading">Describe This Anchor</h3>
         </div>
         ${prefix === "now" ? `<button type="button" class="sonicProfileReviewButton" data-sonic-profile-open-review>Review neighbors</button>` : ""}
       </div>
@@ -7358,7 +7367,7 @@ function renderSonicReview() {
   root.innerHTML = `
     <div class="sonicReviewShell">
       ${sonicReviewHeaderHtml(anchor)}
-      <section class="panel sonicReviewQueueTools"><div><h3>Blind listening</h3><p class="muted">Compare prepared recommendations with model names and scores hidden.</p></div><button type="button" data-sonic-blind-open>Open listening batch</button></section>
+      <section class="panel sonicReviewQueueTools"><div><h3>Blind Listening</h3><p class="muted">Compare prepared recommendations with model names and scores hidden.</p></div><button type="button" data-sonic-blind-open>Open listening batch</button></section>
       ${sonicProfileEditorHtml({ prefix: "sonicReview", anchor, profileState: review })}
       ${review.loaded ? `
         <section class="panel sonicReviewQueueTools" aria-label="Queue sonic neighbors">
@@ -7382,11 +7391,11 @@ function renderSonicReview() {
 
         <section class="panel sonicReviewWorkspace" aria-live="polite" aria-busy="${review.loading ? "true" : "false"}">
           ${review.loading ? `
-            <div class="sonicReviewState"><span class="sonicReviewPulse" aria-hidden="true"></span><strong>Finding sonic neighbors…</strong><p>Using the stored ${escapeHtml(review.anchorIdentityKey || "anchor")} profile. Nothing will be queued.</p></div>
+            <div class="sonicReviewState"><span class="sonicReviewPulse" aria-hidden="true"></span><strong>Finding Sonic Neighbors…</strong><p>Using the stored ${escapeHtml(review.anchorIdentityKey || "anchor")} profile. Nothing will be queued.</p></div>
           ` : review.error ? `
-            <div class="sonicReviewState isError"><strong>Couldn’t load this anchor.</strong><p>${escapeHtml(review.error)}</p><button type="button" data-sonic-review-retry>Try again</button></div>
+            <div class="sonicReviewState isError"><strong>Couldn’t Load This Anchor.</strong><p>${escapeHtml(review.error)}</p><button type="button" data-sonic-review-retry>Try again</button></div>
           ` : !review.loaded ? `
-            <div class="sonicReviewState"><strong>Ready for a sonic anchor.</strong><p>Start a track in Roon, choose Use current track, or load a stored identity.</p></div>
+            <div class="sonicReviewState"><strong>Ready for a Sonic Anchor.</strong><p>Start a track in Roon, choose Use current track, or load a stored identity.</p></div>
           ` : !candidate ? `
             <div class="sonicReviewState isComplete"><strong>${review.candidates.length ? "Pack reviewed." : "No eligible neighbors yet."}</strong><p>${escapeHtml(status)}</p>${review.candidates.length ? `<button type="button" data-sonic-review-reload>Load another pack</button>` : ""}</div>
           ` : `
@@ -8599,7 +8608,7 @@ $("#playlistForm").addEventListener("submit", async (event) => {
   const generateStartedAt = Date.now();
   if (submitButton) submitButton.disabled = true;
   $("#busy").textContent = "Searching TIDAL + discovery sources...";
-  $("#resultTitle").textContent = "Building rabbit hole...";
+  $("#resultTitle").textContent = "Building Rabbit Hole...";
   setResultsCollapsed(false);
   $("#tracks").innerHTML = "";
   state.resultArtistConfirmedOnly = false;
@@ -8622,7 +8631,7 @@ $("#playlistForm").addEventListener("submit", async (event) => {
   $("#rejectedDebug").innerHTML = "";
   $("#tracks").innerHTML = `
     <div class="emptyState isWorking">
-      <strong>Building a TIDAL-first discovery pool.</strong>
+      <strong>Building a TIDAL-First Discovery Pool.</strong>
       <p>Rabbit Hole is scoring fresh candidates first; Send to TIDAL can bridge the final list into playback.</p>
     </div>
   `;
@@ -8632,16 +8641,16 @@ $("#playlistForm").addEventListener("submit", async (event) => {
     renderResults(result);
   } catch (error) {
     if (isFetchDrop(error)) {
-      $("#resultTitle").textContent = "Connection dropped";
+      $("#resultTitle").textContent = "Connection Dropped";
       $("#tracks").innerHTML = `
         <div class="emptyState isWorking">
-          <strong>Checking whether the search finished...</strong>
+          <strong>Checking Whether the Search Finished...</strong>
           <p>The phone lost the request to Rabbit Hole. If the server completed the run, this will recover the saved result automatically.</p>
         </div>
       `;
       if (await recoverGeneratedSession(generateStartedAt)) return;
     }
-    $("#resultTitle").textContent = "Generation failed";
+    $("#resultTitle").textContent = "Generation Failed";
     $("#tracks").innerHTML = emptyResultHtml(error.message, {});
     showPoolDiagnostics(null);
     showSourceReport(null);

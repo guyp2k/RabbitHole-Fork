@@ -49,7 +49,7 @@ test("the track list and queue report sit inside the collapsible body", () => {
 });
 
 test("starting a Generate expands the list before the working placeholder is shown", () => {
-  const working = app.indexOf("Building a TIDAL-first discovery pool.");
+  const working = app.indexOf("Building a TIDAL-First Discovery Pool.");
   assert.notEqual(working, -1);
   const before = app.slice(app.lastIndexOf("\n  try {", working) - 600, working);
   assert.match(before, /setResultsCollapsed\(false\)/);
