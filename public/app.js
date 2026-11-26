@@ -7427,9 +7427,9 @@ function sonicReviewHeaderHtml(anchor = {}) {
   return `
     <header class="panel sonicReviewHeader">
       <div>
-        <p class="eyebrow">Shadow review</p>
+        <p class="eyebrow">System</p>
         <h2 id="sonicReviewHeading">Sonic Review</h2>
-        <p class="sonicReviewIntro">Play the queued standby tracks in Roon, then use the current Roon track as your anchor. Load its sonic neighbors and record what you hear. Reviews stay out of global taste and production ordering. Queueing still uses strict TIDAL and Roon verification.</p>
+        <p class="sonicReviewIntro">A listening test for Rabbit Hole's sound-similarity model. Pick a track (the one playing in Roon works), listen to the tracks the model says sound alike, and mark whether they do. Your answers are kept to judge the model; they do not change your ratings or recommendations. Anything you queue from here still goes through strict TIDAL and Roon verification. It needs Sonic audio profiles; without them there is nothing to compare.</p>
       </div>
       <div class="sonicReviewHeaderMeta">
         <span class="sonicReviewMode">Shadow review · strict queue</span>
@@ -7745,7 +7745,7 @@ async function submitSonicReview(rating = "") {
 }
 
 const LEGACY_NAV_TARGETS = {
-  sonicReview: { group: "discover", item: "sonic-review" },
+  sonicReview: { group: "system", item: "sonic-review" },
   player: { group: "playback", item: "now-playing" },
   queue: { group: "playback", item: "queue" },
   discover: { group: "discover", item: "rabbit-hole" },
