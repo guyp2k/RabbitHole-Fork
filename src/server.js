@@ -2925,7 +2925,7 @@ memory.refreshSources = () => {
   const labels=Object.values(profile.labels||{}).sort((a,b)=>Math.abs(b.score)-Math.abs(a.score)).slice(0,10);
   if(signals.length||labels.length) memory.sync("rabbit_hole_taste", "Learned music taste (positive score = liked, negative = disliked): artists "+signals.map(e=>`${e.name}: ${e.score}`).join(", ")+". Labels: "+labels.map(e=>`${e.name}: ${e.score}`).join(", "),"user_preferences");
   const history=standbyStore.read().standbyHistory||[];
-  if(history.length) memory.sync("rabbit_hole_standby", "Recent standby music exposure: "+history.slice(-3).flatMap(h=>h.tracks.slice(0,8).map(t=>`${t.artist} — ${t.title} (rank ${t.rank})`)).join("; ").slice(0,3500));
+  if(history.length) memory.sync("rabbit_hole_standby", "Recent standby music exposure: "+history.slice(-3).flatMap(h=>h.tracks.slice(0,8).map(t=>`${t.artist} - ${t.title} (rank ${t.rank})`)).join("; ").slice(0,3500));
 };
 memory.refreshSources();
 modelRouter = createModelRouter({

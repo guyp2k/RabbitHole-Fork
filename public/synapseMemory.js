@@ -4,6 +4,54 @@
   if (!$("synapseMemoryView")) return;
   let state = null;
   let loaded = false;
+  const SMALL_WORDS = new Set(["a", "an", "and", "or", "of", "to", "the", "in", "on", "for", "by", "with"]);
+  const SOURCE_LABELS = {
+    explicit_user: "Added by You",
+    manual_import: "Imported",
+    inferred: "Inferred",
+    rabbit_hole_taste: "Learned From Your Ratings",
+    rabbit_hole_standby: "From Standby Picks",
+    conversation_excerpt: "From a Conversation",
+    conversation_user_statement: "From Something You Said"
+  };
+  const LONG_TEXT = 280;
+
+  function labelCase(slug = "") {
+    return String(slug).split(/[_\s]+/).filter(Boolean)
+      .map((word, index) => (index > 0 && SMALL_WORDS.has(word.toLowerCase()) ? word.toLowerCase() : word[0].toUpperCase() + word.slice(1)))
+      .join(" ");
+  }
+
+  function sourceLabel(source = "") {
+    return SOURCE_LABELS[source] || labelCase(source) || "Unknown Source";
+  }
+
+  function formatWhen(iso) {
+    const time = Date.parse(iso || "");
+    if (!Number.isFinite(time)) return "Never";
+    return new Date(time).toLocaleString(undefined, { month: "short", day: "numeric", year: "numeric", hour: "numeric", minute: "2-digit" });
+  }
+
+  function sortEntries(entries, sort) {
+    const time = (entry) => Date.parse(entry.updatedAt || "") || 0;
+    const sorted = [...entries];
+    if (sort === "oldest") sorted.sort((a, b) => time(a) - time(b));
+    else if (sort === "importance") sorted.sort((a, b) => Number(b.importance || 0) - Number(a.importance || 0) || time(b) - time(a));
+    else if (sort === "category") sorted.sort((a, b) => labelCase(a.category).localeCompare(labelCase(b.category)) || time(b) - time(a));
+    else sorted.sort((a, b) => time(b) - time(a));
+    return sorted;
+  }
+
+  function statsText(memory) {
+    const count = Number(memory.count || 0);
+    const categories = (memory.categories || []).filter((item) => Number(item.count) > 0).map((item) => `${labelCase(item.category)} ${item.count}`).join(", ");
+    return [
+      `${count} ${count === 1 ? "Memory" : "Memories"}`,
+      `Updated ${formatWhen(memory.updatedAt)}`,
+      `About ${Number(memory.approximateStoredTokens || 0).toLocaleString()} tokens stored`,
+      `The AI reads up to ${Number(memory.maxContextChars || 0).toLocaleString()} characters of them per request`
+    ].join(" · ") + (categories ? `. ${categories}.` : ".");
+  }
 
   async function api(route, body = {}) {
     const response = await fetch(`/api/memory/synapse${route}`, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(body) });
@@ -34,15 +82,38 @@
     const query = $("synapseMemoryFilter").value.toLowerCase();
     const list = $("synapseMemoryEntries");
     list.replaceChildren();
-    for (const entry of state.entries.filter((item) => `${item.text} ${item.category} ${item.tags.join(" ")}`.toLowerCase().includes(query))) {
+    const shown = sortEntries(state.entries.filter((item) => `${item.text} ${item.category} ${labelCase(item.category)} ${item.tags.join(" ")}`.toLowerCase().includes(query)), $("synapseMemorySort").value);
+    $("synapseMemoryCount").textContent = shown.length === state.entries.length ? `${shown.length} ${shown.length === 1 ? "Memory" : "Memories"}` : `${shown.length} of ${state.entries.length}`;
+    if (!shown.length) {
+      const empty = document.createElement("p");
+      empty.className = "muted";
+      empty.textContent = state.entries.length ? "No memories match the filter." : "No memories yet. Add one below or import a summary.";
+      list.append(empty);
+    }
+    for (const entry of shown) {
       const card = document.createElement("article");
       card.className = "synapseMemoryEntry";
       const heading = document.createElement("strong");
-      heading.textContent = entry.category + (entry.sensitive ? " · Local-Only" : "");
+      heading.textContent = labelCase(entry.category) + (entry.sensitive ? " · Local-Only" : "");
       const text = document.createElement("p");
       text.textContent = entry.text;
       const meta = document.createElement("small");
-      meta.textContent = `${entry.id} · ${entry.source} · Updated ${entry.updatedAt}`;
+      meta.textContent = [sourceLabel(entry.source), `Importance ${entry.importance}`, `Updated ${formatWhen(entry.updatedAt)}`, entry.expiresAt ? `Expires ${formatWhen(entry.expiresAt)}` : ""].filter(Boolean).join(" · ");
+      card.append(heading, text);
+      let more = null;
+      if (String(entry.text).length > LONG_TEXT) {
+        text.classList.add("isClamped");
+        more = document.createElement("button");
+        more.type = "button";
+        more.className = "synapseMemoryMore";
+        more.textContent = "Show More";
+        more.setAttribute("aria-expanded", "false");
+        more.addEventListener("click", () => {
+          const open = text.classList.toggle("isClamped") === false;
+          more.textContent = open ? "Show Less" : "Show More";
+          more.setAttribute("aria-expanded", String(open));
+        });
+      }
       const actions = document.createElement("div");
       actions.className = "synapseMemoryEntryActions";
       const edit = document.createElement("button");
@@ -56,30 +127,32 @@
         $("synapseMemoryImportance").value = entry.importance;
         $("synapseMemoryExpiry").value = entry.expiresAt ? entry.expiresAt.slice(0, 16) : "";
         $("synapseMemorySensitive").checked = entry.sensitive;
+        const editFold = document.querySelector('[data-fold-key="synapseMemory.edit"]');
+        if (editFold?.getAttribute("aria-expanded") === "false") editFold.click();
         $("synapseMemoryText").focus();
       });
       const forget = document.createElement("button");
       forget.type = "button";
       forget.textContent = "Forget";
       forget.addEventListener("click", () => run(async () => { await api("/forget", { id: entry.id }); await load(); }));
-      actions.append(edit, forget);
-      card.append(heading, text, meta, actions);
+      actions.append(...(more ? [more] : []), edit, forget);
+      card.append(meta, actions);
       list.append(card);
     }
   }
 
   async function load() {
     state = await api("");
-    const categories = state.categories.map((item) => `${item.category} ${item.count}`).join(", ");
-    $("synapseMemoryStats").textContent = `${state.count} entries · Updated ${state.updatedAt || "never"} · ~${state.approximateStoredTokens} stored tokens · retrieved context capped at ${state.maxContextChars} characters. Categories: ${categories}`;
+    $("synapseMemoryStats").textContent = statsText(state);
     const select = $("synapseMemoryCategory");
     if (!select.options.length) {
-      for (const item of state.categories) select.append(Object.assign(document.createElement("option"), { value: item.category, textContent: item.category }));
+      for (const item of state.categories) select.append(Object.assign(document.createElement("option"), { value: item.category, textContent: labelCase(item.category) }));
     }
     render();
   }
 
   $("synapseMemoryFilter").addEventListener("input", () => state && render());
+  window.RabbitHoleViewControls?.bindSort($("synapseMemorySort"), "rabbitHole.sort.synapseMemory", () => state && render());
   $("synapseMemoryNew").addEventListener("click", reset);
   $("synapseMemoryFile").addEventListener("change", () => run(async () => { $("synapseMemoryImportText").value = await $("synapseMemoryFile").files[0].text(); }));
   $("synapseMemoryImport").addEventListener("click", () => run(async () => { await api("/import", { content: $("synapseMemoryImportText").value }); await load(); }));
@@ -107,6 +180,7 @@
   }));
 
   window.RabbitHoleSynapseMemory = {
+    labelCase, sourceLabel, formatWhen, sortEntries, statsText,
     show() {
       if (loaded) return;
       loaded = true;

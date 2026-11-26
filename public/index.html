@@ -124,28 +124,38 @@
           </div>
         </section>
         <section class="panel synapseMemoryPanel">
-          <h3>Import / Export</h3>
-          <label>JSON, Markdown or Plain-Text Summary<input id="synapseMemoryFile" type="file" accept=".json,.md,.txt"></label>
-          <textarea id="synapseMemoryImportText" aria-label="Memory summary to import" placeholder="Paste a profile or conversation summary"></textarea>
-          <div class="resultActions"><button type="button" id="synapseMemoryImport">Import</button><button type="button" id="synapseMemoryExport">Export Local Memory</button></div>
-          <p class="muted">Do not include credentials. Local-Only entries are left out of the AI's context but stay in exports.</p>
+          <div class="synapseMemoryListHead">
+            <h3 class="panelFoldHeading"><button type="button" class="panelFold" data-fold-key="synapseMemory.entries" aria-controls="synapseMemoryFoldBody" aria-expanded="true"><span class="panelFoldCaret" aria-hidden="true">▾</span>View Memories</button></h3>
+            <span id="synapseMemoryCount" class="synapseMemoryCount"></span>
+          </div>
+          <div id="synapseMemoryFoldBody" class="synapseMemoryFoldBody">
+          <div class="synapseMemoryToolbar">
+            <input id="synapseMemoryFilter" placeholder="Filter Memories" aria-label="Filter memories">
+            <label class="synapseMemorySortField">Sort<select id="synapseMemorySort" aria-label="Sort memories"><option value="newest">Newest First</option><option value="oldest">Oldest First</option><option value="importance">Most Important</option><option value="category">Category</option></select></label>
+          </div>
+          <div id="synapseMemoryEntries" class="synapseMemoryEntries"></div>
+          </div>
         </section>
         <section class="panel synapseMemoryPanel">
-          <h3>Add / Edit</h3>
+          <h3 class="panelFoldHeading"><button type="button" class="panelFold" data-fold-key="synapseMemory.edit" data-fold-default="closed" aria-controls="synapseMemoryEditBody" aria-expanded="true"><span class="panelFoldCaret" aria-hidden="true">▾</span>Add / Edit</button></h3>
+          <div id="synapseMemoryEditBody" class="synapseMemoryForm">
           <input id="synapseMemoryEntryId" type="hidden">
           <label>Category<select id="synapseMemoryCategory"></select></label>
-          <label>Memory<textarea id="synapseMemoryText"></textarea></label>
-          <label>Tags (Comma Separated)<input id="synapseMemoryTags"></label>
           <label>Importance (0-100)<input id="synapseMemoryImportance" type="number" min="0" max="100" value="90"></label>
           <label>Expires (Leave Blank for Permanent)<input id="synapseMemoryExpiry" type="datetime-local"></label>
-          <label class="synapseMemoryCheck"><input id="synapseMemorySensitive" type="checkbox">Local-Only: Exclude From the AI's Context</label>
-          <div class="resultActions"><button type="button" id="synapseMemorySave">Save</button><button type="button" id="synapseMemoryNew">New Entry</button></div>
+          <label class="synapseMemoryWide">Memory<textarea id="synapseMemoryText"></textarea></label>
+          <label class="synapseMemoryWide">Tags (Comma Separated)<input id="synapseMemoryTags"></label>
+          <label class="synapseMemoryCheck synapseMemoryWide"><input id="synapseMemorySensitive" type="checkbox">Local-Only: Exclude From the AI's Context</label>
+          <div class="resultActions synapseMemoryWide"><button type="button" id="synapseMemorySave">Save</button><button type="button" id="synapseMemoryNew">New Entry</button></div>
+          </div>
         </section>
         <section class="panel synapseMemoryPanel">
-          <h3 class="panelFoldHeading"><button type="button" class="panelFold" data-fold-key="synapseMemory.entries" aria-controls="synapseMemoryFoldBody" aria-expanded="true"><span class="panelFoldCaret" aria-hidden="true">▾</span>View Memories</button></h3>
-          <div id="synapseMemoryFoldBody" class="synapseMemoryFoldBody">
-          <input id="synapseMemoryFilter" placeholder="Filter memories" aria-label="Filter memories">
-          <div id="synapseMemoryEntries" class="synapseMemoryEntries"></div>
+          <h3 class="panelFoldHeading"><button type="button" class="panelFold" data-fold-key="synapseMemory.import" data-fold-default="closed" aria-controls="synapseMemoryImportBody" aria-expanded="true"><span class="panelFoldCaret" aria-hidden="true">▾</span>Import / Export</button></h3>
+          <div id="synapseMemoryImportBody" class="synapseMemoryForm">
+          <label class="synapseMemoryWide">JSON, Markdown or Plain-Text Summary<input id="synapseMemoryFile" type="file" accept=".json,.md,.txt"></label>
+          <textarea id="synapseMemoryImportText" class="synapseMemoryWide" aria-label="Memory summary to import" placeholder="Paste a profile or conversation summary"></textarea>
+          <div class="resultActions synapseMemoryWide"><button type="button" id="synapseMemoryImport">Import</button><button type="button" id="synapseMemoryExport">Export Local Memory</button></div>
+          <p class="muted synapseMemoryWide">Do not include credentials. Local-Only entries are left out of the AI's context but stay in exports.</p>
           </div>
         </section>
       </section>

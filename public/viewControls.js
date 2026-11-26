@@ -49,14 +49,16 @@
     return group;
   }
 
-  function isFolded(key) {
-    try { return localStorage.getItem(`rabbitHole.fold.${key}`) === "1"; } catch { return false; }
+  function isFolded(button) {
+    let saved = null;
+    try { saved = localStorage.getItem(`rabbitHole.fold.${button.dataset.foldKey}`); } catch {}
+    return saved === null ? button.dataset.foldDefault === "closed" : saved === "1";
   }
 
   function applyFold(button) {
     const target = document.getElementById(button.getAttribute("aria-controls"));
     if (!target) return;
-    const folded = isFolded(button.dataset.foldKey);
+    const folded = isFolded(button);
     target.hidden = folded;
     button.setAttribute("aria-expanded", String(!folded));
     const caret = button.querySelector(".panelFoldCaret");
@@ -73,7 +75,7 @@
     document.addEventListener("click", (event) => {
       const button = event.target?.closest?.("[data-fold-key]");
       if (!button) return;
-      try { localStorage.setItem(`rabbitHole.fold.${button.dataset.foldKey}`, isFolded(button.dataset.foldKey) ? "0" : "1"); } catch {}
+      try { localStorage.setItem(`rabbitHole.fold.${button.dataset.foldKey}`, isFolded(button) ? "0" : "1"); } catch {}
       applyFold(button);
     });
     applyFolds();
