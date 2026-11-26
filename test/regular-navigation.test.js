@@ -72,7 +72,7 @@ test("regular navigation groups Playback, Discover, and Memory views and keeps s
   assert.match(app, /queue: \{ group: "playback", item: "queue" \}/);
   assert.match(app, /discover: \{ group: "discover", item: "rabbit-hole" \}/);
   assert.match(app, /tidalLibrary: \{ group: "tidalLibrary", item: "collections" \}/);
-  assert.match(app, /sonicReview: \{ group: "discover", item: "sonic-review" \}/);
+  assert.match(app, /sonicReview: \{ group: "system", item: "sonic-review" \}/);
   assert.match(app, /standby: \{ group: "discover", item: "standby" \}/);
   assert.match(app, /connections: \{ group: "system", item: "connections" \}/);
   assert.match(app, /ai: \{ group: "system", item: "ai" \}/);
