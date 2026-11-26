@@ -51,7 +51,6 @@
             <button type="button" data-nav-group="playback" data-nav-item="queue" data-view="queue">Queue</button>
             <button type="button" data-nav-group="playback" data-nav-item="playlists" data-view="playlists">Playlists</button>
             <button type="button" data-nav-group="playback" data-nav-item="roon-library" data-view="roonLibrary">Library</button>
-            <button type="button" data-nav-group="playback" data-nav-item="database" data-view="database">Database</button>
           </div>
         </div>
 
@@ -89,6 +88,7 @@
             <button type="button" class="active" data-nav-group="system" data-nav-item="connections" data-view="connections" aria-current="page">Connections</button>
             <button type="button" data-nav-group="system" data-nav-item="ai" data-view="ai">AI</button>
             <button type="button" data-nav-group="system" data-nav-item="diagnostics" data-view="diagnostics">Diagnostics</button>
+            <button type="button" data-nav-group="system" data-nav-item="database" data-view="database">Database</button>
             <button type="button" data-nav-group="system" data-nav-item="settings" data-view="settings">Settings</button>
           </div>
         </div>
@@ -615,7 +615,7 @@
 
       <section id="databaseView" class="view databaseView" aria-labelledby="databaseHeading">
         <header class="dbHeader">
-          <div><p class="eyebrow">Your music, explored</p><h2 id="databaseHeading">Database</h2><p id="dbCatalogStatus" class="dbMuted">Browse Rabbit Hole's stored catalog.</p></div>
+          <div><p class="eyebrow">Your music, explored</p><h2 id="databaseHeading">Database</h2><p class="dbIntro">Everything Rabbit Hole remembers about tracks it has played, queued, discovered or looked up, and how you rated them. Recommendations are built from this. It is not your Roon library; use Library for that.</p><p id="dbCatalogStatus" class="dbMuted">Browse Rabbit Hole's stored catalog.</p></div>
           <button id="dbRefresh" type="button">Refresh database</button>
         </header>
         <div class="dbToolbar">
@@ -636,15 +636,15 @@
               <form id="dbFilters" class="dbFilters">
                 <label>Collection<select name="media"><option value="">Rabbit Hole catalogue</option><option value="local">Local files only</option></select></label>
                 <label id="dbAvailabilityLabel" hidden>File availability<select name="availability"><option value="">All scanned files</option><option value="available">Available at last scan</option><option value="missing">Missing at last scan</option><option value="unreadable">Needs attention</option></select></label>
-                <div class="dbQuickFilters" role="group" aria-label="Quick filters"><button type="button" data-db-quick="loved">Loved &amp; liked</button><button type="button" data-db-quick="missing">Missing Sonic</button></div>
+                <div class="dbQuickFilters" role="group" aria-label="Quick filters"><button type="button" data-db-quick="loved">Loved &amp; liked</button><button type="button" data-db-quick="missing" data-db-sonic>Missing Sonic</button></div>
                 <label>Genre<select name="genre" data-db-facet="genre"><option value="">All genres</option></select></label>
                 <label>Artist<input name="artist" type="search" list="dbArtistOptions" placeholder="Choose or type an artist" autocomplete="off"><datalist id="dbArtistOptions"></datalist></label>
                 <label>Label<input name="label" type="search" list="dbLabelOptions" placeholder="Choose or type a label" autocomplete="off"><datalist id="dbLabelOptions"></datalist></label>
                 <label>Latest rating<select name="rating" data-db-facet="rating"><option value="">All ratings</option></select></label>
-                <label>Sonic<select name="sonic"><option value="">All Sonic states</option><option value="embedded">Embedding stored</option><option value="missing">Missing embedding</option><option value="anchor">Has anchor profile</option><option value="reviewed">Has neighbor review</option></select></label>
+                <label data-db-sonic>Sonic<select name="sonic"><option value="">All Sonic states</option><option value="embedded">Embedding stored</option><option value="missing">Missing embedding</option><option value="anchor">Has anchor profile</option><option value="reviewed">Has neighbor review</option></select></label>
                 <details class="dbMoreFilters"><summary>More filters</summary><div>
                   <label>Metadata tag<select name="tag" data-db-facet="tag"><option value="">All metadata tags</option></select></label>
-                  <label>Sonic tag<select name="sonicTag" data-db-facet="sonicTag"><option value="">All Sonic tags</option></select></label>
+                  <label data-db-sonic>Sonic tag<select name="sonicTag" data-db-facet="sonicTag"><option value="">All Sonic tags</option></select></label>
                   <label>Metadata provider<select name="provider" data-db-facet="provider"><option value="">All providers</option></select></label>
                   <label>Seen in<select name="source" data-db-facet="source"><option value="">All sources</option></select></label>
                   <fieldset><legend>Release year</legend><div class="dbRange"><input name="yearMin" type="number" min="1900" max="2100" placeholder="From" aria-label="Earliest release year"><span>to</span><input name="yearMax" type="number" min="1900" max="2100" placeholder="To" aria-label="Latest release year"></div></fieldset>

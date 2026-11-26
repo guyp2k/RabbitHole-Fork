@@ -7743,7 +7743,7 @@ const LEGACY_NAV_TARGETS = {
   beatportCharts: { group: "discover", item: "beatport" },
   radio: { group: "discover", item: "radio" },
   playlists: { group: "playback", item: "playlists" },
-  database: { group: "playback", item: "database" },
+  database: { group: "system", item: "database" },
   roonLibrary: { group: "playback", item: "roon-library" },
   tidal: { group: "discover", item: "tidal" },
   tidalLibrary: { group: "tidalLibrary", item: "collections" },

@@ -257,6 +257,10 @@ function publicRecord(record) {
 }
 
 function browseCatalog(snapshot, input = {}) {
+  return { ...browseCatalogView(snapshot, input), localFileCount: (snapshot.localMedia?.records || []).length };
+}
+
+function browseCatalogView(snapshot, input = {}) {
   const query = normalizeQuery(input);
   if (query.media === 'local') {
     const local = snapshot.localMedia || { records: [], scans: [], sonicAvailable: false };
