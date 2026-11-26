@@ -69,7 +69,6 @@
           <div class="secondaryNavItems">
             <button type="button" class="active" data-nav-group="memory" data-nav-item="library" data-view="musicMemory" aria-current="page">Library</button>
             <button type="button" data-nav-group="memory" data-nav-item="taste" data-view="history">Taste</button>
-            <button type="button" data-nav-group="memory" data-nav-item="synapse-memory" data-view="memory">Synapse Memory</button>
           </div>
         </div>
 
@@ -78,6 +77,7 @@
           <div class="secondaryNavItems">
             <button type="button" class="active" data-nav-group="system" data-nav-item="connections" data-view="connections" aria-current="page">Connections</button>
             <button type="button" data-nav-group="system" data-nav-item="ai" data-view="ai">AI</button>
+            <button type="button" data-nav-group="system" data-nav-item="synapse-memory" data-view="memory">Synapse Memory</button>
             <button type="button" data-nav-group="system" data-nav-item="diagnostics" data-view="diagnostics">Diagnostics</button>
             <button type="button" data-nav-group="system" data-nav-item="database" data-view="database">Database</button>
             <button type="button" data-nav-group="system" data-nav-item="sonic-review" data-view="sonicReview">Sonic Review</button>
@@ -121,6 +121,41 @@
             <div class="systemScopeItem"><strong>Synapse</strong><span>Provider routing, model tiers, and usage</span></div>
             <div class="systemScopeItem"><strong>MCP</strong><span>Assistant-facing tools and orchestration</span></div>
           </div>
+        </section>
+      </section>
+
+      <section id="synapseMemoryView" class="view synapseMemoryView" aria-labelledby="synapseMemoryHeading">
+        <section class="panel synapseMemoryHero pageHero">
+          <div>
+            <p class="eyebrow">System</p>
+            <h2 id="synapseMemoryHeading">Synapse Memory</h2>
+            <p class="pageIntro">Notes the AI reads as background when it builds suggestions: things about you, what you like and what to avoid. Synapse and the local model both use them; Local-Only entries stay out of the AI's context. Import a profile or summary, or add entries here. Nothing is read from ChatGPT automatically.</p>
+            <p id="synapseMemoryStats" class="tasteNarrative"></p>
+            <p id="synapseMemoryStatus" class="muted" role="status"></p>
+          </div>
+        </section>
+        <section class="panel synapseMemoryPanel">
+          <h3>Import / Export</h3>
+          <label>JSON, Markdown or Plain-Text Summary<input id="synapseMemoryFile" type="file" accept=".json,.md,.txt"></label>
+          <textarea id="synapseMemoryImportText" aria-label="Memory summary to import" placeholder="Paste a profile or conversation summary"></textarea>
+          <div class="resultActions"><button type="button" id="synapseMemoryImport">Import</button><button type="button" id="synapseMemoryExport">Export Local Memory</button></div>
+          <p class="muted">Do not include credentials. Local-Only entries are left out of the AI's context but stay in exports.</p>
+        </section>
+        <section class="panel synapseMemoryPanel">
+          <h3>Add / Edit</h3>
+          <input id="synapseMemoryEntryId" type="hidden">
+          <label>Category<select id="synapseMemoryCategory"></select></label>
+          <label>Memory<textarea id="synapseMemoryText"></textarea></label>
+          <label>Tags (Comma Separated)<input id="synapseMemoryTags"></label>
+          <label>Importance (0-100)<input id="synapseMemoryImportance" type="number" min="0" max="100" value="90"></label>
+          <label>Expires (Leave Blank for Permanent)<input id="synapseMemoryExpiry" type="datetime-local"></label>
+          <label class="synapseMemoryCheck"><input id="synapseMemorySensitive" type="checkbox">Local-Only: Exclude From the AI's Context</label>
+          <div class="resultActions"><button type="button" id="synapseMemorySave">Save</button><button type="button" id="synapseMemoryNew">New Entry</button></div>
+        </section>
+        <section class="panel synapseMemoryPanel">
+          <h3>View Memories</h3>
+          <input id="synapseMemoryFilter" placeholder="Filter memories" aria-label="Filter memories">
+          <div id="synapseMemoryEntries" class="synapseMemoryEntries"></div>
         </section>
       </section>
 
@@ -834,6 +869,7 @@
     <script src="/webmcpTools.js"></script>
     <script src="/sonicCoverage.js?v=20260917-1"></script>
     <script src="/database.js?v=20260919-local-metadata-1"></script>
+    <script src="/synapseMemory.js?v=1"></script>
     <script src="/roonLibrary.js?v=20261121-2"></script>
     <script src="/lyrion.js?v=40"></script>
     <script src="/roonZoneBar.js?v=2"></script>

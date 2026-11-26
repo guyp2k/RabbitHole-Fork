@@ -7630,7 +7630,7 @@ const LEGACY_NAV_TARGETS = {
   ai: { group: "system", item: "ai" },
   diagnostics: { group: "system", item: "diagnostics" },
   settings: { group: "system", item: "settings" },
-  memory: { group: "memory", item: "synapse-memory" }
+  memory: { group: "system", item: "synapse-memory" }
 };
 
 const DEFAULT_NAV_ITEMS = {
@@ -7685,10 +7685,6 @@ function setActiveView(view, navigation = null) {
     ? navigation
     : (LEGACY_NAV_TARGETS[target] || LEGACY_NAV_TARGETS.player);
   setNavigationState(navigationTarget.group, navigationTarget.item);
-  if (view === "memory") {
-    window.location.assign("/memory.html");
-    return;
-  }
   $("#playerView").classList.toggle("isActive", target === "player");
   $("#queueView")?.classList.toggle("isActive", target === "queue");
   $("#discoverView")?.classList.toggle("isActive", target === "discover");
@@ -7696,6 +7692,8 @@ function setActiveView(view, navigation = null) {
   $("#connectionsView")?.classList.toggle("isActive", target === "connections");
   $("#aiView")?.classList.toggle("isActive", target === "ai");
   $("#diagnosticsView")?.classList.toggle("isActive", target === "diagnostics");
+  $("#synapseMemoryView")?.classList.toggle("isActive", target === "memory");
+  if (target === "memory") window.RabbitHoleSynapseMemory?.show();
   $("#historyView").classList.toggle("isActive", target === "history");
   $("#musicMemoryView")?.classList.toggle("isActive", target === "musicMemory");
   $("#databaseView")?.classList.toggle("isActive", target === "database");

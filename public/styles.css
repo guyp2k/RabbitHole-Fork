@@ -2980,6 +2980,56 @@ input {
   margin: 0;
 }
 
+.synapseMemoryPanel {
+  display: grid;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.synapseMemoryPanel h3 {
+  margin: 0;
+}
+
+.synapseMemoryPanel label {
+  display: grid;
+  gap: 4px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.synapseMemoryPanel textarea {
+  width: 100%;
+  min-height: 120px;
+}
+
+.synapseMemoryPanel .synapseMemoryCheck {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.synapseMemoryEntries {
+  display: grid;
+  gap: 8px;
+}
+
+.synapseMemoryEntry {
+  display: grid;
+  gap: 4px;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+
+.synapseMemoryEntry p {
+  margin: 0;
+}
+
+.synapseMemoryEntryActions {
+  display: flex;
+  gap: 6px;
+}
+
 .pageIntro {
   max-width: 72ch;
   margin: 4px 0 6px;
@@ -8378,96 +8428,6 @@ body:has(#playerView.isActive > .layout > .player.player--regular:not(.isMaximiz
   }
 }
 
-/* Pass 6 follow-up: keep the standalone Synapse Memory route in the same desktop system. */
-@media (min-width: 1100px) {
-  main[data-memory-item="synapse-memory"] {
-    width: min(1320px, calc(100vw - 48px));
-    max-width: none;
-    margin: 0 auto;
-    padding: 24px 0 48px;
-  }
-
-  main[data-memory-item="synapse-memory"] > a {
-    display: inline-flex;
-    align-items: center;
-    min-height: 38px;
-    margin-bottom: 18px;
-    padding: 0 12px;
-    border: 1px solid var(--rh-desktop-line-soft);
-    border-radius: 8px;
-    background: var(--rh-desktop-card);
-    color: var(--rh-desktop-muted);
-    text-decoration: none;
-  }
-
-  main[data-memory-item="synapse-memory"] > a:hover {
-    border-color: rgba(217, 179, 255, 0.38);
-    color: #fff;
-    box-shadow: 0 0 20px rgba(217, 179, 255, 0.08);
-  }
-
-  main[data-memory-item="synapse-memory"] > h1 {
-    margin-bottom: 8px;
-    color: #fff;
-    font-size: clamp(28px, 3vw, 42px);
-    letter-spacing: -0.03em;
-    line-height: 1;
-  }
-
-  main[data-memory-item="synapse-memory"] > :is(p, #stats) {
-    color: var(--rh-desktop-muted);
-    line-height: 1.45;
-  }
-
-  main[data-memory-item="synapse-memory"] > section {
-    display: grid;
-    gap: 12px;
-    margin-top: var(--rh-desktop-gap);
-    padding: 20px;
-    border: 1px solid var(--rh-desktop-line);
-    border-radius: var(--rh-desktop-radius);
-    background: var(--rh-desktop-surface);
-    box-shadow:
-      inset 0 1px 0 rgba(244, 232, 255, 0.08),
-      0 18px 48px rgba(0, 0, 0, 0.48),
-      0 0 24px rgba(255, 255, 255, 0.035);
-  }
-
-  main[data-memory-item="synapse-memory"] section h2 {
-    margin: 0;
-    color: #fff;
-    font-size: 22px;
-    letter-spacing: -0.02em;
-    line-height: 1.06;
-  }
-
-  main[data-memory-item="synapse-memory"] section > p {
-    color: var(--rh-desktop-muted);
-    line-height: 1.4;
-  }
-
-  main[data-memory-item="synapse-memory"] article {
-    margin: 0;
-    padding: 14px;
-    border: 1px solid var(--rh-desktop-line-soft);
-    border-radius: var(--rh-desktop-radius);
-    background: var(--rh-desktop-card);
-    box-shadow: inset 0 1px 0 rgba(244, 232, 255, 0.06), 0 14px 34px rgba(0, 0, 0, 0.34);
-  }
-
-  main[data-memory-item="synapse-memory"] label {
-    color: var(--rh-desktop-muted);
-  }
-
-  main[data-memory-item="synapse-memory"] :is(button, input, select, textarea) {
-    border-radius: 8px;
-  }
-
-  main[data-memory-item="synapse-memory"] button {
-    min-height: 38px;
-  }
-}
-
 /* Pass 6 follow-up: regular desktop visual-system consistency. */
 @media (min-width: 1100px) {
   :root {
@@ -11929,36 +11889,6 @@ body.playerFullWindow .player.player--fullscreen.isFullWindow .nowInfo .nowSourc
   body:not(.playerFullWindow):not(.playerMaximized) .jumpTop {
     min-height: 44px;
     touch-action: manipulation;
-  }
-
-  main[data-memory-item] {
-    width: 100%;
-    max-width: none;
-    margin: 0;
-    padding: 12px;
-  }
-
-  main[data-memory-item] :is(
-    button,
-    select,
-    textarea,
-    input:not([type="checkbox"]):not([type="range"])
-  ) {
-    width: 100%;
-    max-width: 100%;
-    min-height: 44px;
-  }
-
-  main[data-memory-item] label {
-    display: grid;
-    gap: 8px;
-    margin: 12px 0;
-  }
-
-  main[data-memory-item] > a {
-    display: inline-flex;
-    align-items: center;
-    min-height: 44px;
   }
 
   body:not(.playerFullWindow):not(.playerMaximized) .player.player--regular:not(.isMaximized):not(.isFullWindow) {

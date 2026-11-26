@@ -5,7 +5,6 @@ const assert = require('node:assert/strict');
 
 const root = path.resolve(__dirname, '..');
 const html = fs.readFileSync(path.join(root, 'public', 'index.html'), 'utf8');
-const memoryHtml = fs.readFileSync(path.join(root, 'public', 'memory.html'), 'utf8');
 const css = fs.readFileSync(path.join(root, 'public', 'styles.css'), 'utf8');
 const app = fs.readFileSync(path.join(root, 'public', 'app.js'), 'utf8');
 
@@ -28,7 +27,7 @@ test('regular, maximized, and fullscreen geometry have explicit scoped owners', 
 });
 
 test('desktop polish uses shared page headers and stays scoped to regular mode', () => {
-  assert.equal((html.match(/class="panel [^"]*pageHero/g) || []).length, 6);
+  assert.equal((html.match(/class="panel [^"]*pageHero/g) || []).length, 7);
   assert.match(css, /Pass 6: regular desktop readability and proportion polish/);
   assert.match(css, /\.player\.player--regular:not\(\.isMaximized\):not\(\.isFullWindow\) \{/);
   assert.match(css, /grid-template-rows: 42px clamp\(470px, 58vh, 540px\) 58px 44px;/);
@@ -46,9 +45,6 @@ test('desktop visual-system follow-up shares regular-view surfaces without touch
   assert.match(css, /\.musicMemoryCard[\s\S]*\.tidalMixCard[\s\S]*background: var\(--rh-desktop-card\)/);
   assert.match(css, /\.musicMemoryArt[\s\S]*\.tidalMixArt/);
   assert.match(css, /:not\(\.scoringModeCard\)/);
-  assert.match(memoryHtml, /main data-memory-item="synapse-memory"/);
-  assert.match(css, /standalone Synapse Memory route in the same desktop system/);
-  assert.match(css, /main\[data-memory-item="synapse-memory"\] > section/);
 });
 
 test('regular desktop inherits maximized artwork treatment while player modes remain scoped', () => {
@@ -302,11 +298,7 @@ test('phone regular player reserves mode controls and keeps transport readable',
   assert.doesNotMatch(phone, /body\.playerMaximized|body\.playerFullWindow|player--fullscreen/);
 });
 
-test('phone memory route gets a full-width touch-friendly shell', () => {
-  assert.match(memoryHtml, /styles\.css\?v=20260909-phone-complete-03/);
-  assert.match(css, /main\[data-memory-item\] \{[\s\S]*?width: 100%;[\s\S]*?max-width: none;[\s\S]*?padding: 12px;/);
-  assert.match(css, /main\[data-memory-item\] :is\([\s\S]*?button,[\s\S]*?select,[\s\S]*?min-height: 44px;/);
-  assert.match(css, /main\[data-memory-item\] > a \{[\s\S]*?display: inline-flex;[\s\S]*?min-height: 44px;/);
+test('the phone Jump to Now Playing button is a full-size touch target', () => {
   assert.match(css, /body:not\(\.playerFullWindow\):not\(\.playerMaximized\) \.jumpTop \{[\s\S]*?min-height: 44px;[\s\S]*?touch-action: manipulation;/);
 });
 
