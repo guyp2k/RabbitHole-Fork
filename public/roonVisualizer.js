@@ -14,7 +14,7 @@
     feedEligible: () => stage.dataset.playbackConnected === "true",
     feedCopy: {
       hint: "HQPlayer’s live spectrum drives the visuals through a separate analysis signal. Experimental; timing may differ from what you hear.",
-      start: "Select Start visuals to use HQPlayer analysis from your selected Roon zone.",
+      start: "Select Start Visuals to use HQPlayer analysis from your selected Roon zone.",
       missingTarget: "Choose the connected HQPlayer Roon zone before starting HQPlayer analysis.",
       active: "HQPlayer’s live analysis signal is feeding SoundSpectrum.",
       waiting: "Waiting for HQPlayer analysis from your selected Roon zone.", label: "HQPlayer analysis"

@@ -6,7 +6,7 @@ const test = require("node:test");
 const assert = require("node:assert/strict");
 const { RoonClient } = require("../src/roonClient");
 
-test("Play from here dispatches the cached Roon queue item ID", async () => {
+test("Play from Here dispatches the cached Roon queue item ID", async () => {
   const client = new RoonClient();
   const calls = [];
   client.transport = {
@@ -32,7 +32,7 @@ test("Play from here dispatches the cached Roon queue item ID", async () => {
   }]);
 });
 
-test("Play from here refuses a stale queue item without calling Roon", async () => {
+test("Play from Here refuses a stale queue item without calling Roon", async () => {
   const client = new RoonClient();
   let called = false;
   client.transport = {

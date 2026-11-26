@@ -82,7 +82,7 @@ class SoundSpectrum {
       const nativeMusic = installed.musicInputs?.find(item => item.id === input.id && item.kind === "music-feed");
       return { ...input, source: FEED_SOURCES[input.id],
         available: input.available === true && nativeMusic?.available !== false && !!nativeMusic,
-        reason: input.reason || (!nativeMusic || nativeMusic.available === false ? "The verified SoundSpectrum recording input is unavailable. Refresh inputs after checking the local cable setup." : "") };
+        reason: input.reason || (!nativeMusic || nativeMusic.available === false ? "The verified SoundSpectrum recording input is unavailable. Refresh Inputs after checking the local cable setup." : "") };
     });
     this.inventory = { visualizers: installed.visualizers || [], inputs: installed.inputs || [], noMicInputs: installed.noMicInputs || {}, musicInputs, supported: installed.supported !== false,
       captureAvailable: runtime.available === true && !installed.recoveryError,
@@ -119,9 +119,9 @@ class SoundSpectrum {
   }
   videoState() { this.emitVideo({ type: "state", state: this.state, generation: this.generation, error: this.error, closed: this.closed }); }
   authorizeVideo(viewerId, expectedGeneration) {
-    if (!validViewer(viewerId) || (this.leases.get(viewerId) || 0) <= this.clock()) throw problem("Select Start visuals before opening the video stream.", 403);
+    if (!validViewer(viewerId) || (this.leases.get(viewerId) || 0) <= this.clock()) throw problem("Select Start Visuals before opening the video stream.", 403);
     if (expectedGeneration !== undefined && (!Number.isSafeInteger(expectedGeneration) || expectedGeneration !== this.generation)) throw problem("The visualizer selection changed. Reconnect its video stream.", 409);
-    if (!["starting", "running"].includes(this.state)) throw problem("SoundSpectrum video is unavailable. Select Start visuals to retry.", 409);
+    if (!["starting", "running"].includes(this.state)) throw problem("SoundSpectrum video is unavailable. Select Start Visuals to retry.", 409);
     return { frame: this.latest, capturedAt: this.frameAt, generation: this.generation };
   }
   async session({ action, viewerId, visualizer, inputId, playerId, zoneId, generation: expectedGeneration } = {}) {
@@ -142,7 +142,7 @@ class SoundSpectrum {
       return this.snapshot(viewerId);
     }
     if (action === "heartbeat") {
-      if ((this.leases.get(viewerId) || 0) <= this.clock()) throw problem(this.state === "error" && this.error || "Visuals stopped. Select Start visuals to reconnect.", 409);
+      if ((this.leases.get(viewerId) || 0) <= this.clock()) throw problem(this.state === "error" && this.error || "Visuals stopped. Select Start Visuals to reconnect.", 409);
       this.leases.set(viewerId, this.clock() + this.leaseMs);
       return this.snapshot(viewerId);
     }
@@ -231,7 +231,7 @@ class SoundSpectrum {
     child.once("close", () => {
       clearTimeout(child.startDeadline);
       if (this.child === child && generation === this.generation) {
-        const message = /access|denied/i.test(diagnostic) ? "Windows blocked capture of the SoundSpectrum window. Check the PC desktop session." : "The SoundSpectrum video bridge stopped. Select Start visuals to retry.";
+        const message = /access|denied/i.test(diagnostic) ? "Windows blocked capture of the SoundSpectrum window. Check the PC desktop session." : "The SoundSpectrum video bridge stopped. Select Start Visuals to retry.";
         void this.fail(generation, problem(message, 502));
       }
     });
@@ -310,7 +310,7 @@ class SoundSpectrum {
       this.inputCheckAt = now;
       this.inputCheck = Promise.resolve().then(() => this.native.listAudioInputs()).then(inputs => {
         if (generation === this.generation && !inputs.some(input => input.id === inputId)) this.fail(generation, problem("The PC microphone disconnected. Reconnect it, refresh inputs and start visuals again.", 503));
-      }).catch(() => { if (generation === this.generation) this.fail(generation, problem("The PC microphone could not be checked. Refresh inputs and start visuals again.", 503)); })
+      }).catch(() => { if (generation === this.generation) this.fail(generation, problem("The PC microphone could not be checked. Refresh Inputs and start visuals again.", 503)); })
         .finally(() => { this.inputCheck = null; });
     }
   }

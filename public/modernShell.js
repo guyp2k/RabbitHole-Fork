@@ -559,7 +559,7 @@
       pills.append(make("div", { className: "modernChainStage" }, make("b", { text: stage.label }), make("span", { text: stage.value })));
     });
     const parts = hqpHostParts(detail.hqplayer) || [];
-    const host = make("p", { className: "hqpHostLine modernChainHost", hidden: !parts.length }, make("span", { className: "hqpHostTag", text: "HQP host" }));
+    const host = make("p", { className: "hqpHostLine modernChainHost", hidden: !parts.length }, make("span", { className: "hqpHostTag", text: "HQP Host" }));
     parts.forEach((part, index) => {
       if (index) host.append(" · ");
       const span = make("span", { text: part.text });

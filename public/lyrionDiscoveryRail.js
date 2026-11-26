@@ -2,8 +2,8 @@
 (() => {
  const stage=document.getElementById('lyrionNow');if(!stage)return;
  const rail=document.createElement('aside');rail.id='lyrionDiscoveryRail';rail.className='lyrionRail';rail.setAttribute('aria-label','Track details and playlists');
- rail.innerHTML=`<section class="lyrionFeedbackSection" hidden><h3>Rating</h3><div id="lyrionFeedback" class="feedbackButtons lyrionFeedback" role="group" aria-label="Rate this track"></div></section><section id="lyrionBeatportSection" hidden><h3>Beatport metadata</h3><p id="lyrionBeatportStatus" class="muted" role="status">Play a track to find its details.</p><dl id="lyrionBeatportFields"></dl><a id="lyrionBeatportLink" target="_blank" rel="noopener noreferrer" hidden>View on Beatport</a><button id="lyrionBeatportRetry" type="button" hidden>Retry lookup</button></section>
- <section class="lyrionPlaylistSection"><h3>Add to playlist</h3><p class="muted lyrionPlaylistHint">Save this track to TIDAL.</p><div id="lyrionPlaylistTargets"></div><button id="lyrionAddPlaylist" type="button" disabled>Add to TIDAL</button><button id="lyrionRefreshPlaylists" type="button">Refresh playlists</button><form id="lyrionCreatePlaylist"><label for="lyrionPlaylistName">New TIDAL playlist</label><input id="lyrionPlaylistName" required maxlength="200" placeholder="Playlist name"><button type="submit">Create playlist</button></form><p id="lyrionPlaylistStatus" role="status" aria-live="polite"></p></section>`;
+ rail.innerHTML=`<section class="lyrionFeedbackSection" hidden><h3>Rating</h3><div id="lyrionFeedback" class="feedbackButtons lyrionFeedback" role="group" aria-label="Rate This Track"></div></section><section id="lyrionBeatportSection" hidden><h3>Beatport Metadata</h3><p id="lyrionBeatportStatus" class="muted" role="status">Play a track to find its details.</p><dl id="lyrionBeatportFields"></dl><a id="lyrionBeatportLink" target="_blank" rel="noopener noreferrer" hidden>View on Beatport</a><button id="lyrionBeatportRetry" type="button" hidden>Retry Lookup</button></section>
+ <section class="lyrionPlaylistSection"><h3>Add to Playlist</h3><p class="muted lyrionPlaylistHint">Save this track to TIDAL.</p><div id="lyrionPlaylistTargets"></div><button id="lyrionAddPlaylist" type="button" disabled>Add to TIDAL</button><button id="lyrionRefreshPlaylists" type="button">Refresh Playlists</button><form id="lyrionCreatePlaylist"><label for="lyrionPlaylistName">New TIDAL Playlist</label><input id="lyrionPlaylistName" required maxlength="200" placeholder="Playlist name"><button type="submit">Create Playlist</button></form><p id="lyrionPlaylistStatus" role="status" aria-live="polite"></p></section>`;
  stage.querySelector('.lyrionArtworkLane').after(rail);
  const stageFavorites=document.getElementById('lyrionStageFavorites');if(stageFavorites)rail.append(stageFavorites);
  const visible=()=>!stage.closest?.('.lyrionTabPanel')?.hidden;
@@ -32,7 +32,7 @@
  let saved=[];try{saved=JSON.parse(localStorage.getItem('lyrion.playlistTargets')||'[]');}catch{}if(!Array.isArray(saved))saved=[];
  const targets=Array.from({length:3},(_,i)=>{
   const row=document.createElement('div');row.className='lyrionPlaylistTarget';const arm=document.createElement('input');arm.type='checkbox';arm.setAttribute('aria-label',`Use TIDAL playlist ${i+1}`);arm.checked=!!saved[i]?.armed;
-  const select=document.createElement('select');select.setAttribute('aria-label',`TIDAL playlist ${i+1}`);select.append(new Option('Choose a playlist',''));
+  const select=document.createElement('select');select.setAttribute('aria-label',`TIDAL playlist ${i+1}`);select.append(new Option('Choose a Playlist',''));
   row.append(arm,select);$('lyrionPlaylistTargets').append(row);
   arm.onchange=select.onchange=()=>{persist();buttons();};return {arm,select,id:saved[i]?.id||''};
  });
@@ -42,7 +42,7 @@
  async function loadPlaylists(force=false){
   if(loading||loaded&&!force)return;loading=true;buttons();$('lyrionPlaylistStatus').textContent='Loading TIDAL playlists…';
   try{const data=await request('/api/tidal/playlists'+(force?'?refresh=1':''));if(data.connected===false)throw Error(data.error||'Connect TIDAL profile access first.');playlists=data.playlists||[];
-   for(const t of targets){const id=t.select.value||t.id;t.select.replaceChildren(new Option('Choose a playlist',''),...playlists.map(p=>new Option(p.title||p.name||'Untitled',String(p.id))));t.select.value=id;t.id='';}
+   for(const t of targets){const id=t.select.value||t.id;t.select.replaceChildren(new Option('Choose a Playlist',''),...playlists.map(p=>new Option(p.title||p.name||'Untitled',String(p.id))));t.select.value=id;t.id='';}
    loaded=true;$('lyrionPlaylistStatus').textContent=playlists.length?'':'No TIDAL playlists yet. Create one below.';
   }catch(e){$('lyrionPlaylistStatus').textContent=e.message;}finally{loading=false;buttons();}
  }

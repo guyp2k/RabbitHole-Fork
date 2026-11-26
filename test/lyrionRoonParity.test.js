@@ -62,7 +62,7 @@ test("Lyrion panels share the Roon views' desktop and phone surfaces, except the
 
 test("the Lyrion queue renders Roon queue rows, and tapping a row plays from that position", () => {
   assert.match(source, /<div class="lyrionQueueFoldHead"><h3 class="panelFoldHeading"><button type="button" class="panelFold" data-fold-key="lyrion\.queue" aria-controls="lyrionQueueFoldBody" aria-expanded="true"><span class="panelFoldCaret" aria-hidden="true">▾<\/span>Lyrion Queue<\/button><\/h3><span id="lyrionQueueCount" class="lyrionQueueCount"><\/span><\/div><div id="lyrionQueueFoldBody"><section class="liveQueue"><ol id="lyrionQueue"><\/ol><\/section>/);
-  assert.match(source, /b\.type="button";b\.className="queueItemButton";b\.title="Play from here";/);
+  assert.match(source, /b\.type="button";b\.className="queueItemButton";b\.title="Play from Here";/);
   assert.match(source, /b\.onclick=run\(async\(\)=>\{await api\("control",\{action:"jump",index:t\.index\}\);await refreshStatus\(\);\}\);/);
 });
 

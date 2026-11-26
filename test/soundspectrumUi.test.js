@@ -147,7 +147,7 @@ test("saved center and renderer preferences never start PC capture", async () =>
   assert.equal(h.requests.length, 1);
   assert.equal(h.requests[0].url, "/api/soundspectrum/status");
   assert.equal(h.get("lyrionVisualVideo").src, "");
-  assert.equal(h.get("lyrionVisualToggle").textContent, "Start visuals");
+  assert.equal(h.get("lyrionVisualToggle").textContent, "Start Visuals");
 });
 
 test("missing all audio inputs blocks start and refresh discovers newly connected input", async () => {
@@ -185,7 +185,7 @@ test("cancelled late starts cannot reopen the video or resurrect a viewer", asyn
   assert.equal(h.get("lyrionVisualToggle").textContent, "Cancel start");
   h.get("lyrionVisualToggle").click(); await h.answer(1, status({ state: "running" }));
   assert.equal(h.get("lyrionVisualVideo").src, "");
-  assert.equal(h.get("lyrionVisualToggle").textContent, "Start visuals");
+  assert.equal(h.get("lyrionVisualToggle").textContent, "Start Visuals");
   assert.deepEqual(await h.stoppedIds(), ["viewer-1", "viewer-1"]);
 });
 
@@ -238,7 +238,7 @@ test("native failure keeps the specific cause when its viewer lease ends", async
   await h.fire(4000);
   await h.answer(2, status({ state: "error", viewerActive: false, error: "The PC microphone disconnected. Connect it and try again." }));
   assert.equal(h.get("lyrionVisualReason").textContent, "The PC microphone disconnected. Connect it and try again.");
-  assert.equal(h.get("lyrionVisualToggle").textContent, "Start visuals");
+  assert.equal(h.get("lyrionVisualToggle").textContent, "Start Visuals");
   assert.equal(h.get("lyrionVisualVideo").src, "");
   assert.deepEqual(await h.stoppedIds(), ["viewer-1"]);
 });
@@ -384,7 +384,7 @@ test("changing Lyrion player releases only the music-feed viewer and requires a 
   h.get("lyrionNativeInput").value = "feed:pre-hqplayer"; h.get("lyrionNativeInput").onchange(); await h.start(feedStatus());
   h.get("lyrionPlayer").value = "another-player"; h.get("lyrionPlayer").dispatchEvent({ type: "change" });
   assert.deepEqual(await h.stoppedIds(), ["viewer-1"]);
-  assert.equal(h.get("lyrionVisualVideo").src, ""); assert.equal(h.get("lyrionVisualToggle").textContent, "Start visuals");
+  assert.equal(h.get("lyrionVisualVideo").src, ""); assert.equal(h.get("lyrionVisualToggle").textContent, "Start Visuals");
   assert.equal(h.requests.length, 2);
   await h.start(feedStatus({ audioFeed: { state: "waiting", playerId: "another-player" } }));
   assert.equal(h.body(2).playerId, "another-player");
@@ -515,7 +515,7 @@ test("native or media failure clears expanded presentation without replacing its
     await failure(h);
     assert.equal(h.stage.classList.contains("lyrionNow--visualFullscreen"), false); assert.equal(h.get("lyrionVisualOverlay").hidden, true);
     assert.equal(h.get("lyrionNativeInput").value, "USB microphone full description");
-    assert.equal(h.get("lyrionVisualToggle").textContent, "Start visuals"); assert.deepEqual(await h.stoppedIds(), ["viewer-1"]);
+    assert.equal(h.get("lyrionVisualToggle").textContent, "Start Visuals"); assert.deepEqual(await h.stoppedIds(), ["viewer-1"]);
   }
 });
 
@@ -568,7 +568,7 @@ test("Roon uses separate saved choices without starting capture and filters its 
   assert.deepEqual(h.get("roonNativeInput").children.map(option => option.value), [...nativeGenerators.map(value => value.id), hqplayerInput.id]);
   assert.equal(h.get("roonNativeInput").value, "generator:fluid");
   assert.equal(h.get("roonNativeVisualizer").value, "whitecap");
-  assert.equal(h.get("roonVisualToggle").textContent, "Start visuals");
+  assert.equal(h.get("roonVisualToggle").textContent, "Start Visuals");
   assert.equal(h.requests.length, 1); assert.equal(h.releases.length, 0);
   assert.equal(h.stage.querySelector(".playerViewControls").querySelector(".lyrionCenterViews").querySelectorAll("button")[0].getAttribute("aria-controls"), "cover");
   assert.equal(h.storage.has("lyrion.centerView"), false);
@@ -638,7 +638,7 @@ test("changing Roon zones stops both analysis and generator viewers and requires
     h.get("zoneSelect").value = "other-zone"; h.get("zoneSelect").dispatchEvent(uiEvent("change"));
     assert.deepEqual(await h.stoppedIds(), ["viewer-1"]); assert.equal(h.get("roonVisualVideo").src, "");
     h.get("zoneSelect").value = "exact-zone"; h.stage.dispatchEvent(uiEvent("roon-playback"));
-    assert.equal(h.get("roonVisualToggle").textContent, "Start visuals"); assert.equal(h.requests.length, 2);
+    assert.equal(h.get("roonVisualToggle").textContent, "Start Visuals"); assert.equal(h.requests.length, 2);
   }
 });
 
@@ -646,7 +646,7 @@ test("an automatic Roon zone change or disconnect cancels a pending analysis sta
   for (const update of [h => { h.get("zoneSelect").value = "other-zone"; }, h => { h.stage.dataset.playbackConnected = "false"; }]) {
     const h = harness({ provider: "roon" }); await h.ready(roonStatus()); selectRoonAnalysis(h); h.get("roonVisualToggle").click();
     update(h); h.stage.dispatchEvent(uiEvent("roon-playback")); await h.answer(1, roonFeedStatus());
-    assert.equal(h.get("roonVisualVideo").src, ""); assert.equal(h.get("roonVisualToggle").textContent, "Start visuals");
+    assert.equal(h.get("roonVisualVideo").src, ""); assert.equal(h.get("roonVisualToggle").textContent, "Start Visuals");
     assert.deepEqual(await h.stoppedIds(), ["viewer-1", "viewer-1"]);
   }
 });
@@ -725,7 +725,7 @@ test("late Roon native fullscreen entry is undone after Return or Stop without r
     h.document.fullscreenElement = h.stage; h.document.dispatchEvent(uiEvent("fullscreenchange")); pending.resolve(); await flush();
     assert.equal(nativeExits, 1); assert.equal(h.document.fullscreenElement, null); assert.equal(h.stage.classList.contains("roonVisualFullscreen"), false);
     assert.deepEqual(await h.stoppedIds(), stop ? ["viewer-1"] : []);
-    assert.equal(h.get("roonVisualToggle").textContent, stop ? "Start visuals" : "Stop visuals");
+    assert.equal(h.get("roonVisualToggle").textContent, stop ? "Start Visuals" : "Stop visuals");
   }
 });
 
@@ -798,13 +798,13 @@ test("recurring Roon heartbeats keep the real service lease alive across mode ch
   try { await service.session(h.body(expired)); } catch (error) { rejection = error; }
   assert.equal(rejection.statusCode, 409);
   await h.answer(expired, { ...service.snapshot(viewerId), error: rejection.message }, false);
-  assert.match(h.get("roonVisualReason").textContent, /Visuals stopped\. Select Start visuals to reconnect/);
-  assert.equal(h.get("roonVisualToggle").textContent, "Start visuals"); assert.equal(service.snapshot().clients, 1);
+  assert.match(h.get("roonVisualReason").textContent, /Visuals stopped\. Select Start Visuals to reconnect/);
+  assert.equal(h.get("roonVisualToggle").textContent, "Start Visuals"); assert.equal(service.snapshot().clients, 1);
   assert.deepEqual(await h.stoppedIds(), [viewerId]);
   assert.equal(h.requests.filter(request => request.options?.body && JSON.parse(request.options.body).action === "start").length, 1);
 });
 
-test("Refresh inputs rejects obsolete heartbeat completions without releasing or replacing the active Roon stream", async () => {
+test("Refresh Inputs rejects obsolete heartbeat completions without releasing or replacing the active Roon stream", async () => {
   for (const late of ["abort", "success"]) {
     const h = harness({ provider: "roon", withMedia: true }); await h.ready(roonStatus()); selectRoonAnalysis(h); await h.start(roonFeedStatus());
     const initialMedia = [...h.mediaCalls]; await h.fire(4000);

@@ -285,7 +285,7 @@
 
     badge.textContent = hasTrack ? ratingLabel(state.feedback) : "No active track";
     badge.dataset.rating = state.feedback || "none";
-    title.textContent = hasTrack ? summary.title : "No active zone";
+    title.textContent = hasTrack ? summary.title : "No Active Zone";
     artist.textContent = hasTrack ? (summary.artist || "Unknown artist") : (state.payload?.connected ? "Nothing is currently playing." : "Rabbit Hole is reconnecting to Roon.");
     const displayAlbum = hasTrack && summary.album && ![summary.title, summary.artist].some((value) => cleanText(value).toLowerCase() === cleanText(summary.album).toLowerCase())
       ? summary.album
@@ -293,7 +293,7 @@
     album.textContent = displayAlbum;
     album.hidden = !displayAlbum;
     trigger.disabled = !hasTrack || state.ratingBusy;
-    triggerText.textContent = state.feedback ? `Rate: ${ratingOption(state.feedback)?.label || "Track"}` : "Rate this track";
+    triggerText.textContent = state.feedback ? `Rate: ${ratingOption(state.feedback)?.label || "Track"}` : "Rate This Track";
 
     const image = hasTrack ? artworkUrl(state.now) : "";
     artwork.hidden = !image;

@@ -49,7 +49,7 @@ function createFeedMux(entries = []) {
         return input?.id === id && input.kind === "music-feed" ? [{ ...input, source: FEED_SOURCES[id] }] : [];
       });
     },
-    snapshot(inputId) { return feeds.get(inputId)?.audioFeed.snapshot() || { state: "waiting", source: "", reason: "Select a music input and Start visuals." }; },
+    snapshot(inputId) { return feeds.get(inputId)?.audioFeed.snapshot() || { state: "waiting", source: "", reason: "Select a music input and Start Visuals." }; },
     async validateStart({ inputId, ...selection }) { await select(inputId).audioFeed.validateStart?.(selection); },
     async start({ inputId, ...selection }) {
       const selected = select(inputId);

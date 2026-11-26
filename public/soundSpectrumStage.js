@@ -11,7 +11,7 @@ window.createSoundSpectrumStage = function createSoundSpectrumStage(config = {})
   const selectedPlayer = config.selectedTarget || (() => "");
   const copy = {
     hint: "A separate copy of decoded PCM feeds the visuals for supported Lyrion playback. Experimental; timing may differ from what you hear.",
-    start: "Select Start visuals to use the experimental music feed from your selected Lyrion player.",
+    start: "Select Start Visuals to use the experimental music feed from your selected Lyrion player.",
     missingTarget: "Choose a Lyrion player before starting the music feed.",
     active: "The separate PCM copy is feeding SoundSpectrum.",
     waiting: "Waiting for supported Lyrion audio from your selected player.",
@@ -28,9 +28,9 @@ window.createSoundSpectrumStage = function createSoundSpectrumStage(config = {})
   panel.setAttribute("aria-label", "SoundSpectrum music visualizer");
   panel.innerHTML = markup([
     '<div id="lyrionVisualSurface" class="lyrionVisualSurface" role="group" aria-label="SoundSpectrum visualizer" tabindex="-1"><canvas id="lyrionVisualCanvas" role="img" aria-label="SoundSpectrum music visuals" hidden></canvas><img id="lyrionVisualVideo" alt="SoundSpectrum music visuals" hidden><div id="lyrionVisualEmpty"><p id="lyrionVisualReason">Select a visualizer and start visuals.</p></div><div id="lyrionVisualOverlay" class="lyrionVisualOverlay" hidden><button id="lyrionVisualExpand" type="button" aria-label="Expand visualizer" aria-controls="lyrionVisualSurface" aria-expanded="false" tabindex="-1"><svg id="lyrionVisualExpandIcon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3H3v5M16 3h5v5M21 16v5h-5M3 16v5h5"/></svg><span id="lyrionVisualExpandLabel" class="lyrionVisualExpandLabel">Fullscreen</span></button></div></div>',
-    '<div class="lyrionVisualFields"><label for="lyrionNativeVisualizer">Visualizer<select id="lyrionNativeVisualizer"><option value="aeon">Aeon</option><option value="g-force">G-Force</option><option value="whitecap">WhiteCap</option></select></label><label for="lyrionNativeInput">Audio input<select id="lyrionNativeInput"><option value="">Loading inputs…</option></select></label></div>',
+    '<div class="lyrionVisualFields"><label for="lyrionNativeVisualizer">Visualizer<select id="lyrionNativeVisualizer"><option value="aeon">Aeon</option><option value="g-force">G-Force</option><option value="whitecap">WhiteCap</option></select></label><label for="lyrionNativeInput">Audio Input<select id="lyrionNativeInput"><option value="">Loading inputs…</option></select></label></div>',
     '<p id="lyrionVisualHint" class="muted">Loading SoundSpectrum audio inputs…</p>',
-    '<div class="lyrionVisualToolbar"><button id="lyrionVisualToggle" type="button" aria-describedby="lyrionVisualHint">Start visuals</button><button id="lyrionVisualRefresh" type="button">Refresh inputs</button><button id="lyrionVisualFreeze" type="button" aria-pressed="false" disabled>Pause visuals</button></div>',
+    '<div class="lyrionVisualToolbar"><button id="lyrionVisualToggle" type="button" aria-describedby="lyrionVisualHint">Start Visuals</button><button id="lyrionVisualRefresh" type="button">Refresh Inputs</button><button id="lyrionVisualFreeze" type="button" aria-pressed="false" disabled>Pause Visuals</button></div>',
     '<p id="lyrionVisualStatus" class="muted" role="status" aria-live="polite">Loading audio inputs…</p>'
   ].join("\n"));
   lane.prepend(panel);
@@ -54,7 +54,7 @@ window.createSoundSpectrumStage = function createSoundSpectrumStage(config = {})
   const visibility = () => String(document.visibilityState || (document.hidden ? "hidden" : "visible")).slice(0, 16);
   const media = window.createSoundSpectrumVideo?.({ image: video, canvas: $("lyrionVisualCanvas"), backdrop,
     onReady: value => { stage.dataset.visualActive = String(value && visible()); if (!value) leaveImmersive(false); render(); if (value) showControls(); },
-    onError: () => { if (!viewerId || !visible()) return; currentError = "The visual stream disconnected. Select Start visuals to reconnect."; stop(); } });
+    onError: () => { if (!viewerId || !visible()) return; currentError = "The visual stream disconnected. Select Start Visuals to reconnect."; stop(); } });
   try {
     mode = localStorage.getItem(storagePrefix + ".centerView") === "visualizer" ? "visualizer" : "artwork";
     const saved = localStorage.getItem(storagePrefix + ".soundSpectrum");
@@ -199,7 +199,7 @@ window.createSoundSpectrumStage = function createSoundSpectrumStage(config = {})
     })), selected, undefined, true);
     inputAvailable = canUseInput();
     input.title = selectedInput()?.name || "";
-    if (!audioInputs.length) input.replaceChildren(new Option("No audio inputs available", ""));
+    if (!audioInputs.length) input.replaceChildren(new Option("No Audio Inputs Available", ""));
   }
   function accept(data) {
     if (!data || !["idle", "starting", "running", "error"].includes(data.state)) throw Error("SoundSpectrum returned an unexpected status. Try again.");
@@ -207,7 +207,7 @@ window.createSoundSpectrumStage = function createSoundSpectrumStage(config = {})
     if (viewerId && ["starting", "running"].includes(data.state) && data.inputKind === "music-feed" && (data.inputId !== musicFeedId ||
       (config.feedSource && incomingSource && incomingSource !== config.feedSource) ||
       (config.targetParam === "zoneId" && incomingZone && incomingZone !== selectedPlayer()))) {
-      currentError = "The shared visualizer switched to another playback source. Select Start visuals to reconnect.";
+      currentError = "The shared visualizer switched to another playback source. Select Start Visuals to reconnect.";
       stop(); return;
     }
     remote = data;
@@ -218,11 +218,11 @@ window.createSoundSpectrumStage = function createSoundSpectrumStage(config = {})
     }
     if (Array.isArray(data.inputs) || data.noMicInputs || Array.isArray(data.musicInputs)) { inputsKnown = true; updateInputs(["running", "starting"].includes(data.state) ? data.inputId || "" : input.value); }
     captureAvailable = data.captureAvailable !== false && data.supported !== false;
-    if (data.state === "error") currentError = data.error || "SoundSpectrum could not start. Refresh inputs and try again.";
+    if (data.state === "error") currentError = data.error || "SoundSpectrum could not start. Refresh Inputs and try again.";
     else if (viewerId) currentError = "";
     if (viewerId && data.viewerActive === false) {
       const previous = viewerId; viewerId = ""; release(previous);
-      if (!currentError) currentError = "The visualizer session ended. Select Start visuals to reconnect.";
+      if (!currentError) currentError = "The visualizer session ended. Select Start Visuals to reconnect.";
     }
     if (viewerId && data.state === "running") {
       // The shared renderer changes for all viewers; preserve its live connection.
@@ -231,7 +231,7 @@ window.createSoundSpectrumStage = function createSoundSpectrumStage(config = {})
         streamKey = nextKey;
         if (media) media.start(viewerId, data.videoTransport);
         else {
-          video.onerror = () => { if (viewerId !== nextKey || !visible()) return; currentError = "The visual stream disconnected. Select Start visuals to reconnect."; stop(); };
+          video.onerror = () => { if (viewerId !== nextKey || !visible()) return; currentError = "The visual stream disconnected. Select Start Visuals to reconnect."; stop(); };
           video.src = "/api/soundspectrum/video?" + new URLSearchParams({ viewerId });
         }
       }
@@ -239,7 +239,7 @@ window.createSoundSpectrumStage = function createSoundSpectrumStage(config = {})
     } else if (!viewerId || data.state !== "starting") clearVideo();
     if (viewerId && ["error", "idle"].includes(data.state)) {
       const previous = viewerId; viewerId = ""; release(previous);
-      if (data.state === "idle") currentError = "The visualizer stopped on the PC. Select Start visuals to reconnect.";
+      if (data.state === "idle") currentError = "The visualizer stopped on the PC. Select Start Visuals to reconnect.";
     }
     render();
   }
@@ -250,11 +250,11 @@ window.createSoundSpectrumStage = function createSoundSpectrumStage(config = {})
     surface.tabIndex = running && visible() ? 0 : -1; expand.disabled = !running || !visible();
     if (!running || !visible()) { leaveImmersive(false); hideControls(); }
     inputAvailable = canUseInput();
-    toggle.textContent = loading ? "Cancel start" : viewerId ? "Stop visuals" : "Start visuals";
+    toggle.textContent = loading ? "Cancel start" : viewerId ? "Stop visuals" : "Start Visuals";
     toggle.disabled = !visible() || ((!available || !captureAvailable || !inputAvailable) && !viewerId);
     renderer.disabled = loading || !available; input.disabled = loading || !audioInputs.length;
     $("lyrionVisualRefresh").disabled = loading;
-    freeze.textContent = paused ? "Resume visuals" : "Pause visuals";
+    freeze.textContent = paused ? "Resume visuals" : "Pause Visuals";
     freeze.disabled = !visible() || (!viewerId && !paused) || (paused && (!available || !captureAvailable || !inputAvailable));
     freeze.setAttribute("aria-pressed", String(paused)); $("lyrionVisualEmpty").hidden = running;
     panel.setAttribute("aria-busy", String(loading || (!!viewerId && remote.state === "starting")));
@@ -263,9 +263,9 @@ window.createSoundSpectrumStage = function createSoundSpectrumStage(config = {})
     input.title = selectedInput()?.name || "";
     $("lyrionVisualHint").textContent = !inputsKnown ? "Loading SoundSpectrum audio inputs…" : noMic ? "SoundSpectrum’s built-in sound generator uses no microphone and does not listen to your music. Playback stays unchanged." : musicFeed ? copy.hint : "The microphone on the Rabbit Hole PC feeds the visuals. Playback stays unchanged.";
     let status = inputsKnown ? "Visuals stopped" : "Loading audio inputs…";
-    let reason = !inputsKnown ? "Checking SoundSpectrum’s available audio inputs…" : noMic ? "Select Start visuals to run " + selected.name + ". No microphone is needed." : musicFeed ? copy.start : "Select a visualizer and Start visuals to use the PC microphone.";
+    let reason = !inputsKnown ? "Checking SoundSpectrum’s available audio inputs…" : noMic ? "Select Start Visuals to run " + selected.name + ". No microphone is needed." : musicFeed ? copy.start : "Select a visualizer and Start Visuals to use the PC microphone.";
     if (!available) { status = "SoundSpectrum unavailable"; reason = "No supported SoundSpectrum visualizer is available on the PC."; }
-    else if (inputsKnown && !inputAvailable && !viewerId) { status = musicFeed ? "Music feed unavailable" : "Audio input unavailable"; reason = musicFeed ? selected.available === false ? selected.reason || "The experimental music feed is unavailable. Refresh inputs after enabling it on the PC." : copy.missingTarget : "No audio input is available. Refresh inputs, or connect a microphone on the Rabbit Hole PC."; }
+    else if (inputsKnown && !inputAvailable && !viewerId) { status = musicFeed ? "Music feed unavailable" : "Audio input unavailable"; reason = musicFeed ? selected.available === false ? selected.reason || "The experimental music feed is unavailable. Refresh Inputs after enabling it on the PC." : copy.missingTarget : "No audio input is available. Refresh Inputs, or connect a microphone on the Rabbit Hole PC."; }
     else if (!captureAvailable) { status = "SoundSpectrum unavailable"; reason = remote.reason || "The SoundSpectrum video bridge is unavailable on the PC."; }
     else if (paused) { status = "Visuals paused"; reason = "Select Resume visuals to start SoundSpectrum again."; }
     else if (currentError) { status = "SoundSpectrum unavailable"; reason = currentError; }
@@ -279,7 +279,7 @@ window.createSoundSpectrumStage = function createSoundSpectrumStage(config = {})
         if (!feeding) $("lyrionVisualEmpty").hidden = false;
       } else status = (names[remote.visualizer] || "SoundSpectrum") + (activeNoMic ? " · Sound generator · No microphone" : " · PC microphone active");
     }
-    else if (remote.state === "running") { status = "SoundSpectrum is running on the PC"; reason = (names[remote.visualizer] || "SoundSpectrum") + " is running in another view. Select Start visuals to view it."; }
+    else if (remote.state === "running") { status = "SoundSpectrum is running on the PC"; reason = (names[remote.visualizer] || "SoundSpectrum") + " is running in another view. Select Start Visuals to view it."; }
     $("lyrionVisualStatus").textContent = status; $("lyrionVisualReason").textContent = reason;
   }
   async function request(body, signal) {
@@ -306,7 +306,7 @@ window.createSoundSpectrumStage = function createSoundSpectrumStage(config = {})
     } catch (error) {
       release(id);
       if (current !== revision || viewerId !== id) return;
-      viewerId = ""; loading = false; currentError = error.name === "AbortError" ? "SoundSpectrum timed out. Select Start visuals to reconnect." : error.message; render(); schedule(8000);
+      viewerId = ""; loading = false; currentError = error.name === "AbortError" ? "SoundSpectrum timed out. Select Start Visuals to reconnect." : error.message; render(); schedule(8000);
     } finally { clearTimeout(timeout); if (controller === pending) controller = null; }
   }
   function schedule(delay = 4000) {
@@ -334,7 +334,7 @@ window.createSoundSpectrumStage = function createSoundSpectrumStage(config = {})
     } catch (error) {
       if (current !== revision || !visible()) return;
       if (heartbeat) stage.dataset.lastHeartbeatError = String(error.name || "Error").slice(0, 32) + (Number.isInteger(error.statusCode) ? ":" + error.statusCode : "");
-      currentError = error.name === "AbortError" ? "SoundSpectrum timed out. Select Start visuals to reconnect." : error.message;
+      currentError = error.name === "AbortError" ? "SoundSpectrum timed out. Select Start Visuals to reconnect." : error.message;
       const previous = viewerId; viewerId = ""; clearVideo(); release(previous); render();
     } finally {
       clearTimeout(timeout); if (controller === pending) controller = null;
