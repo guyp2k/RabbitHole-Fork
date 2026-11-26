@@ -15,16 +15,20 @@ const rule = selector => {
 };
 const forced = (block, property) => assert.match(block, new RegExp(`${property}[^;]*!important;`), `${property} is forced`);
 
-test("every disclosure marker is drawn by the same forced rule as the panel fold buttons", () => {
+test("every disclosure marker is a plain accent arrow, like the fold headings, with no box behind it", () => {
   assert.notEqual(layerStart, -1, "@layer folds exists");
-  const shared = layer.slice(layer.indexOf("  .resultsToggle,\n  summary::before {"), layer.indexOf("\n  }", layer.indexOf("  .resultsToggle,\n  summary::before {")));
-  assert.ok(shared.length > 0, "fold buttons and summary markers share one rule");
-  for (const property of ["border-radius: 6px", "min-width: 34px", "min-height: 34px", "background:", "box-shadow:", "color: #eadcff", "opacity: 1"]) {
-    forced(shared, property);
+  const marker = rule("summary::before");
+  for (const property of ["border: 0", "border-radius: 0", "background: none", "box-shadow: none", "min-width: 0", "min-height: 0", "padding: 0", "width: auto", "height: auto", "color: var\\(--accent\\)", "font-size: 12px", "transform: none"]) {
+    forced(marker, property);
   }
-  forced(rule("summary::before"), "width: 34px");
-  forced(rule("summary::before"), "height: 34px");
-  forced(rule("summary::before"), "transform: none");
+  assert.equal(layer.includes("  .resultsToggle,\n  summary::before {"), false, "summary markers no longer share the boxed button rule");
+});
+
+test("section disclosures read as fold headings, while track and record details keep their own text", () => {
+  const heading = rule("summary:not(.trackDetails > summary, #dbTrackDetail summary)");
+  for (const property of ["color: var\\(--accent\\)", "font-size: 12px", "font-weight: 800", "text-transform: uppercase"]) forced(heading, property);
+  const count = rule("summary:not(.trackDetails > summary, #dbTrackDetail summary) :is(span, small, em, b)");
+  for (const property of ["color: var\\(--muted\\)", "text-transform: none"]) forced(count, property);
 });
 
 test("a disclosure shows only the fold button: no native triangle and no second marker", () => {
@@ -39,8 +43,7 @@ test("disclosures use the same closed and open glyphs as the panel fold buttons"
   forced(rule("details[open] > summary::before"), 'content: "\\\\25BE"');
 });
 
-test("hovering a disclosure gives its marker the button hover glow", () => {
-  const hover = layer.slice(layer.indexOf("  .resultsToggle:hover,\n  summary:hover::before {"));
-  assert.ok(layer.includes("  .resultsToggle:hover,\n  summary:hover::before {"));
-  forced(hover, "box-shadow");
+test("hovering a disclosure does not draw a glow box around its arrow", () => {
+  assert.equal(layer.includes("summary:hover::before"), false);
+  forced(rule("summary::before"), "box-shadow: none");
 });
