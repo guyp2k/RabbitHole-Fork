@@ -377,6 +377,7 @@
                 <div>
                   <p class="eyebrow">Playlist Builder</p>
                   <h2 id="composerTitle" class="resultsTitleToggle">Start the Rabbit Hole Journey</h2>
+                  <p class="pageIntro">Describe what you want to hear, or start from the track playing, an artist or a playlist. Rabbit Hole searches TIDAL, checks every track against Roon, drops the ones that fail and lists the rest to play, queue or send to TIDAL.</p>
                 </div>
               </div>
               <button type="submit">Generate</button>
@@ -525,12 +526,14 @@
             <div>
               <p class="eyebrow">Standby Discovery</p>
               <h2 id="standbyTitle">0/25 standby tracks</h2>
+              <p class="pageIntro">Discovery tracks Rabbit Hole keeps ready in the background, already checked against TIDAL and Roon, so Queue gives you something new straight away. The pool refreshes itself; Refresh starts a new search now.</p>
               <p id="standbyStatus" class="muted">Waiting for background search.</p>
+              <details id="standbyDetails" class="standbyDetails" hidden><summary>Details</summary><p id="standbyDetailText"></p></details>
             </div>
             <div class="resultActions standbyActions">
               <button type="button" id="standbyRefresh">Refresh</button>
               <button type="button" id="standbyQueue" disabled>Queue</button>
-              <button type="button" id="standbyQueueNext" disabled>Queue next</button>
+              <button type="button" id="standbyQueueNext" disabled>Queue Next</button>
               <button type="button" id="standbySendTidal" disabled>Send to TIDAL</button>
               <button type="button" id="standbyClear" disabled>Clear</button>
             </div>
@@ -703,6 +706,7 @@
           <div>
             <p class="eyebrow">Beatport Charts</p>
             <h2>Progressive House Charts</h2>
+            <p class="pageIntro">Beatport's Progressive House charts. Pick a chart and queue it: Rabbit Hole finds each track on TIDAL and checks it against Roon before it plays.</p>
             <p id="beatportChartStatus" class="tasteNarrative">Choose a Progressive House chart, then queue through Rabbit Hole's TIDAL/Roon resolver.</p>
           </div>
           <form id="beatportChartForm" class="beatportChartForm">
@@ -741,8 +745,8 @@
               <p id="beatportChartMeta" class="muted"></p>
             </div>
             <div class="resultActions">
-              <button type="button" id="beatportChartQueue" disabled>Add to queue</button>
-              <button type="button" id="beatportChartQueueNext" disabled>Queue next</button>
+              <button type="button" id="beatportChartQueue" disabled>Add to Queue</button>
+              <button type="button" id="beatportChartQueueNext" disabled>Queue Next</button>
             </div>
           </div>
           <div id="beatportChartTracks" class="beatportChartTracks"></div>
@@ -789,6 +793,7 @@
           <div>
             <p class="eyebrow">TIDAL Profile</p>
             <h2>Mixes & Radio</h2>
+            <p class="pageIntro">Your personal TIDAL mixes, such as My Mix and My Daily Discovery. Play or queue one in Roon, turn it into a Rabbit Hole prompt or download its track list. Paste a TIDAL link below to pin any playlist or mix here.</p>
             <p id="tidalMixStatus" class="tasteNarrative">TIDAL Mixes & Radio has not been loaded yet.</p>
           </div>
           <div class="resultActions">

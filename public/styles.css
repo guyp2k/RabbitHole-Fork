@@ -2861,6 +2861,22 @@ input {
   background: color-mix(in srgb, var(--accent) 30%, transparent) !important;
 }
 
+.standbyDetails {
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.standbyDetails summary {
+  cursor: pointer;
+  width: max-content;
+}
+
+.standbyDetails p {
+  margin: 4px 0 0;
+  max-width: 90ch;
+}
+
 .pageIntro {
   max-width: 72ch;
   margin: 4px 0 6px;

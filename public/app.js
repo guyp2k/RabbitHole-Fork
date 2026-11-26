@@ -2036,6 +2036,34 @@ function standbyTrackHtml(track = {}, index = 0) {
   `;
 }
 
+function standbyStatusParts(standby = {}, count = 0) {
+  const target = Number(standby?.targetCount || 25);
+  const summary = [];
+  const details = [];
+  if (standby?.refreshing) summary.push("Refreshing");
+  if (standby?.lastError) summary.push(`Last refresh failed: ${standby.lastError}`);
+  if (standby?.lastRefreshAt) summary.push(`Updated ${standbyTimeLabel(standby.lastRefreshAt)}`);
+  summary.push(`${count} ready`);
+  if (standby?.nextRefreshAt && !standby?.refreshing) summary.push(`Next ${standbyTimeLabel(standby.nextRefreshAt)}`);
+  if (standby?.lastRun && !standby.lastError) {
+    const kept = Number(standby.lastRun.kept || count);
+    const generated = Number(standby.lastRun.generated || 0);
+    if (generated) details.push(`${kept}/${target} ready after ${generated} checked`);
+  }
+  const novelty = standby?.lastRun?.diagnostics?.novelty;
+  if (novelty) {
+    const carried = Array.isArray(novelty.carriedOver) ? novelty.carriedOver.length : Number(novelty.carriedOver || 0);
+    details.push(`${novelty.finalCount ?? novelty.total ?? count} / ${standby.targetCount || 25} fresh tracks found; new: ${novelty.newTracksIntroduced}; carried over: ${carried}`);
+    if (novelty.shortfallReason) details.push(novelty.shortfallReason);
+    if (novelty.carryoverReason) details.push(novelty.carryoverReason);
+  }
+  const synapseReview = standby?.lastRun?.diagnostics?.synapseReview;
+  if (synapseReview) details.push(synapseReview.participated
+    ? `Synapse reviewed: ${synapseReview.model || "model unavailable"} (${synapseReview.latencyMs || synapseReview.durationMs || 0}ms)`
+    : `Synapse ${synapseReview.attempted ? "attempted but failed" : "skipped"}${synapseReview.model ? ` (${synapseReview.model})` : ""} [${synapseReview.failureType || "legacy diagnostic"}]: ${synapseReview.skipReason || synapseReview.reason}; kept local/Qwen pool`);
+  return { summary, details };
+}
+
 function renderStandbyPool(standby = state.standby) {
   const title = $("#standbyTitle");
   const status = $("#standbyStatus");
@@ -2048,28 +2076,14 @@ function renderStandbyPool(standby = state.standby) {
   const count = state.standbyTracks.length;
   title.textContent = `${count}/${target} standby tracks`;
 
-  const statusParts = [];
-  if (standby?.refreshing) statusParts.push("Refreshing");
-  if (standby?.lastError) statusParts.push(`Last refresh failed: ${standby.lastError}`);
-  if (standby?.lastRefreshAt) statusParts.push(`Updated ${standbyTimeLabel(standby.lastRefreshAt)}`);
-  if (standby?.lastRun && !standby.lastError) {
-    const kept = Number(standby.lastRun.kept || count);
-    const generated = Number(standby.lastRun.generated || 0);
-    if (generated) statusParts.push(`${kept}/${target} ready after ${generated} checked`);
+  const parts = standbyStatusParts(standby || {}, count);
+  status.textContent = standby ? parts.summary.join(" · ") : "Waiting for background search.";
+  const details = $("#standbyDetails");
+  const detailText = $("#standbyDetailText");
+  if (details && detailText) {
+    detailText.textContent = parts.details.join(" · ");
+    details.hidden = !parts.details.length;
   }
-  const novelty = standby?.lastRun?.diagnostics?.novelty;
-  if (novelty) {
-    const carried = Array.isArray(novelty.carriedOver) ? novelty.carriedOver.length : Number(novelty.carriedOver || 0);
-    statusParts.push(`${novelty.finalCount ?? novelty.total ?? count} / ${standby.targetCount || 25} fresh tracks found; new: ${novelty.newTracksIntroduced}; carried over: ${carried}`);
-    if (novelty.shortfallReason) statusParts.push(novelty.shortfallReason);
-    if (novelty.carryoverReason) statusParts.push(novelty.carryoverReason);
-  }
-  const synapseReview = standby?.lastRun?.diagnostics?.synapseReview;
-  if (synapseReview) statusParts.push(synapseReview.participated
-    ? `Synapse reviewed: ${synapseReview.model || "model unavailable"} (${synapseReview.latencyMs || synapseReview.durationMs || 0}ms)`
-    : `Synapse ${synapseReview.attempted ? "attempted but failed" : "skipped"}${synapseReview.model ? ` (${synapseReview.model})` : ""} [${synapseReview.failureType || "legacy diagnostic"}]: ${synapseReview.skipReason || synapseReview.reason}; kept local/Qwen pool`);
-  if (standby?.nextRefreshAt && !standby?.refreshing) statusParts.push(`Next ${standbyTimeLabel(standby.nextRefreshAt)}`);
-  status.textContent = statusParts.join(" - ") || "Waiting for background search.";
 
   const hasTracks = count > 0;
   $("#standbyQueue").disabled = !hasTracks;
@@ -8109,7 +8123,7 @@ $("#beatportChartQueue")?.addEventListener("click", () => {
   const tracks = (state.beatportChartTracks || []).map(beatportChartTrackPayload);
   queueTrackList(tracks, $("#beatportChartQueue"), {
     source: "beatport_chart",
-    buttonText: "Add to queue",
+    buttonText: "Add to Queue",
     mode: "append",
     targetCount: tracks.length,
     preferExtendedMixes: false,
@@ -8122,7 +8136,7 @@ $("#beatportChartQueueNext")?.addEventListener("click", () => {
   const tracks = (state.beatportChartTracks || []).map(beatportChartTrackPayload);
   queueTrackList(tracks, $("#beatportChartQueueNext"), {
     source: "beatport_chart",
-    buttonText: "Queue next",
+    buttonText: "Queue Next",
     mode: "next",
     targetCount: tracks.length,
     preferExtendedMixes: false,
