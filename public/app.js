@@ -769,6 +769,16 @@ function tidalProfileMixesHealthSummary(app = {}) {
   return { level: "ok", status: "ready", detail: "personal mixes available" };
 }
 
+function diagnosticFoldHeadHtml(key, body, label) {
+  return `<button type="button" class="panelFold" data-fold-key="diagnostics.${key}" aria-controls="${body}" aria-expanded="true"><span class="panelFoldCaret" aria-hidden="true">▾</span>${escapeHtml(label)}</button>`;
+}
+
+function capValueText(value) {
+  const number = Number(value);
+  if (value === null || value === undefined || value === "" || !Number.isFinite(number) || number <= 0) return "n/a";
+  return number >= Number.MAX_SAFE_INTEGER ? "No Cap" : String(number);
+}
+
 function healthCardHtml(item = {}) {
   const level = providerHealthClass(item.level);
   return `
@@ -801,10 +811,10 @@ function renderSystemHealth() {
 
   container.innerHTML = `
     <div class="systemHealthHead">
-      <span>System Health</span>
+      ${diagnosticFoldHeadHtml("health", "systemHealthBody", "System Health")}
       ${updatedAt ? `<small>${escapeHtml(updatedAt)}</small>` : ""}
     </div>
-    <div class="healthGrid">
+    <div id="systemHealthBody" class="healthGrid">
       ${healthCardHtml(roon)}
       ${healthCardHtml({ label: "TIDAL Search", ...tidal })}
       ${healthCardHtml({ label: "Radio Art TIDAL", ...radioTidal })}
@@ -815,6 +825,7 @@ function renderSystemHealth() {
       ${healthCardHtml({ label: "Last.fm", ...lastfm })}
     </div>
   `;
+  window.RabbitHoleViewControls?.applyFolds(container);
 }
 
 function isLiveRadioZone(zone = {}) {
@@ -3672,9 +3683,9 @@ function poolDiagnosticsHtml(result = {}) {
     ["Retained pool", diagnostics.retainedPool || 0],
     ["Alternates", diagnostics.alternates || 0],
     ["Target pool", diagnostics.usefulCandidateTarget || diagnostics.candidatePoolTarget || "n/a"],
-    ["Artist cap", artistSpread.artistCap || "n/a"],
-    ["Label cap", diversityCaps.labelCap || "n/a"],
-    ["Source cap", diversityCaps.sourceCap || "n/a"],
+    ["Artist cap", capValueText(artistSpread.artistCap)],
+    ["Label cap", capValueText(diversityCaps.labelCap)],
+    ["Source cap", capValueText(diversityCaps.sourceCap)],
     ["Cap held", diversityCaps.capHeld?.total || 0],
     ["Below-floor considered", diagnostics.scoreFiltered || 0],
     ["Previous held", diagnostics.previousHeldBack || 0],
@@ -3703,9 +3714,10 @@ function poolDiagnosticsHtml(result = {}) {
   return `
     <div class="poolDiagnosticsCard">
       <div class="intentDebugHead">
-        <span>Pool Diagnostics</span>
+        ${diagnosticFoldHeadHtml("pool", "poolDiagnosticsBody", "Pool Diagnostics")}
         <strong>${escapeHtml(summary)}</strong>
       </div>
+      <div id="poolDiagnosticsBody">
       <div class="sourceReportMetrics poolMetrics">
         ${metrics.map(([label, value]) => `
           <p>
@@ -3733,6 +3745,7 @@ function poolDiagnosticsHtml(result = {}) {
         ${recoveryLine ? `<p><span>Recovery</span><b>${escapeHtml(recoveryLine)}</b></p>` : ""}
         ${(diagnostics.notes || []).slice(0, 4).map((note) => `<p><span>Note</span><b>${escapeHtml(note)}</b></p>`).join("")}
       </div>
+      </div>
     </div>
   `;
 }
@@ -3747,6 +3760,7 @@ function showPoolDiagnostics(result = null) {
   }
   panel.hidden = false;
   panel.innerHTML = poolDiagnosticsHtml(result);
+  window.RabbitHoleViewControls?.applyFolds(panel);
 }
 
 function sourceReportGridHtml(items = [], emptyText = "none") {
@@ -4000,9 +4014,10 @@ function sourceReportHtml(result = {}) {
   return `
     <div class="sourceReportCard">
       <div class="intentDebugHead">
-        <span>Candidate Source Report</span>
+        ${diagnosticFoldHeadHtml("sources", "sourceReportBody", "Candidate Source Report")}
         <strong>${escapeHtml(autoSummary)}</strong>
       </div>
+      <div id="sourceReportBody">
       <div class="sourceReportMetrics">
         ${report.metrics.map(([label, value]) => `
           <p>
@@ -4041,7 +4056,7 @@ function sourceReportHtml(result = {}) {
       ${queryYieldHtml(report.queryYield)}
       ${autoLanes.length ? `
         <details>
-          <summary>Auto-broaden passes</summary>
+          <summary>Auto-Broaden Passes</summary>
           <ol>
             ${autoLanes.map((lane) => `
               <li>
@@ -4052,6 +4067,7 @@ function sourceReportHtml(result = {}) {
           </ol>
         </details>
       ` : ""}
+      </div>
     </div>
   `;
 }
@@ -4066,6 +4082,7 @@ function showSourceReport(result = null) {
   }
   panel.hidden = false;
   panel.innerHTML = sourceReportHtml(result);
+  window.RabbitHoleViewControls?.applyFolds(panel);
 }
 
 function rejectedDebugHtml(result = {}) {
@@ -4075,9 +4092,10 @@ function rejectedDebugHtml(result = {}) {
   return `
     <div class="rejectedDebugCard">
       <div class="intentDebugHead">
-        <span>Rejected / discarded</span>
+        ${diagnosticFoldHeadHtml("rejected", "rejectedDebugBody", "Rejected / Discarded")}
         <strong>${escapeHtml(discarded.length)} candidates</strong>
       </div>
+      <div id="rejectedDebugBody">
       <div class="rejectedGroups">
         ${groups.map(([reason, count]) => `
           <p>
@@ -4087,7 +4105,7 @@ function rejectedDebugHtml(result = {}) {
         `).join("")}
       </div>
       <details>
-        <summary>Show examples</summary>
+        <summary>Show Examples</summary>
         <ol>
           ${discarded.slice(0, 80).map((item) => `
             <li>
@@ -4098,6 +4116,7 @@ function rejectedDebugHtml(result = {}) {
           `).join("")}
         </ol>
       </details>
+      </div>
     </div>
   `;
 }
@@ -4116,6 +4135,7 @@ function updateRejectedDebug() {
   }
   panel.hidden = false;
   panel.innerHTML = rejectedDebugHtml(state.lastResult);
+  window.RabbitHoleViewControls?.applyFolds(panel);
 }
 
 function intentListValue(value, fallback = "not specified") {
@@ -4151,10 +4171,10 @@ function intentDebugHtml(intent = {}) {
   return `
     <div class="intentDebugCard">
       <div class="intentDebugHead">
-        <span>Intent Parsed</span>
+        ${diagnosticFoldHeadHtml("intent", "intentDebugBody", "Intent Parsed")}
         <strong>${escapeHtml(intent.scoringModeLabel || "Taste Guided")}</strong>
       </div>
-      <div class="intentDebugGrid">
+      <div id="intentDebugBody" class="intentDebugGrid">
         ${rows.map(([label, value]) => `
           <p>
             <span>${escapeHtml(label)}</span>
@@ -4176,6 +4196,7 @@ function showIntentDebug(intent = null) {
   }
   panel.hidden = false;
   panel.innerHTML = intentDebugHtml(intent);
+  window.RabbitHoleViewControls?.applyFolds(panel);
 }
 
 function cleanRenderedArtifacts(root) {
@@ -4622,16 +4643,16 @@ function renderSonicProductionSettings() {
   status.textContent = settings.error
     ? `Could not update: ${settings.error}`
     : !settings.enabled
-      ? "Sonic Review unavailable"
+      ? "Sonic Review Unavailable"
       : settings.loading
         ? "Loading…"
         : settings.saving
           ? "Saving…"
           : mode === "blend"
-            ? `Blend active · max ±${Number(settings.maxAdjustmentPoints || 0).toFixed(1)} pts`
+            ? `Blend Active · Max ±${Number(settings.maxAdjustmentPoints || 0).toFixed(1)} Points`
             : mode === "observe"
-              ? "Observe only · ordering preserved"
-              : "Off · current ordering preserved";
+              ? "Observe Only · Ordering Preserved"
+              : "Off · Current Ordering Preserved";
 }
 
 async function refreshSonicProductionSettings() {
@@ -7309,7 +7330,7 @@ function sonicReviewHeaderHtml(anchor = {}) {
         <p class="sonicReviewIntro">A listening test for Rabbit Hole's sound-similarity model. Pick a track (the one playing in Roon works), listen to the tracks the model says sound alike, and mark whether they do. Your answers are kept to judge the model; they do not change your ratings or recommendations. Anything you queue from here still goes through strict TIDAL and Roon verification. It needs Sonic audio profiles; without them there is nothing to compare.</p>
       </div>
       <div class="sonicReviewHeaderMeta">
-        <span class="sonicReviewMode">Shadow review · strict queue</span>
+        <span class="sonicReviewMode">Shadow Review · Strict Queue</span>
         ${review.loaded && review.candidates.length ? `<span class="sonicReviewProgress">${Math.min(review.index + 1, review.candidates.length)} / ${review.candidates.length}</span>` : ""}
       </div>
     </header>
@@ -7319,13 +7340,13 @@ function sonicReviewHeaderHtml(anchor = {}) {
           <p class="eyebrow">Anchor</p>
           <p class="muted">Use the track currently playing in Roon, or paste a stored identity for a track that is not playing.</p>
         </div>
-        <button type="button" data-sonic-review-load-current>Use current track</button>
+        <button type="button" data-sonic-review-load-current>Use Current Track</button>
       </div>
       <form id="sonicReviewAnchorForm" class="sonicReviewAnchorForm">
-        <label for="sonicReviewAnchorInput">Stored identity or TIDAL track URL</label>
+        <label for="sonicReviewAnchorInput">Stored Identity or TIDAL Track URL</label>
         <div class="sonicReviewAnchorRow">
           <input id="sonicReviewAnchorInput" name="anchor" type="text" value="${escapeHtml(anchorKey)}" placeholder="tidal:123456789 or https://tidal.com/browse/track/123456789" autocomplete="off">
-          <button type="submit">Load anchor</button>
+          <button type="submit">Load Anchor</button>
         </div>
       </form>
       ${anchorKey ? `<p class="sonicReviewAnchorCurrent">Current anchor: <strong>${escapeHtml(anchorName)}</strong>${anchorMeta ? ` · ${escapeHtml(anchorMeta)}` : ""}${anchorUrl ? ` · <a href="${escapeHtml(anchorUrl)}" target="_blank" rel="noreferrer">Open in TIDAL</a>` : ` · <span>No verified TIDAL link</span>`}</p>` : ""}
@@ -7367,7 +7388,7 @@ function renderSonicReview() {
   root.innerHTML = `
     <div class="sonicReviewShell">
       ${sonicReviewHeaderHtml(anchor)}
-      <section class="panel sonicReviewQueueTools"><div><h3>Blind Listening</h3><p class="muted">Compare prepared recommendations with model names and scores hidden.</p></div><button type="button" data-sonic-blind-open>Open listening batch</button></section>
+      <section class="panel sonicReviewQueueTools"><div><h3>Blind Listening</h3><p class="muted">Compare prepared recommendations with model names and scores hidden.</p></div><button type="button" data-sonic-blind-open>Open Listening Batch</button></section>
       ${sonicProfileEditorHtml({ prefix: "sonicReview", anchor, profileState: review })}
       ${review.loaded ? `
         <section class="panel sonicReviewQueueTools" aria-label="Queue sonic neighbors">
@@ -7382,8 +7403,8 @@ function renderSonicReview() {
       <div class="sonicReviewLayout">
         <aside class="panel sonicReviewAnchorPanel">
           <p class="eyebrow">Listen from</p>
-          <h3>${escapeHtml(sonicReviewTrackLabel(anchor, review.anchorIdentityKey || "Choose an anchor"))}</h3>
-          <p class="sonicReviewAnchorMeta">${escapeHtml(sonicReviewTrackMeta(anchor) || review.anchorIdentityKey || "No track loaded yet")}</p>
+          <h3>${escapeHtml(sonicReviewTrackLabel(anchor, review.anchorIdentityKey || "Choose an Anchor"))}</h3>
+          <p class="sonicReviewAnchorMeta">${escapeHtml(sonicReviewTrackMeta(anchor) || review.anchorIdentityKey || "No Track Loaded Yet")}</p>
           <div class="sonicReviewRule"></div>
           <p class="muted">${review.loaded ? `${reviewedCount} reviewed in this pack` : "The review pack will stay shadow-only until you choose an anchor."}</p>
           ${review.diagnostics ? `<p class="sonicReviewDiagnostics"><span>Traversal</span>${escapeHtml(sonicReviewDiagnosticsText(review.diagnostics))}</p>` : ""}
@@ -7395,7 +7416,7 @@ function renderSonicReview() {
           ` : review.error ? `
             <div class="sonicReviewState isError"><strong>Couldn’t Load This Anchor.</strong><p>${escapeHtml(review.error)}</p><button type="button" data-sonic-review-retry>Try again</button></div>
           ` : !review.loaded ? `
-            <div class="sonicReviewState"><strong>Ready for a Sonic Anchor.</strong><p>Start a track in Roon, choose Use current track, or load a stored identity.</p></div>
+            <div class="sonicReviewState"><strong>Ready for a Sonic Anchor</strong><p>Start a track in Roon, choose Use Current Track, or load a stored identity.</p></div>
           ` : !candidate ? `
             <div class="sonicReviewState isComplete"><strong>${review.candidates.length ? "Pack reviewed." : "No eligible neighbors yet."}</strong><p>${escapeHtml(status)}</p>${review.candidates.length ? `<button type="button" data-sonic-review-reload>Load another pack</button>` : ""}</div>
           ` : `
