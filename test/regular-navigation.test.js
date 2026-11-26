@@ -119,6 +119,6 @@ test("Settings exposes the safe Sonic production mode selector", () => {
   assert.match(settings, /option value="blend"/);
   assert.match(settings, /aria-describedby="sonicProductionHelp"/);
   assert.match(app, /\/api\/recommendation-v2\/production-mode/);
-  assert.match(app, /Observe only · ordering preserved/);
+  assert.match(app, /Observe Only · Ordering Preserved/);
   assert.match(app, /function updateSonicProductionMode\(/);
 });

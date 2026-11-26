@@ -30,7 +30,7 @@
     disable("retry", !snapshot?.queueCounts.failed);
     const counts = query("#sonicCoverageCounts");
     counts.hidden = !job;
-    if (job) counts.replaceChildren(...[["Total eligible",job.totalEligible],["Already embedded",job.alreadyEmbedded],["Prepared",job.preparedSuccessfully],["Failed",job.failed],["Remaining",job.remaining]].map(([label,value]) => {
+    if (job) counts.replaceChildren(...[["Total Eligible",job.totalEligible],["Already Embedded",job.alreadyEmbedded],["Prepared",job.preparedSuccessfully],["Failed",job.failed],["Remaining",job.remaining]].map(([label,value]) => {
       const entry = document.createElement("div"), term = document.createElement("dt"), detail = document.createElement("dd");
       term.textContent = label; detail.textContent = number(value); entry.append(term,detail); return entry;
     }));
@@ -74,7 +74,7 @@
         snapshot = result;
       } finally { clearTimeout(timeout); }
       if (["configure","start"].includes(action)) dirty = false;
-    } catch (failure) { error = `Could not update coverage: ${failure.message}. Refresh to retry.`; }
+    } catch (failure) { error = `Could not update coverage: ${String(failure.message).replace(/[.\s]+$/, "")}. Refresh to retry.`; }
     finally { busy = false; render(); schedule(); }
   }
 

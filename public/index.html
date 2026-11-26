@@ -166,7 +166,7 @@
           <div class="systemViewHeader">
             <p class="eyebrow">System</p>
             <h2 id="diagnosticsHeading">Diagnostics</h2>
-            <p class="muted">Health, discovery diagnostics, recovery details, and rejected output live here when needed.</p>
+            <p class="pageIntro">Look under the hood. System Health shows whether each service Rabbit Hole relies on is reachable. The sections below fill in after a Rabbit Hole run and explain it: what the request was read as, how many candidates were found, which were dropped and why, and where the picks came from. Use it when a run returns fewer or stranger picks than expected.</p>
           </div>
           <section id="systemHealth" class="systemHealth" aria-live="polite"></section>
           <div class="diagnosticSurfaces">
@@ -183,8 +183,10 @@
           <div class="settingsHeader">
             <p class="eyebrow">System</p>
             <h2>Settings</h2>
-            <p class="muted">Configure AI routing, Sonic Review influence, and the active Roon output zone.</p>
+            <p class="pageIntro">How Rabbit Hole thinks, plays and looks: which AI answers requests, which Roon zone plays, the theme and the layout. The Sonic sections control the sound-similarity model: whether it may reorder recommendations, and the background job that fingerprints your tracks so it has something to compare.</p>
           </div>
+          <h3 class="panelFoldHeading"><button type="button" class="panelFold" data-fold-key="settings.general" aria-controls="settingsGeneralBody" aria-expanded="true"><span class="panelFoldCaret" aria-hidden="true">▾</span>AI, Zone and Appearance</button></h3>
+          <div id="settingsGeneralBody">
           <div class="topControls">
             <div class="aiModeControls" aria-label="AI provider controls">
               <label>
@@ -217,57 +219,62 @@
               <select id="layoutSelect" aria-label="Layout"><option value="classic">Classic</option><option value="modern">Modern</option></select>
             </label>
           </div>
+          </div>
           <section class="settingsSection sonicProductionSettings" aria-labelledby="sonicProductionHeading">
             <div class="settingsSectionHeader">
               <div>
                 <p class="eyebrow">Recommendations</p>
-                <h3 id="sonicProductionHeading">Sonic Review in recommendations</h3>
+                <h3 id="sonicProductionHeading" class="panelFoldHeading"><button type="button" class="panelFold" data-fold-key="settings.sonicProduction" aria-controls="sonicProductionBody" aria-expanded="true"><span class="panelFoldCaret" aria-hidden="true">▾</span>Sonic Review in Recommendations</button></h3>
                 <p class="muted">Use reviewed sonic-neighbor evidence as a ranking signal. Identity, version, resolver, TIDAL, Roon, and queue checks stay unchanged.</p>
               </div>
               <span id="sonicProductionStatus" class="sonicProductionStatus" role="status" aria-live="polite">Loading…</span>
             </div>
+            <div id="sonicProductionBody">
             <label class="sonicProductionField" for="sonicProductionModeSelect">
-              <span>Sonic production mode</span>
+              <span>Sonic Production Mode</span>
               <select id="sonicProductionModeSelect" aria-describedby="sonicProductionHelp">
-                <option value="off">Off — current ordering</option>
-                <option value="observe">Observe — log only</option>
-                <option value="blend">Blend — capped score adjustment</option>
+                <option value="off">Off: Current Ordering</option>
+                <option value="observe">Observe: Log Only</option>
+                <option value="blend">Blend: Capped Score Adjustment</option>
               </select>
             </label>
             <p id="sonicProductionHelp" class="muted">Blend is capped at the configured maximum (8 points by default) and applies immediately to new discovery requests until restart.</p>
+            </div>
           </section>
           <section id="sonicCoveragePanel" class="settingsSection sonicCoverageSettings" aria-labelledby="sonicCoverageHeading">
             <div class="settingsSectionHeader">
               <div>
-                <h3 id="sonicCoverageHeading">Sonic audio coverage</h3>
+                <h3 id="sonicCoverageHeading" class="panelFoldHeading"><button type="button" class="panelFold" data-fold-key="settings.sonicCoverage" aria-controls="sonicCoverageBody" aria-expanded="true"><span class="panelFoldCaret" aria-hidden="true">▾</span>Sonic Audio Coverage</button></h3>
                 <p class="muted">Prepare audio fingerprints for known tracks. Discovery requests get priority. Musical reviews and ratings stay separate.</p>
               </div>
               <button type="button" data-coverage-action="refresh">Refresh</button>
             </div>
+            <div id="sonicCoverageBody">
             <p id="sonicCoverageStatus" role="status" aria-live="polite">Loading coverage…</p>
             <progress id="sonicCoverageProgress" aria-label="Backfill progress" hidden></progress>
             <dl id="sonicCoverageCounts" class="sonicCoverageCounts" hidden></dl>
             <p id="sonicCoverageQueue" class="muted"></p>
             <div class="sonicCoverageActions">
-              <button type="button" data-coverage-action="start" disabled>Start backfill</button>
-              <button type="button" data-coverage-action="pause" disabled>Pause all</button>
+              <button type="button" data-coverage-action="start" disabled>Start Backfill</button>
+              <button type="button" data-coverage-action="pause" disabled>Pause All</button>
               <button type="button" data-coverage-action="resume" disabled>Resume</button>
-              <button type="button" data-coverage-action="cancel" disabled>Cancel backfill</button>
-              <button type="button" data-coverage-action="retry" disabled>Retry failed</button>
+              <button type="button" data-coverage-action="cancel" disabled>Cancel Backfill</button>
+              <button type="button" data-coverage-action="retry" disabled>Retry Failed</button>
             </div>
             <p class="muted">Pausing lets active tracks finish. Cancel stops future backfill work and keeps completed fingerprints.</p>
             <details>
-              <summary>Preparation limits</summary>
+              <summary>Preparation Limits</summary>
               <form id="sonicCoverageLimits" class="sonicCoverageLimits">
-                <label>Tracks per batch <input name="batchSize" type="number" min="1" max="50" step="1" value="5" required></label>
-                <label>Parallel preparations <input name="concurrency" type="number" min="1" max="3" step="1" value="1" required></label>
-                <label>Seconds between starts <input name="intervalSeconds" type="number" min="0.25" max="60" step="0.25" value="2" required></label>
-                <label>Seconds between batches <input name="batchPauseSeconds" type="number" min="1" max="300" step="1" value="5" required></label>
-                <label class="sonicCoverageToggle"><input name="lazyEnabled" type="checkbox" checked> Fill missing discovery fingerprints in the background</label>
-                <button type="submit">Apply limits</button>
+                <label>Tracks per Batch <input name="batchSize" type="number" min="1" max="50" step="1" value="5" required></label>
+                <label>Parallel Preparations <input name="concurrency" type="number" min="1" max="3" step="1" value="1" required></label>
+                <label>Seconds Between Starts <input name="intervalSeconds" type="number" min="0.25" max="60" step="0.25" value="2" required></label>
+                <label>Seconds Between Batches <input name="batchPauseSeconds" type="number" min="1" max="300" step="1" value="5" required></label>
+                <label class="sonicCoverageToggle"><input name="lazyEnabled" type="checkbox" checked> Fill Missing Discovery Fingerprints in the Background</label>
+                <button type="submit">Apply Limits</button>
               </form>
             </details>
-            <details id="sonicCoverageFailures" hidden><summary>Recent preparation failures</summary><ul></ul></details>
+            <details id="sonicCoverageFailures" hidden><summary>Recent Preparation Failures</summary><ul></ul></details>
+            </div>
           </section>
         </section>
       </section>

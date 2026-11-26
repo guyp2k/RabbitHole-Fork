@@ -74,16 +74,16 @@ test("every Settings control shares one width and one label column", () => {
     assert.notEqual(at, -1, `${selector} has a rule`);
     return css.slice(at, css.indexOf("}", at));
   };
-  assert.ok(css.lastIndexOf(".settingsPanel > .topControls {") > css.indexOf(".settingsPanel > .topControls .zonePicker select {"));
-  assert.match(rule(".settingsPanel > .topControls"), /display: flex;[\s\S]*flex-wrap: wrap;/);
-  assert.match(rule(".settingsPanel > .topControls .aiModeControls"), /display: contents;/);
-  const control = rule(".settingsPanel > .topControls :is(.aiModeControls label, .zonePicker)");
+  assert.ok(css.lastIndexOf("#settingsGeneralBody > .topControls {") > css.indexOf("#settingsGeneralBody > .topControls .zonePicker select {"));
+  assert.match(rule("#settingsGeneralBody > .topControls"), /display: flex;[\s\S]*flex-wrap: wrap;/);
+  assert.match(rule("#settingsGeneralBody > .topControls .aiModeControls"), /display: contents;/);
+  const control = rule("#settingsGeneralBody > .topControls :is(.aiModeControls label, .zonePicker)");
   assert.match(control, /flex: 0 1 var\(--settings-control-width\);/);
   assert.match(control, /width: var\(--settings-control-width\);/);
   assert.match(control, /flex-direction: row;/, "phones keep the label beside the select, as AI Mode does");
-  assert.match(rule(".settingsPanel > .topControls :is(.aiModeControls label, .zonePicker) span"), /padding-left: 9px;/, "the label text keeps its inset from the pill edge");
-  assert.match(rule(".settingsPanel > .topControls :is(.aiModeControls label, .zonePicker) span"), /flex: 0 0 var\(--settings-label-width\);/);
-  const fieldSelector = `body:not(.playerFullWindow):not(.playerMaximized) .settingsPanel > .topControls :is(.aiModeControls label, .zonePicker) :is(
+  assert.match(rule("#settingsGeneralBody > .topControls :is(.aiModeControls label, .zonePicker) span"), /padding-left: 9px;/, "the label text keeps its inset from the pill edge");
+  assert.match(rule("#settingsGeneralBody > .topControls :is(.aiModeControls label, .zonePicker) span"), /flex: 0 0 var\(--settings-label-width\);/);
+  const fieldSelector = `body:not(.playerFullWindow):not(.playerMaximized) #settingsGeneralBody > .topControls :is(.aiModeControls label, .zonePicker) :is(
   input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="hidden"]),
   select
 )`;
