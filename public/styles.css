@@ -2943,6 +2943,41 @@ input {
   }
 }
 
+.musicMemoryListView .musicMemoryResults {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 6px;
+}
+
+.musicMemoryListView .musicMemoryCard {
+  grid-template-columns: 48px minmax(0, 1fr);
+  align-items: center;
+  padding: 8px 12px;
+}
+
+.musicMemoryListView .musicMemoryArt {
+  width: 48px;
+}
+
+.musicMemoryListView :is(.musicMemoryIds, .musicMemoryProvider, .musicMemoryFeedback, .musicMemoryMeta) {
+  display: none;
+}
+
+.musicMemoryListView .musicMemoryBody {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 14px;
+}
+
+.musicMemoryListView .musicMemoryTitleRow {
+  flex: 1 1 320px;
+  min-width: 0;
+}
+
+.musicMemoryListView .musicMemoryBadges {
+  margin: 0;
+}
+
 .pageIntro {
   max-width: 72ch;
   margin: 4px 0 6px;

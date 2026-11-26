@@ -1241,9 +1241,17 @@ class MusicMemoryStore {
     beatport = "",
     feedback = "",
     provider = "",
+    sort = "recent",
     limit = 50,
     offset = 0
   } = {}) {
+    const ORDER = {
+      recent: "ti.last_seen_at DESC, ti.id DESC",
+      title: "ti.title COLLATE NOCASE ASC, ti.artist COLLATE NOCASE ASC, ti.id ASC",
+      artist: "ti.artist COLLATE NOCASE ASC, ti.title COLLATE NOCASE ASC, ti.id ASC",
+      plays: "COALESCE(pc.play_count, 0) DESC, ti.last_seen_at DESC, ti.id DESC"
+    };
+    const orderSql = Object.hasOwn(ORDER, sort) ? ORDER[sort] : ORDER.recent;
     if (!this.enabled || !this.db) return {
       enabled: false,
       tracks: [],
@@ -1385,7 +1393,7 @@ class MusicMemoryStore {
         lba.next_retry_at AS latest_beatport_retry_at
       ${fromSql}
       GROUP BY ti.id
-      ORDER BY ti.last_seen_at DESC, ti.id DESC
+      ORDER BY ${orderSql}
       LIMIT ? OFFSET ?
     `).all(...params, safeLimit, safeOffset);
     return {
