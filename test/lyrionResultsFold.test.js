@@ -7,11 +7,11 @@ const path = require("node:path");
 const lyrion = fs.readFileSync(path.join(__dirname, "..", "public", "lyrion.js"), "utf8");
 
 test("the Lyrion source list has the shared fold button at the start of its browse bar", () => {
-  assert.match(lyrion, /<div class="lyrionToolbar"><button type="button" id="lyrionResultsToggle" class="resultsToggle" aria-expanded="true" aria-controls="lyrionResultsBody" title="Hide the source list">&#9662;<\/button><button id="lyrionBack"/);
+  assert.match(lyrion, /<div class="lyrionToolbar"><button type="button" id="lyrionResultsToggle" class="resultsToggle panelFold" data-fold-label="Browse" aria-expanded="true" aria-controls="lyrionResultsBody" title="Hide the source list"><span class="panelFoldCaret" aria-hidden="true">&#9662;<\/span>Browse<\/button><button id="lyrionBack"/);
 });
 
 test("folding hides the items and Load more, while the browse bar stays visible", () => {
-  assert.match(lyrion, /<div id="lyrionResultsBody"><ul id="lyrionResults" class="lyrionResultList"><\/ul><button id="lyrionMore" type="button" hidden>Load more<\/button><\/div>/);
+  assert.match(lyrion, /<div id="lyrionResultsBody"><ul id="lyrionResults" class="lyrionResultList"><\/ul><button id="lyrionMore" type="button" hidden>Load More<\/button><\/div>/);
   assert.match(lyrion, /setPanelFolded\("#lyrionResultsToggle","#lyrionResultsBody",folded,"the source list"\)/);
 });
 

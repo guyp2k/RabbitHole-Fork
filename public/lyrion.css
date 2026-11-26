@@ -180,7 +180,7 @@ body[data-playback-system="lyrion"] #roonZoneBar,#roonZoneBar[hidden] {display:n
 .roonZoneLabel {color:var(--muted);font-size:16px;}
 #lyrionSourceChoices.isFolded button:not([aria-pressed="true"]) {display:none;}
 #lyrionView {--lyrion-label-col:48px;}
-:is(#lyrionSourceToggle,#lyrionResultsToggle) {margin-right:calc(var(--lyrion-label-col) - 34px);}
+:is(#lyrionSourceToggle,#lyrionResultsToggle) {margin-right:14px;}
 #lyrionSearch {padding-left:calc(var(--lyrion-label-col) + 12px);}
 #lyrionSearch #lyrionQuery {flex:1 1 320px;max-width:640px;}
 .lyrionSourceRow {align-items:flex-start;flex-wrap:nowrap;}
@@ -254,3 +254,9 @@ body[data-playback-system="lyrion"] #roonZoneBar,#roonZoneBar[hidden] {display:n
 #lyrionView .lyrionConnections .statusStack {display:grid;grid-template-columns:minmax(0,1fr);gap:5px;justify-content:stretch;width:100%;}
 #lyrionView .lyrionConnections .statusPill {position:relative;display:block;min-height:0;max-width:none;margin:0;padding:0 0 0 14px;overflow:hidden;border:0;border-radius:0;background:transparent;box-shadow:none;color:var(--accent);font-size:12px;font-weight:720;line-height:1.25;text-overflow:ellipsis;white-space:nowrap;}
 #lyrionView .lyrionConnections .statusPill::before {position:absolute;top:.42em;left:0;width:6px;height:6px;margin:0;}
+
+#lyrionView .lyrionHomeHead {margin:0 0 18px;}
+#lyrionView .lyrionHomeHead h2 {margin:0;}
+#lyrionView .lyrionQueueFoldHead {display:flex;align-items:center;justify-content:space-between;gap:12px;margin:12px 0 8px;}
+#lyrionView .lyrionQueueCount {color:var(--muted);font-size:12px;}
+#lyrionView .lyrionSourceRow > .panelFold,#lyrionView .lyrionToolbar > #lyrionResultsToggle {flex:0 0 auto;}

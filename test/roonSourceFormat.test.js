@@ -136,7 +136,7 @@ test("Roon's Now Playing details show a Format row after Genre, with where the v
   vm.runInNewContext(app.slice(start, app.indexOf("\n", start)) + "\n" + fn("nowSourceQualityHtml") + "\nthis.html = nowSourceQualityHtml;", context);
   const html = context.html(null, {}, { text: "FLAC · 44.1 kHz / 16-bit · 785 kbps VBR", from: "library" });
   const labels = [...html.matchAll(/sourceLabel">([^<]+)/g)].map(m => m[1]);
-  assert.deepEqual(labels, ["Track length", "Released", "Label", "Genre", "Format"]);
+  assert.deepEqual(labels, ["Track Length", "Released", "Label", "Genre", "Format"]);
   assert.match(html, /sourceValue">FLAC · 44\.1 kHz \/ 16-bit · 785 kbps VBR <span class="sourceNote">Library file<\/span>/);
   assert.doesNotMatch(context.html(null, {}, { text: "", from: "" }), /Format/);
 });

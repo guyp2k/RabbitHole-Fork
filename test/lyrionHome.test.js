@@ -203,7 +203,7 @@ test("a shelf that failed or is empty says so instead of looking blank", () => {
 });
 
 test("Home is the first Lyrion tab", () => {
-  assert.match(source, /const tabDefinitions=\[\['home','Home',\$\('lyrionHomeView'\)\],\['now','Now playing'/);
+  assert.match(source, /const tabDefinitions=\[\['home','Home',\$\('lyrionHomeView'\)\],\['now','Now Playing'/);
 });
 
 test("a home response that arrives after the player changed is dropped", async () => {

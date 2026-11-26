@@ -33,7 +33,7 @@ test("every static list has a fold heading that controls a wrapper around the li
 });
 
 test("the Roon queue keeps its scroll limit inside the fold wrapper", () => {
-  assert.match(css, /#queueFoldBody > \.liveQueue \{\s*max-height: min\(68vh, 720px\);/);
+  assert.match(css, /:is\(#queueFoldBody, #lyrionQueueFoldBody\) > \.liveQueue \{\s*max-height: min\(68vh, 720px\);/);
 });
 
 test("the Database results fold from a caret beside the results heading", () => {

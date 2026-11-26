@@ -105,7 +105,7 @@ function statusHarness(){
   document:{createElement:()=>({textContent:''}),createTextNode:value=>value},
   api:(route,body,query)=>{const call=deferred();requests.push({...call,route,query});return call.promise;},
   syncArtistFavorites(){},syncXtraFavorites(){},refreshXtraFavorites:async()=>{},refreshFavoriteMetadata:async()=>{},
-  refreshArtistFavorites:()=>favorites.promise,renderFavorites(){},playerQuery:()=>'?playerId='+encodeURIComponent(context.player),
+  refreshArtistFavorites:()=>favorites.promise,renderFavorites(){},syncSiriusXm(){},playerQuery:()=>'?playerId='+encodeURIComponent(context.player),
   setScrollingLabel:(id,value)=>get(id).textContent=value,
   time:seconds=>String(seconds),run:fn=>fn,home:async()=>{},loadHome:async()=>{},renderLyrionDetails(){},refreshLyrionSystem:async()=>{},lyrionVolume:{update(){}},renderHqplayer(){},renderLyrionSeek(){},showTime:value=>value};
  vm.runInNewContext(artworkCode+statusCode+loadPlayerCode,context);
