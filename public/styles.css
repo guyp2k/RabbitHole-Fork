@@ -13308,3 +13308,81 @@ dialog.playerCard .playerCardMute {
 #aiView .systemHealth + .resultActions {
   margin-top: 14px;
 }
+
+.synapseMemoryListHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.synapseMemoryCount {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.synapseMemoryToolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.synapseMemoryToolbar #synapseMemoryFilter {
+  flex: 1 1 260px;
+  min-width: 0;
+}
+
+.synapseMemoryPanel .synapseMemorySortField {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.synapseMemoryForm {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px 14px;
+}
+
+.synapseMemoryForm .synapseMemoryWide {
+  grid-column: 1 / -1;
+}
+
+.synapseMemoryForm[hidden] {
+  display: none;
+}
+
+.synapseMemoryPanel .synapseMemoryCheck {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 8px;
+}
+
+.synapseMemoryPanel .synapseMemoryCheck input[type="checkbox"] {
+  flex: 0 0 auto;
+  width: 18px;
+  height: 18px;
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+}
+
+.synapseMemoryEntry p.isClamped {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+}
+
+.synapseMemoryEntry .synapseMemoryMore {
+  justify-self: start;
+}
+
+@media (max-width: 720px) {
+  .synapseMemoryForm {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
