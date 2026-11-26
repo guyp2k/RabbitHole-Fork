@@ -2046,6 +2046,7 @@ async function handleApi(req, res, url) {
       beatport: url.searchParams.get("beatport") || "",
       feedback: url.searchParams.get("feedback") || "",
       provider: url.searchParams.get("provider") || "",
+      sort: url.searchParams.get("sort") || "",
       limit: url.searchParams.get("limit") || 50,
       offset: url.searchParams.get("offset") || 0
     }) || { enabled: false, tracks: [], total: 0 });

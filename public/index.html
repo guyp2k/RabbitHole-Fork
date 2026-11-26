@@ -676,25 +676,27 @@
           <div>
             <p class="eyebrow">Library</p>
             <h2 id="musicMemoryHeading">Music Memory</h2>
+            <p class="pageIntro">Every track Rabbit Hole has played, queued, discovered or looked up, with what it knows about each one and how you rated it. Search it here; System &gt; Database has the full evidence behind it.</p>
             <p id="musicMemoryStatus" class="tasteNarrative">Search Rabbit Hole's local track memory.</p>
           </div>
           <form id="musicMemorySearchForm" class="musicMemorySearch">
             <input id="musicMemoryQuery" type="search" placeholder="Artist, title, genre, label, TIDAL ID, Beatport ID, ISRC" autocomplete="off">
             <select id="musicMemoryBeatportFilter" aria-label="Beatport filter">
-              <option value="">All Beatport states</option>
+              <option value="">All Beatport States</option>
               <option value="has">Has Beatport</option>
               <option value="missing">Missing Beatport</option>
-              <option value="retry-blocked">Beatport retry waiting</option>
+              <option value="retry-blocked">Beatport Retry Waiting</option>
             </select>
             <select id="musicMemoryFeedbackFilter" aria-label="Feedback filter">
-              <option value="">All feedback</option>
-              <option value="any">Has feedback</option>
+              <option value="">All Feedback</option>
+              <option value="any">Has Feedback</option>
               <option value="love">Love</option>
               <option value="like">Like</option>
               <option value="ok">Okay</option>
               <option value="dislike">Dislike</option>
               <option value="never">Never Again</option>
             </select>
+            <label class="viewSort">Sort<select id="musicMemorySort"><option value="recent">Recently Seen</option><option value="title">Title</option><option value="artist">Artist</option><option value="plays">Most Played</option></select></label>
             <button type="submit">Search</button>
           </form>
         </section>

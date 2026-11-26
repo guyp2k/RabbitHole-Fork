@@ -5521,6 +5521,7 @@ async function refreshMusicMemory({ append = false } = {}) {
       q: query,
       beatport,
       feedback,
+      sort: $("#musicMemorySort")?.value || "recent",
       limit: String(state.musicMemoryLimit),
       offset: String(offset)
     });
@@ -8228,6 +8229,8 @@ $("#tidalView .tidalMixHero .resultActions")?.append(window.RabbitHoleViewContro
 if ($("#standbySort")) standbySort = window.RabbitHoleViewControls.bindSort($("#standbySort"), "rabbitHole.sort.standby", (value) => { standbySort = value; renderStandbyPool(); });
 if ($("#beatportChartSort")) beatportSort = window.RabbitHoleViewControls.bindSort($("#beatportChartSort"), "rabbitHole.sort.beatport", (value) => { beatportSort = value; renderBeatportChart(); });
 if ($("#tidalMixSort")) tidalMixSort = window.RabbitHoleViewControls.bindSort($("#tidalMixSort"), "rabbitHole.sort.tidalMixes", (value) => { tidalMixSort = value; renderTidalMixes(); });
+$("#musicMemorySearchForm")?.append(window.RabbitHoleViewControls.layoutSwitch({ key: "rabbitHole.layout.musicMemory", name: "Track", onChange: (layout) => $("#musicMemoryView")?.classList.toggle("musicMemoryListView", layout === "list") }));
+if ($("#musicMemorySort")) window.RabbitHoleViewControls.bindSort($("#musicMemorySort"), "rabbitHole.sort.musicMemory", () => refreshMusicMemory());
 $("#radioView .radioHero .resultActions")?.append(window.RabbitHoleViewControls.layoutSwitch({ key: "rabbitHole.layout.radio", name: "Station", onChange: (layout) => $("#radioView")?.classList.toggle("radioListView", layout === "list") }));
 const radioSortSelect = $("#radioSort");
 if (radioSortSelect) {
