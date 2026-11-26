@@ -131,14 +131,15 @@ server under System:
 
 ![Lyrion Now Playing: player pills, track and file details, the System block with the Lyrion server, player, address and repeat and shuffle state, album art with the HQPlayer and HQP host lines, Up next, transport and seek bar, and rating, TIDAL and SoundCloud tools on the right](screenshots/lyrion-now-playing.png)
 
-A **Home** tab with new music, favorites and explore tiles:
+A **Home** tab with new music, favorites and explore tiles. Each shelf folds, and a
+Thumbnails | List switch turns the shelves into compact rows:
 
-![Lyrion Home tab: a New Music row of six album tiles, a Favorites row of four, and Explore tiles for Albums, Artists, New Music and Favorites](screenshots/lyrion-home.png)
+![Lyrion Home in the Modern layout: a short explanation under the Home title, a Thumbnails and List switch, and New Music, Favorites and Explore shelves that each fold, with made-up albums such as Low Tide Signals and Paper Lanterns](screenshots/lyrion-home.png)
 
-**Sources & Discovery** with foldable rows and the setup links moved into a
-Setup menu:
+**Sources & Discovery** with the setup links in a Setup menu, foldable Sources and
+Browse rows that share one column, and browse results as a list or as thumbnails:
 
-![Lyrion Sources and Discovery: a folded Setup menu, a row of source pills, a search box with Search source and Search all sources, and Back and Browse source buttons](screenshots/lyrion-sources.png)
+![Lyrion Sources and Discovery: a Setup menu, a Sources row of source pills, a search box with Search Source and Search All Sources, a Browse row with Back, Browse Source, the item count and a Thumbnails and List switch, and made-up results with Play, Play Next and Add buttons](screenshots/lyrion-sources.png)
 
 Lyrion tracks can be rated like Roon's, streamed tracks show their cover art,
 and one unanswered Roon call no longer freezes the Lyrion controls.

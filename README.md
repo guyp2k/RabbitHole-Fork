@@ -31,6 +31,12 @@ signal chain stacks into aligned rows:
   <img src="docs/screenshots/modern-fold.png" alt="Modern layout at 840 pixels wide: the left menu beside a one-column player with track details, album art, transport, volume, seek bar, the stacked signal chain and the panels" width="300">
 </p>
 
+System > **Connections** shows every service Rabbit Hole uses, whether it is working right
+now and what it is for. Services switched off in this deployment, such as Beatport and
+Sonic, read Off (see [Disabled features](#disabled-features-revisit-if-wanted)):
+
+![System Connections: a short explanation, then a Services panel of status cards for Roon, TIDAL Search, TIDAL Profile, Radio Art TIDAL, Last.fm, Local Model, Synapse, Rabbit Hole MCP, Beatport and Sonic, each with a green, amber or grey light, its status, what it is for and a detail line](docs/screenshots/connections.png)
+
 The Mindshovel Blue theme in the Modern layout:
 
 ![Modern Roon Now Playing in Mindshovel Blue: navy surfaces, white titles and values, grey-blue labels, the artist line in sky blue and mid-blue filled buttons](docs/screenshots/modern-blue.png)
@@ -111,6 +117,11 @@ offered upstream as pull requests.
   one-column player beside the menu. Classic stays the default.
 - **Layout:** foldable cards and panels, a header logo in the theme's colours,
   and a favicon.
+- **One page style:** every page opens with a plain-language explanation, every
+  list folds from its heading, lists with artwork have a Thumbnails | List
+  switch, long lists have a Sort, labels are Title Case, and status lights are
+  green, amber, red or grey in every theme. Features this deployment cannot run
+  hide themselves instead of showing dead controls.
 - **Unraid:** a published image and an Unraid template. The image hands its data
   folder to `PUID`/`PGID`, so a fresh appdata folder works without fixing
   permissions by hand. Without `PUID`/`PGID` it runs as `node` (1000), as upstream does.
