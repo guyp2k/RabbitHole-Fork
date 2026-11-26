@@ -785,11 +785,70 @@ function healthCardHtml(item = {}) {
     <article class="healthCard ${level}">
       <div>
         <span>${escapeHtml(item.label)}</span>
-        <strong>${escapeHtml(item.status || "")}</strong>
+        <strong>${escapeHtml(headingCase(item.status || ""))}</strong>
       </div>
+      ${item.purpose ? `<p class="healthPurpose">${escapeHtml(item.purpose)}</p>` : ""}
       <small>${escapeHtml(item.detail || "")}</small>
     </article>
   `;
+}
+
+function beatportHealthSummary(app = {}) {
+  const beatport = app.beatport;
+  if (!beatport) return { level: "unknown", status: "not checked", detail: "waiting for status" };
+  if (beatport.enabled !== true) return { level: "unknown", status: "off", detail: "needs a Beatport partner token; see the README" };
+  if (beatport.configured !== true) return { level: "warn", status: "not configured", detail: "enabled without an access token" };
+  return { level: "ok", status: "ready", detail: "charts available under Discover" };
+}
+
+function sonicHealthSummary(app = {}) {
+  const sonic = app.sonic;
+  if (!sonic) return { level: "unknown", status: "not checked", detail: "waiting for status" };
+  if (sonic.available !== true) return { level: "unknown", status: "off", detail: "needs Recommendation Engine v2 and the Discogs-EffNet worker; see the README" };
+  return { level: "ok", status: "running", detail: "Sonic Review and coverage under System" };
+}
+
+function aiModeHealthSummary(ai = null) {
+  if (!ai) return { level: "unknown", status: "not checked", detail: "waiting for status" };
+  const mode = String(ai.mode || "auto");
+  const active = ai.lastDecision || {};
+  const provider = String(active.provider || ai.activeProvider || "");
+  const answered = provider
+    ? `Last request answered by ${provider === "synapse" || provider === "SYNAPSE" ? "Synapse" : provider.toLowerCase() === "local" ? "the local model" : provider}${active.fallback ? " (fallback)" : ""}`
+    : "No requests answered yet";
+  return { level: active.fallback ? "warn" : "ok", status: mode, detail: answered };
+}
+
+function synapseUsageHealthSummary(ai = null) {
+  if (!ai) return { level: "unknown", status: "not checked", detail: "waiting for status" };
+  const usage = ai.synapse?.usage || {};
+  const today = usage.todayCostUsd ?? usage.today?.costUsd ?? 0;
+  const session = usage.session || {};
+  return {
+    level: ai.synapse?.enabled ? "ok" : "unknown",
+    status: `${formatUsd(today)} today`,
+    detail: `This session: ${compactInteger(session.calls || 0)} calls, ${formatUsd(session.costUsd || 0)}`
+  };
+}
+
+function renderAiHealth() {
+  const container = $("#aiHealth");
+  if (!container) return;
+  const app = state.appStatus || {};
+  const ai = state.modelStatus?.ai || app.ai || null;
+  container.innerHTML = `
+    <div class="systemHealthHead">
+      ${diagnosticFoldHeadHtml("ai", "aiHealthBody", "AI Services").replace('data-fold-key="diagnostics.ai"', 'data-fold-key="ai.services"')}
+    </div>
+    <div id="aiHealthBody" class="healthGrid">
+      ${healthCardHtml({ label: "AI Mode", purpose: "Which AI Rabbit Hole asks first", ...aiModeHealthSummary(ai) })}
+      ${healthCardHtml({ label: "Local Model", purpose: "Plans and reviews recommendations on this server", ...llmHealthSummary(app) })}
+      ${healthCardHtml({ label: "Synapse", purpose: "Optional OpenAI model for harder requests", ...synapseHealthSummary(app) })}
+      ${healthCardHtml({ label: "Synapse Usage", purpose: "What Synapse has cost", ...synapseUsageHealthSummary(ai) })}
+      ${healthCardHtml({ label: "Rabbit Hole MCP", purpose: "Tools an AI assistant can use to drive Rabbit Hole", ...mcpHealthSummary(app) })}
+    </div>
+  `;
+  window.RabbitHoleViewControls?.applyFolds(container);
 }
 
 function renderSystemHealth() {
@@ -811,21 +870,24 @@ function renderSystemHealth() {
 
   container.innerHTML = `
     <div class="systemHealthHead">
-      ${diagnosticFoldHeadHtml("health", "systemHealthBody", "System Health")}
+      ${diagnosticFoldHeadHtml("health", "systemHealthBody", "Services").replace('data-fold-key="diagnostics.health"', 'data-fold-key="connections.services"')}
       ${updatedAt ? `<small>${escapeHtml(updatedAt)}</small>` : ""}
     </div>
     <div id="systemHealthBody" class="healthGrid">
-      ${healthCardHtml(roon)}
-      ${healthCardHtml({ label: "TIDAL Search", ...tidal })}
-      ${healthCardHtml({ label: "Radio Art TIDAL", ...radioTidal })}
-      ${healthCardHtml({ label: "TIDAL Profile", ...tidalProfile })}
-      ${healthCardHtml({ label: "Local Model", ...llm })}
-      ${healthCardHtml({ label: "Rabbit Hole MCP", ...mcp })}
-      ${healthCardHtml({ label: "Synapse", ...synapse })}
-      ${healthCardHtml({ label: "Last.fm", ...lastfm })}
+      ${healthCardHtml({ ...roon, purpose: "Plays music and reports zones, queue and library" })}
+      ${healthCardHtml({ label: "TIDAL Search", purpose: "Finds and verifies tracks before they play", ...tidal })}
+      ${healthCardHtml({ label: "TIDAL Profile", purpose: "Your personal TIDAL mixes", ...tidalProfile })}
+      ${healthCardHtml({ label: "Radio Art TIDAL", purpose: "Album art and track details for radio", ...radioTidal })}
+      ${healthCardHtml({ label: "Last.fm", purpose: "Listening history for your taste profile", ...lastfm })}
+      ${healthCardHtml({ label: "Local Model", purpose: "Plans and reviews recommendations on this server", ...llm })}
+      ${healthCardHtml({ label: "Synapse", purpose: "Optional OpenAI model for harder requests", ...synapse })}
+      ${healthCardHtml({ label: "Rabbit Hole MCP", purpose: "Tools an AI assistant can use to drive Rabbit Hole", ...mcp })}
+      ${healthCardHtml({ label: "Beatport", purpose: "Dance music charts under Discover", ...beatportHealthSummary(app) })}
+      ${healthCardHtml({ label: "Sonic", purpose: "Sound-alike matching and Sonic Review", ...sonicHealthSummary(app) })}
     </div>
   `;
   window.RabbitHoleViewControls?.applyFolds(container);
+  renderAiHealth();
 }
 
 function isLiveRadioZone(zone = {}) {
@@ -8035,6 +8097,10 @@ document.querySelectorAll(".secondaryNavShell [data-view]").forEach((button) => 
     group: button.dataset.navGroup,
     item: button.dataset.navItem
   }));
+});
+
+document.querySelectorAll("[data-view-jump]").forEach((button) => {
+  button.addEventListener("click", () => setActiveView(button.dataset.viewJump));
 });
 
 setNavigationState();

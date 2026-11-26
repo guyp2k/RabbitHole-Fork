@@ -95,17 +95,9 @@
           <div class="systemViewHeader">
             <p class="eyebrow">System</p>
             <h2 id="connectionsHeading">Connections</h2>
-            <p class="muted">Integration state stays visible in the compact header while this view keeps the connected services in one place.</p>
+            <p class="pageIntro">Every service Rabbit Hole talks to, whether it is working right now, and what it is used for. Green is working, amber needs attention, red is down and grey is switched off or not checked yet. It updates on its own.</p>
           </div>
-          <div class="systemScopeList" aria-label="Rabbit Hole integrations">
-            <div class="systemScopeItem"><strong>Roon</strong><span>Playback, zones, queue, and playlists</span></div>
-            <div class="systemScopeItem"><strong>TIDAL</strong><span>Catalog, profile mixes, and playlist actions</span></div>
-            <div class="systemScopeItem"><strong>Last.fm</strong><span>Listening history and taste signals</span></div>
-            <div class="systemScopeItem"><strong>MCP</strong><span>Browser and assistant tool surface</span></div>
-            <div class="systemScopeItem"><strong>LM Studio</strong><span>Local discovery and planning model</span></div>
-            <div class="systemScopeItem"><strong>Synapse</strong><span>Optional provider and shared memory context</span></div>
-            <div class="systemScopeItem"><strong>Beatport</strong><span>Charts and metadata enrichment</span></div>
-          </div>
+          <section id="systemHealth" class="systemHealth" aria-live="polite"></section>
         </section>
       </section>
 
@@ -114,13 +106,10 @@
           <div class="systemViewHeader">
             <p class="eyebrow">System</p>
             <h2 id="aiHeading">AI</h2>
-            <p class="muted">Provider state and usage remain visible globally. AI mode and Synapse model controls remain in Settings to preserve the approved control placement.</p>
+            <p class="pageIntro">Which AI is answering Rabbit Hole's requests and how it is doing. The local model runs on this server; Synapse is an optional OpenAI model for harder requests; MCP is the set of tools an AI assistant can use to drive Rabbit Hole. Change the AI mode in Settings.</p>
           </div>
-          <div class="systemScopeList" aria-label="AI services">
-            <div class="systemScopeItem"><strong>Local model</strong><span>LM Studio discovery and fallback generation</span></div>
-            <div class="systemScopeItem"><strong>Synapse</strong><span>Provider routing, model tiers, and usage</span></div>
-            <div class="systemScopeItem"><strong>MCP</strong><span>Assistant-facing tools and orchestration</span></div>
-          </div>
+          <section id="aiHealth" class="systemHealth" aria-live="polite"></section>
+          <div class="resultActions"><button type="button" data-view-jump="settings">Change AI Mode in Settings</button></div>
         </section>
       </section>
 
@@ -166,9 +155,8 @@
           <div class="systemViewHeader">
             <p class="eyebrow">System</p>
             <h2 id="diagnosticsHeading">Diagnostics</h2>
-            <p class="pageIntro">Look under the hood. System Health shows whether each service Rabbit Hole relies on is reachable. The sections below fill in after a Rabbit Hole run and explain it: what the request was read as, how many candidates were found, which were dropped and why, and where the picks came from. Use it when a run returns fewer or stranger picks than expected.</p>
+            <p class="pageIntro">Look under the hood of the last Rabbit Hole run. These sections fill in after a run and explain it: what the request was read as, how many candidates were found, which were dropped and why, and where the picks came from. Use it when a run returns fewer or stranger picks than expected. Whether each service is reachable is on Connections.</p>
           </div>
-          <section id="systemHealth" class="systemHealth" aria-live="polite"></section>
           <div class="diagnosticSurfaces">
             <div id="poolDiagnostics" class="poolDiagnostics" hidden></div>
             <div id="intentDebug" class="intentDebug" hidden></div>

@@ -62,7 +62,7 @@ test("regular navigation groups Playback, Discover, and Memory views and keeps s
   const sourceReport = html.indexOf('id="sourceReport"');
   const rejectedDebug = html.indexOf('id="rejectedDebug"');
   assert.ok(connectionsViewStart >= 0 && aiViewStart > connectionsViewStart && diagnosticsViewStart > aiViewStart && settingsViewStart > diagnosticsViewStart);
-  assert.ok(systemHealth > diagnosticsViewStart && systemHealth < settingsViewStart);
+  assert.ok(systemHealth > connectionsViewStart && systemHealth < aiViewStart);
   assert.ok(poolDiagnostics > diagnosticsViewStart && poolDiagnostics < settingsViewStart && intentDebug > diagnosticsViewStart && intentDebug < settingsViewStart && sourceReport > diagnosticsViewStart && sourceReport < settingsViewStart && rejectedDebug > diagnosticsViewStart && rejectedDebug < settingsViewStart);
   assert.ok(resultsPanel > poolDiagnostics && resultsPanel > intentDebug && resultsPanel > sourceReport && resultsPanel > rejectedDebug);
   assert.match(app, /function setNavigationState\(/);
