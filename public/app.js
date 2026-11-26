@@ -6062,7 +6062,18 @@ function handleRadioStationMoveTarget(event) {
   return moveRadioStation(radioMoveIndex, toIndex);
 }
 
-function radioStationCardHtml(station = {}, index = 0) {
+const RADIO_SORT_KEY = "rabbitHole.radioSort";
+let radioSort = (() => { try { const value = localStorage.getItem(RADIO_SORT_KEY); return ["name", "name-desc"].includes(value) ? value : "mine"; } catch { return "mine"; } })();
+
+function sortedRadioEntries(stations = [], sort = "mine") {
+  const entries = stations.map((station, index) => ({ station, index }));
+  const byName = (a, b) => String(a.station.title || "").localeCompare(String(b.station.title || ""), undefined, { sensitivity: "base", numeric: true }) || a.index - b.index;
+  if (sort === "name") entries.sort(byName);
+  else if (sort === "name-desc") entries.sort((a, b) => byName(b, a));
+  return entries;
+}
+
+function radioStationCardHtml(station = {}, index = 0, position = index, movable = true) {
   const title = station.title || "Untitled station";
   const subtitle = (station.subtitle || "").trim();
   const fallbackMeta = station.kind === "folder" ? "Folder" : "";
@@ -6073,7 +6084,7 @@ function radioStationCardHtml(station = {}, index = 0) {
     : "";
   const art = imageUrl
     ? `<span class="radioStationArt" style="background-image:url('${escapeHtml(imageUrl)}')"></span>`
-    : `<span class="radioStationArt radioStationArtEmpty">${escapeHtml(String(index + 1).padStart(2, "0"))}</span>`;
+    : `<span class="radioStationArt radioStationArtEmpty">${escapeHtml(String(position + 1).padStart(2, "0"))}</span>`;
   return `
     <article class="radioStation${moving ? " isMoveSelected" : ""}" data-radio-index="${index}">
       ${art}
@@ -6082,7 +6093,7 @@ function radioStationCardHtml(station = {}, index = 0) {
         ${meta ? `<p>${escapeHtml(meta)}</p>` : ""}
       </div>
       <div class="radioStationActions">
-        <button type="button" class="radioStationDragButton" data-radio-drag="${index}" aria-pressed="${moving ? "true" : "false"}" aria-label="Move ${escapeHtml(title)}">${moving ? "Moving" : "Move"}</button>
+        ${movable ? `<button type="button" class="radioStationDragButton" data-radio-drag="${index}" aria-pressed="${moving ? "true" : "false"}" aria-label="Move ${escapeHtml(title)}">${moving ? "Moving" : "Move"}</button>` : ""}
         ${station.kind === "folder" ? `<button type="button" data-radio-open="${index}">Open</button>` : ""}
         ${station.playable ? `<button type="button" data-radio-play="${index}">Play</button>` : ""}
       </div>
@@ -6115,8 +6126,9 @@ function renderRadioStations() {
   const resetButton = $("#resetRadioOrder");
   if (resetButton) resetButton.hidden = !state.radioStationsLoaded || !hasCustomRadioStationOrder();
   if (radioMoveIndex >= state.radioStations.length) radioMoveIndex = -1;
+  const entries = sortedRadioEntries(state.radioStations, radioSort);
   grid.innerHTML = state.radioStations.length
-    ? state.radioStations.map(radioStationCardHtml).join("")
+    ? entries.map((entry, position) => radioStationCardHtml(entry.station, entry.index, position, radioSort === "mine")).join("")
     : `<p class="muted">${escapeHtml(state.radioStationsLoading ? "Loading stations..." : "Open this tab or refresh to load Roon radio stations.")}</p>`;
 }
 
@@ -7741,7 +7753,7 @@ const LEGACY_NAV_TARGETS = {
   history: { group: "memory", item: "taste" },
   musicMemory: { group: "memory", item: "library" },
   beatportCharts: { group: "discover", item: "beatport" },
-  radio: { group: "discover", item: "radio" },
+  radio: { group: "playback", item: "radio" },
   playlists: { group: "playback", item: "playlists" },
   database: { group: "system", item: "database" },
   roonLibrary: { group: "playback", item: "roon-library" },
@@ -8361,6 +8373,17 @@ $("#refreshPlaylistBrowser")?.addEventListener("click", () => {
 });
 
 $("#playlistView .playlistHero .resultActions")?.append(window.RabbitHoleViewControls.layoutSwitch({ key: "rabbitHole.layout.playlists", name: "Playlist", onChange: (layout) => { playlistLayout = layout; renderPlaylistBrowser(); } }));
+$("#radioView .radioHero .resultActions")?.append(window.RabbitHoleViewControls.layoutSwitch({ key: "rabbitHole.layout.radio", name: "Station", onChange: (layout) => $("#radioView")?.classList.toggle("radioListView", layout === "list") }));
+const radioSortSelect = $("#radioSort");
+if (radioSortSelect) {
+  radioSortSelect.value = radioSort;
+  radioSortSelect.addEventListener("change", () => {
+    radioSort = ["name", "name-desc"].includes(radioSortSelect.value) ? radioSortSelect.value : "mine";
+    try { localStorage.setItem(RADIO_SORT_KEY, radioSort); } catch {}
+    radioMoveIndex = -1;
+    renderRadioStations();
+  });
+}
 $("#queueView .queueViewHeader")?.append(window.RabbitHoleViewControls.layoutSwitch({ key: "rabbitHole.layout.queue", name: "Queue", onChange: (layout) => $("#queueView")?.classList.toggle("queueCardsView", layout === "cards") }));
 
 $("#playlistBrowserGrid")?.addEventListener("change", (event) => {

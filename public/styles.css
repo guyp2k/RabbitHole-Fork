@@ -3041,6 +3041,39 @@ input {
   background: color-mix(in srgb, var(--accent) 30%, transparent) !important;
 }
 
+.pageIntro {
+  max-width: 72ch;
+  margin: 4px 0 6px;
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+#radioView.radioListView .radioGrid {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 6px;
+}
+
+#radioView.radioListView .radioStation {
+  grid-template-columns: 44px minmax(0, 1fr) auto;
+  grid-template-areas: "art text actions";
+  min-height: 0;
+  padding: 8px 12px;
+}
+
+#radioView.radioListView .radioStationArt {
+  width: 44px;
+}
+
+@media (max-width: 699px) {
+  #radioView.radioListView .radioStation {
+    grid-template-columns: 44px minmax(0, 1fr);
+    grid-template-areas:
+      "art text"
+      "actions actions";
+  }
+}
+
 .viewSort {
   display: inline-flex;
   align-items: center;
@@ -3050,8 +3083,8 @@ input {
 }
 
 .viewSort select {
-  width: auto;
-  max-width: 200px;
+  width: auto !important;
+  max-width: 200px !important;
   min-height: 32px;
 }
 

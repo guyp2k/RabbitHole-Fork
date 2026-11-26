@@ -51,6 +51,7 @@
             <button type="button" data-nav-group="playback" data-nav-item="queue" data-view="queue">Queue</button>
             <button type="button" data-nav-group="playback" data-nav-item="playlists" data-view="playlists">Playlists</button>
             <button type="button" data-nav-group="playback" data-nav-item="roon-library" data-view="roonLibrary">Library</button>
+            <button type="button" data-nav-group="playback" data-nav-item="radio" data-view="radio">Radio</button>
           </div>
         </div>
 
@@ -61,7 +62,6 @@
             <button type="button" data-nav-group="discover" data-nav-item="standby" data-view="standby">Standby</button>
             <button type="button" data-nav-group="discover" data-nav-item="sonic-review" data-view="sonicReview">Sonic Review</button>
             <button type="button" data-nav-group="discover" data-nav-item="beatport" data-view="beatportCharts">Beatport</button>
-            <button type="button" data-nav-group="discover" data-nav-item="radio" data-view="radio">Radio</button>
             <button type="button" data-nav-group="discover" data-nav-item="tidal" data-view="tidal">TIDAL</button>
           </div>
         </div>
@@ -762,11 +762,13 @@
           <div>
             <p class="eyebrow">Roon Radio</p>
             <h2>Radio Stations</h2>
+            <p class="pageIntro">Live internet radio from Roon's My Live Radio. Play a station on the selected Roon zone. Drag a station, or use Move, to set your own order.</p>
             <p id="radioStatus" class="tasteNarrative">Radio stations have not been loaded yet.</p>
           </div>
           <div class="resultActions">
             <button type="button" id="radioRoot" hidden>Radio root</button>
             <button type="button" id="resetRadioOrder" hidden>Reset order</button>
+            <label class="viewSort">Sort<select id="radioSort"><option value="mine">My Order</option><option value="name">Name A-Z</option><option value="name-desc">Name Z-A</option></select></label>
             <button type="button" id="refreshRadioStations">Refresh stations</button>
           </div>
         </section>
