@@ -4717,31 +4717,53 @@ input {
 }
 
 .resultFilterToggle {
+  position: relative;
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  min-height: 34px;
-  padding: 0 12px;
-  border: 1px solid rgba(217, 179, 255, 0.2);
-  border-radius: 999px;
+  min-height: 38px;
+  padding: 0 14px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
   background: rgba(8, 4, 17, 0.72);
-  color: rgba(241, 232, 255, 0.9);
-  font-size: 13px;
-  font-weight: 800;
+  color: var(--text);
+  font-size: 14px;
   line-height: 1;
+  cursor: pointer;
+}
+
+.resultFilterToggle::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--muted);
+  opacity: 0.5;
 }
 
 .resultFilterToggle input {
-  width: 16px;
-  height: 16px;
+  position: absolute;
+  width: 1px;
+  height: 1px;
   margin: 0;
-  accent-color: #77dcff;
+  opacity: 0;
+  pointer-events: none;
 }
 
 .resultFilterToggle:has(input:checked) {
-  border-color: rgba(119, 220, 255, 0.5);
-  color: #c9f7ff;
-  box-shadow: 0 0 18px rgba(119, 220, 255, 0.1);
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 30%, transparent);
+}
+
+.resultFilterToggle:has(input:checked)::before {
+  background: var(--accent);
+  opacity: 1;
+  box-shadow: 0 0 6px var(--accent);
+}
+
+.resultFilterToggle:has(input:focus-visible) {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
 }
 
 .resultFilterToggle:has(input:disabled) {

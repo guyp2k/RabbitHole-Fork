@@ -10,7 +10,7 @@ const app = fs.readFileSync(require.resolve("../public/app.js"), "utf8");
 
 test("every Discover page says what it does under its title", () => {
   assert.match(html, /<h2 id="composerTitle" class="resultsTitleToggle">Start the Rabbit Hole Journey<\/h2>\s*<p class="pageIntro">Describe what you want to hear, or start from the track playing, an artist or a playlist\. Rabbit Hole searches TIDAL, checks every track against Roon, drops the ones that fail and lists the rest to play, queue or send to TIDAL\.<\/p>/);
-  assert.match(html, /<h2 id="standbyTitle">0\/25 standby tracks<\/h2>\s*<p class="pageIntro">Discovery tracks Rabbit Hole keeps ready in the background, already checked against TIDAL and Roon, so Queue gives you something new straight away\. The pool refreshes itself; Refresh starts a new search now\.<\/p>/);
+  assert.match(html, /<h2 id="standbyTitle">0\/25 Standby Tracks<\/h2>\s*<p class="pageIntro">Discovery tracks Rabbit Hole keeps ready in the background, already checked against TIDAL and Roon, so Queue gives you something new straight away\. The pool refreshes itself; Refresh starts a new search now\.<\/p>/);
   assert.match(html, /<h2>Progressive House Charts<\/h2>\s*<p class="pageIntro">Beatport's Progressive House charts\. Pick a chart and queue it: Rabbit Hole finds each track on TIDAL and checks it against Roon before it plays\.<\/p>/);
   assert.match(html, /<h2>Mixes & Radio<\/h2>\s*<p class="pageIntro">Your personal TIDAL mixes, such as My Mix and My Daily Discovery\. Play or queue one in Roon, turn it into a Rabbit Hole prompt or download its track list\. Paste a TIDAL link below to pin any playlist or mix here\.<\/p>/);
 });
