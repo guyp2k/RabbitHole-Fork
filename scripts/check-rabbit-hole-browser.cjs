@@ -133,7 +133,7 @@ async function screenshot(page, name) {
 
 function trackCardClient(app) {
   const names = [
-    "escapeHtml", "safeHttpUrl", "jsonDataAttr", "trackPayload", "normalizeKeyText", "normalizeMatchText",
+    "escapeHtml", "headingCase", "safeHttpUrl", "jsonDataAttr", "trackPayload", "normalizeKeyText", "normalizeMatchText",
     "trackKeyFor", "trackFeedbackKeys", "feedbackForTrack", "applyFeedbackToTrack", "applyFeedbackToTracks",
     "tidalTrackUrl", "formatSeconds", "formatDuration", "artistCreditConfirmed", "roonVisibleTrack",
     "artistConfirmationBadgeHtml", "displayedResultTracks", "scoreBandFor", "minimumScoreLabel",

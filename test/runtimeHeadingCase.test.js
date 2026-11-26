@@ -10,9 +10,9 @@ const html = fs.readFileSync(require.resolve("../public/index.html"), "utf8");
 const css = fs.readFileSync(require.resolve("../public/styles.css"), "utf8");
 
 test("headings built at runtime are Title Case, keeping small joining words and existing capitals", () => {
-  const start = app.indexOf("const HEADING_SMALL_WORDS");
+  const start = app.indexOf("function headingCase(");
   assert.ok(start >= 0);
-  const end = app.indexOf("\n}\n", app.indexOf("function headingCase(", start)) + 2;
+  const end = app.indexOf("\n}\n", start) + 2;
   const context = {};
   vm.runInNewContext(app.slice(start, end) + "\nthis.headingCase = headingCase;", context);
   assert.equal(context.headingCase("10 verified tracks (13 discarded from 49)"), "10 Verified Tracks (13 Discarded From 49)");
@@ -46,4 +46,9 @@ test("Audit Exact Artists is a toggle shaped like the buttons beside it, lit whe
   assert.match(css, /\.resultFilterToggle input \{[^}]*opacity: 0;/);
   assert.match(css, /\.resultFilterToggle:has\(input:checked\)::before \{[^}]*background: var\(--accent\);/);
   assert.match(css, /\.resultFilterToggle:has\(input:focus-visible\) \{[^}]*outline: 2px solid var\(--accent\);/);
+});
+
+test("the browser layout check loads headingCase with the results renderer that calls it", () => {
+  const harness = fs.readFileSync(require.resolve("../scripts/check-rabbit-hole-browser.cjs"), "utf8");
+  assert.match(harness, /"headingCase",/);
 });

@@ -2049,12 +2049,11 @@ function standbyTrackHtml(track = {}, index = 0) {
   `;
 }
 
-const HEADING_SMALL_WORDS = new Set(["a", "an", "and", "or", "of", "to", "the", "in", "on", "for", "by", "with"]);
-
 function headingCase(text = "") {
+  const small = new Set(["a", "an", "and", "or", "of", "to", "the", "in", "on", "for", "by", "with"]);
   return String(text).split(/(\s+)/).map((word, index) => {
     if (/^\s+$/.test(word) || !/^[(]?[a-z]/.test(word)) return word;
-    if (index > 0 && HEADING_SMALL_WORDS.has(word.toLowerCase())) return word;
+    if (index > 0 && small.has(word.toLowerCase())) return word;
     return word.replace(/[a-z]/, (letter) => letter.toUpperCase()).replace(/-([a-z])/g, (_, letter) => `-${letter.toUpperCase()}`);
   }).join("");
 }
