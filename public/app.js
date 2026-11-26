@@ -2956,6 +2956,10 @@ async function addNowTrackToTidalPlaylist(button = $("#addNowToTidalPlaylist")) 
 function renderNowSonicProfileEditor(track = null) {
   const root = $("#nowSonicProfile");
   if (!root) return;
+  if (!sonicAvailable(state.appStatus || {})) {
+    root.hidden = true;
+    return;
+  }
   const profileState = state.nowSonicProfile;
   const identityKey = sonicReviewIdentityKey(track || {});
   if (!identityKey) {
@@ -4461,6 +4465,19 @@ function applyBeatportAvailability(app = {}) {
   if (!available && $("#beatportChartsView")?.classList.contains("isActive")) setActiveView("discover");
 }
 
+function sonicAvailable(app = {}) {
+  return app.sonic?.available === true;
+}
+
+function applySonicAvailability(app = {}) {
+  const available = sonicAvailable(app);
+  for (const element of document.querySelectorAll('[data-requires="sonic"]')) element.hidden = !available;
+  if (available) return;
+  const profile = $("#nowSonicProfile");
+  if (profile) profile.hidden = true;
+  if ($("#sonicReviewView")?.classList.contains("isActive")) setActiveView("settings");
+}
+
 function applyAppState(app = {}) {
   if (!app) return;
   // Compact updates deliberately omit the saved session. Retain omitted fields
@@ -4471,6 +4488,7 @@ function applyAppState(app = {}) {
   }
   state.appStatus = app;
   applyBeatportAvailability(app);
+  applySonicAvailability(app);
   state.memory = app.memory || state.memory;
   if (app.standby) renderStandbyPool(app.standby);
   renderMemoryStatus();

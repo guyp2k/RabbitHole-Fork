@@ -8,7 +8,7 @@ const html = fs.readFileSync(require.resolve("../public/index.html"), "utf8");
 const app = fs.readFileSync(require.resolve("../public/app.js"), "utf8");
 
 test("Sonic Review lives under System, after Database, in the navigation and the view map", () => {
-  assert.match(html, /data-nav-item="database" data-view="database">Database<\/button>\s*<button type="button" data-nav-group="system" data-nav-item="sonic-review" data-view="sonicReview">Sonic Review<\/button>/);
+  assert.match(html, /data-nav-item="database" data-view="database">Database<\/button>\s*<button type="button" data-nav-group="system" data-nav-item="sonic-review" data-view="sonicReview" data-requires="sonic" hidden>Sonic Review<\/button>/);
   assert.doesNotMatch(html, /data-nav-group="discover" data-nav-item="sonic-review"/);
   assert.match(app, /sonicReview: \{ group: "system", item: "sonic-review" \},/);
 });
