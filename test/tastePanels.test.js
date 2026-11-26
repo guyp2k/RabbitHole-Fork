@@ -14,11 +14,14 @@ function foldHarness(saved) {
   const store = new Map(saved ? [["rabbitHole.fold.taste.topArtists", saved]] : []);
   const target = { hidden: false };
   const caret = { textContent: "" };
-  const button = { dataset: { foldKey: "taste.topArtists" }, attrs: { "aria-controls": "topArtists" }, listeners: {},
+  const listeners = {};
+  const button = { dataset: { foldKey: "taste.topArtists" }, attrs: { "aria-controls": "topArtists" }, listeners,
     getAttribute(n) { return this.attrs[n]; }, setAttribute(n, v) { this.attrs[n] = String(v); },
-    querySelector: () => caret, addEventListener(t, f) { this.listeners[t] = f; } };
+    querySelector: () => caret };
+  button.listeners.click = () => listeners.documentClick({ target: { closest: () => button } });
   const context = {
-    document: { createElement: () => ({}), querySelectorAll: () => [button], getElementById: (id) => (id === "topArtists" ? target : null) },
+    document: { createElement: () => ({}), querySelectorAll: () => [button], getElementById: (id) => (id === "topArtists" ? target : null),
+      addEventListener(t, f) { if (t === "click") listeners.documentClick = f; } },
     localStorage: { getItem: (k) => store.get(k) ?? null, setItem: (k, v) => store.set(k, v) }
   };
   context.window = context;
@@ -44,7 +47,7 @@ test("every Taste panel folds from its heading", () => {
   for (const [key, id, label] of [["topArtists", "topArtists", "Top Artists"], ["topTracks", "topTracks", "Top Tracks"], ["tasteSignals", "tasteSignals", "Taste Signals"], ["recentPlays", "recentPlays", "Recent Plays"]]) {
     assert.match(html, new RegExp(`<h3 class="panelFoldHeading"><button type="button" class="panelFold" data-fold-key="taste\\.${key}" aria-controls="${id}" aria-expanded="true"><span class="panelFoldCaret" aria-hidden="true">▾</span>${label}</button></h3>`), label);
   }
-  assert.match(css, /:is\(\.reportList, \.signalGrid\)\[hidden\] \{\s*display: none;/);
+  assert.match(css, /:is\(\.reportList, \.signalGrid, [^)]*\)\[hidden\] \{\s*display: none;/);
 });
 
 test("Taste's artist and track lists use the shared Thumbnails | List switch", () => {

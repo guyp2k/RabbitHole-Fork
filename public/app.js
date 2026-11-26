@@ -1018,7 +1018,6 @@ function liveQueueHtml(zone = {}) {
 
   return `
     <div class="liveQueueHead">
-      <strong>Roon Queue</strong>
       ${suffix ? `<span>${escapeHtml(suffix)}</span>` : ""}
     </div>
     ${items.length ? `
@@ -6479,19 +6478,19 @@ function renderTidalMixes(result = state.tidalMixes) {
   const pinnedHtml = pinnedMixes.length ? `
     <section class="tidalMixSection">
       <div class="tidalSectionTitle">
-        <h3>Pinned TIDAL</h3>
+        <h3><button type="button" class="panelFold" data-fold-key="tidal.pinned" aria-controls="tidalMixCardsPinned" aria-expanded="true"><span class="panelFoldCaret" aria-hidden="true">▾</span>Pinned TIDAL</button></h3>
         <span>${pinnedMixes.length} imported</span>
       </div>
-      ${sortedTrackEntries(pinnedMixes, tidalMixSort).map((entry) => tidalMixCardHtml(entry.track, entry.index)).join("")}
+      <div id="tidalMixCardsPinned" class="tidalMixCards">${sortedTrackEntries(pinnedMixes, tidalMixSort).map((entry) => tidalMixCardHtml(entry.track, entry.index)).join("")}</div>
     </section>
   ` : "";
   const officialHtml = mixes.length ? `
     <section class="tidalMixSection">
       <div class="tidalSectionTitle">
-        <h3>Official Profile Mixes</h3>
+        <h3><button type="button" class="panelFold" data-fold-key="tidal.official" aria-controls="tidalMixCardsOfficial" aria-expanded="true"><span class="panelFoldCaret" aria-hidden="true">▾</span>Official Profile Mixes</button></h3>
         <span>${mixes.length} available</span>
       </div>
-      ${sortedTrackEntries(mixes, tidalMixSort).map((entry) => tidalMixCardHtml(entry.track, entry.index + pinnedMixes.length)).join("")}
+      <div id="tidalMixCardsOfficial" class="tidalMixCards">${sortedTrackEntries(mixes, tidalMixSort).map((entry) => tidalMixCardHtml(entry.track, entry.index + pinnedMixes.length)).join("")}</div>
     </section>
   ` : "";
   grid.innerHTML = total || pinnedErrorHtml
@@ -6502,6 +6501,7 @@ function renderTidalMixes(result = state.tidalMixes) {
         <p>The endpoint is reachable, but Rabbit Hole did not see My Mix, Daily Discovery, New Arrivals, Track Radio, or Artist Radio items.</p>
       </div>
     `;
+  window.RabbitHoleViewControls?.applyFolds(grid);
 }
 
 function tidalExportHref(item = {}, format = "m3u") {
