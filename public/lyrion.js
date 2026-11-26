@@ -82,6 +82,8 @@
   }
   let player = "", sources = [], favorites = [], browseRequest = {}, history = [], queueOffset = 0, epoch = 0, busy = false, polling = false;
   // Keep the existing controls and state; navigation only changes visibility.
+  const queueHead=ui.querySelector(".lyrionQueueHead");
+  if(queueHead)queueHead.querySelector("[data-lyrion-control='clear']").before(window.RabbitHoleViewControls.layoutSwitch({ key: "rabbitHole.layout.lyrionQueue", name: "Queue", onChange: (layout) => queueHead.closest("section").classList.toggle("queueCardsView", layout === "cards") }));
   const tabDefinitions=[['home','Home',$('lyrionHomeView')],['now','Now playing', $('lyrionNow')],['channels','Channels',ui.querySelector('.lyrionFavorites')],['shows','Shows',$('lyrionShowsHeading').closest('section')],['artists','Artist stations',$('lyrionArtists')],['xtra','Xtra channels',$('lyrionXtra')],['sources','Sources',ui.querySelector('.lyrionColumns > section')],['queue','Queue',ui.querySelector('.lyrionColumns > section:last-child')]];
   const tabs=document.createElement('nav');tabs.className='secondaryNav lyrionTabs';tabs.setAttribute('aria-label','Lyrion sections');tabs.innerHTML='<div class="lyrionTabsShell"><span class="secondaryNavLabel">Lyrion</span><div class="secondaryNavItems" role="tablist" aria-label="Lyrion sections"></div></div>';const tabItems=tabs.querySelector('.secondaryNavItems');
   $('lyrionMessage').before(tabs);

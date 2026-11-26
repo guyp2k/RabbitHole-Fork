@@ -74,12 +74,8 @@ test("only albums in the Roon library get play buttons, because Roon plays an al
   assert.equal(playable({ key: "", inLibrary: false }), false);
 });
 
-test("the Library switches between thumbnails and a one-row-per-album list, remembered per browser", () => {
-  const page = fs.readFileSync(require.resolve("../public/index.html"), "utf8");
-  assert.match(page, /<div class="rlLayoutSwitch" role="group" aria-label="Album View"><button type="button" data-rl-layout="cards" aria-pressed="true">Thumbnails<\/button><button type="button" data-rl-layout="list" aria-pressed="false">List<\/button><\/div>/);
-  assert.match(source, /const LAYOUT_KEY = "rabbitHole\.rlLayout";/);
-  assert.match(source, /view\.classList\.toggle\("rlListView", layout === "list"\);/);
-  assert.match(source, /localStorage\.setItem\(LAYOUT_KEY, layout\)/);
+test("the shared switch's List choice turns every Library album grid into one row per album", () => {
+  assert.match(source, /classList\.toggle\("rlListView", layout === "list"\)/);
   assert.match(css, /#roonLibraryView\.rlListView \.rlCard \{[^}]*grid-template-areas: "art name actions" "art meta actions";/);
   assert.match(css, /#roonLibraryView\.rlListView \.rlGrid \{[^}]*grid-template-columns: minmax\(0, 1fr\);/);
 });

@@ -3028,7 +3028,20 @@ input {
   font-size: 0.8em;
 }
 
-.playlistBrowserSort {
+
+.viewSwitch {
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: 6px;
+}
+
+.viewSwitch button[aria-pressed="true"] {
+  border-color: var(--accent) !important;
+  color: var(--text) !important;
+  background: color-mix(in srgb, var(--accent) 30%, transparent) !important;
+}
+
+.viewSort {
   display: inline-flex;
   align-items: center;
   gap: 8px;
@@ -3036,21 +3049,81 @@ input {
   font-size: 12px;
 }
 
-.playlistBrowserSort select {
+.viewSort select {
   width: auto;
   max-width: 200px;
   min-height: 32px;
 }
 
-.playlistBrowserView {
-  display: inline-flex;
-  gap: 6px;
+#queueView .queueViewHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
 }
 
-#playlistView .playlistBrowserView button[aria-pressed="true"] {
-  border-color: var(--accent) !important;
-  color: var(--text) !important;
-  background: color-mix(in srgb, var(--accent) 30%, transparent) !important;
+.queueCardsView .liveQueue ol {
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 12px;
+}
+
+.queueCardsView .liveQueue :is(.queueItemButton, .queueItemStatic) {
+  position: relative;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-areas: "art" "text";
+  grid-template-rows: auto 1fr;
+  align-items: start;
+  align-content: start;
+  gap: 8px;
+  min-height: 0;
+  height: 100%;
+  padding: 8px;
+}
+
+.queueCardsView .liveQueue .queueArt {
+  grid-area: art;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1;
+  overflow: hidden;
+}
+
+.queueCardsView .liveQueue .queueArt img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.queueCardsView .liveQueue .queueText {
+  grid-area: text;
+}
+
+.queueCardsView .liveQueue .queueItemTitle {
+  display: -webkit-box !important;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  overflow: hidden;
+}
+
+.queueCardsView .liveQueue .queueItemPosition {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  z-index: 1;
+  padding: 2px 6px;
+  border-radius: 6px;
+  background: rgba(0, 0, 0, 0.62);
+  color: #fff;
+}
+
+.queueCardsView .liveQueue .queueItemActionHint {
+  position: absolute;
+  top: 12px;
+  right: 14px;
+  z-index: 1;
+  color: #fff;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8);
 }
 
 .playlistBrowserCards.isList {

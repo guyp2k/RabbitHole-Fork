@@ -592,7 +592,6 @@
           <button type="button" data-rl-view="recent" aria-pressed="false">Recently Played</button>
           <button type="button" data-rl-view="top" aria-pressed="false">Most Played</button>
           <button type="button" data-rl-view="picks" aria-pressed="false">Daily Picks</button>
-          <div class="rlLayoutSwitch" role="group" aria-label="Album View"><button type="button" data-rl-layout="cards" aria-pressed="true">Thumbnails</button><button type="button" data-rl-layout="list" aria-pressed="false">List</button></div>
         </div>
         <form id="rlFilters" class="rlFilters">
           <label class="dbSearch">Search Your Library<input name="text" type="search" placeholder="Album or artist" autocomplete="off"></label>
@@ -783,7 +782,6 @@
             <p id="playlistBrowserStatus" class="tasteNarrative">Playlists have not been loaded yet.</p>
           </div>
           <div class="resultActions">
-            <div class="playlistBrowserView" role="group" aria-label="Playlist View"><button type="button" data-playlist-view="cards" aria-pressed="true">Thumbnails</button><button type="button" data-playlist-view="list" aria-pressed="false">List</button></div>
             <a class="buttonLink" id="playlistAuthorizeTidal" href="/api/tidal/oauth/start">Connect TIDAL</a>
             <button type="button" id="refreshPlaylistBrowser">Refresh playlists</button>
           </div>
@@ -842,6 +840,7 @@
       </section>
     </main>
     <button type="button" id="jumpTop" class="jumpTop" hidden>Now Playing</button>
+    <script src="/viewControls.js?v=1"></script>
     <script src="/themePicker.js?v=1"></script>
     <script src="/statusLive.js?v=1"></script>
     <script src="/volumeControl.js?v=1"></script>
