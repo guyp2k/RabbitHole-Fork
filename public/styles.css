@@ -643,154 +643,9 @@
   }
 }
 
-/* TIDAL Library: one collection surface for playlists, mixes, and export. */
-#tidalLibraryView.isActive {
-  display: grid;
-  gap: 16px;
-}
-
-.tidalLibraryHero {
-  align-items: center;
-}
-
-.tidalLibraryToolbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 14px;
-  padding: 12px 16px;
-}
-
-.tidalLibraryFilters {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-}
-
-.tidalLibraryFilters button {
-  min-height: 44px;
-  padding: 0 16px;
-  border: 1px solid rgba(217, 179, 255, 0.16);
-  border-radius: 10px;
-  background: rgba(7, 3, 14, 0.36);
-  color: rgba(238, 228, 252, 0.72);
-  box-shadow: none;
-}
-
-.tidalLibraryCards {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));
-  gap: 14px;
-}
-
-.tidalLibraryCard {
-  display: grid;
-  grid-template-columns: 92px minmax(0, 1fr);
-  gap: 14px;
-  min-width: 0;
-  padding: 14px;
-  border: 1px solid rgba(217, 179, 255, 0.15);
-  border-radius: 14px;
-  background: linear-gradient(145deg, rgba(18, 9, 31, 0.88), rgba(5, 3, 13, 0.72));
-  box-shadow: var(--inner-light), 0 14px 30px rgba(2, 0, 8, 0.22);
-}
-
-.tidalLibraryArt {
-  display: grid;
-  grid-row: span 2;
-  place-items: center;
-  aspect-ratio: 1;
-  overflow: hidden;
-  border: 1px solid rgba(217, 179, 255, 0.18);
-  border-radius: 12px;
-  background: rgba(13, 7, 24, 0.8);
-  color: rgba(217, 179, 255, 0.76);
-  font-size: 18px;
-  font-weight: 800;
-}
-
-.tidalLibraryArt img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.tidalLibraryBody {
-  min-width: 0;
-}
-
-.tidalLibraryType {
-  color: var(--accent);
-  font-size: 10px;
-  font-weight: 850;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-}
-
-.tidalLibraryBody h3 {
-  margin: 5px 0 4px;
-  color: #fff;
-  font-size: 17px;
-  line-height: 1.15;
-}
-
-.tidalLibraryBody p,
-.tidalLibraryBody small {
-  display: block;
-  color: rgba(238, 228, 252, 0.64);
-  line-height: 1.35;
-}
-
-.tidalLibraryBody p {
-  overflow: hidden;
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
-  font-size: 13px;
-}
-
-.tidalLibraryBody small {
-  margin-top: 6px;
-  font-size: 12px;
-}
-
-.tidalLibraryActions {
-  display: grid;
-  grid-column: 1 / -1;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 6px;
-  min-width: 0;
-}
-
-.tidalLibraryActions :is(button, .buttonLink) {
-  min-height: 44px;
-  min-width: 0;
-  padding-inline: 10px;
-  text-align: center;
-}
-
-.tidalLibraryActions .tidalLibraryExport {
-  border-color: rgba(255, 115, 216, 0.34);
-  color: #ffd4f4;
-}
-
-.tidalLibraryActions .tidalLibraryExport.isLoading {
-  cursor: wait;
-  opacity: 0.68;
-  pointer-events: none;
-}
-
-.tidalLibraryEmpty {
-  padding: 28px 20px;
-  border: 1px dashed rgba(217, 179, 255, 0.2);
-  border-radius: 14px;
-  color: rgba(238, 228, 252, 0.68);
-  text-align: center;
-}
-
 @media (min-width: 1100px) {
   .viewTabs.primaryNav {
-    grid-template-columns: repeat(5, minmax(0, 1fr));
+    grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 }
 
@@ -799,41 +654,6 @@
     padding-inline: 4px;
     font-size: 10px;
     white-space: nowrap;
-  }
-
-  .tidalLibraryToolbar {
-    align-items: stretch;
-    flex-direction: column;
-  }
-
-  .tidalLibraryFilters {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-
-  .tidalLibraryFilters button {
-    padding-inline: 6px;
-  }
-
-  .tidalLibraryCards {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
-  .tidalLibraryCard {
-    grid-template-columns: 76px minmax(0, 1fr);
-    gap: 10px;
-    padding: 12px;
-  }
-
-  .tidalLibraryActions {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .tidalLibraryCard,
-  .tidalLibraryActions :is(button, .buttonLink) {
-    transition: none;
   }
 }
 
@@ -12769,11 +12589,11 @@ body .nowVolume .volumeSlider,
 }
 
 @layer pills {
-  :is(.lyrionChoices, .lyrionTabs, .secondaryNavItems, .lyrionCenterViews, .dbViewSwitch, .tidalLibraryFilters) :is(button, a) {
+  :is(.lyrionChoices, .lyrionTabs, .secondaryNavItems, .lyrionCenterViews, .dbViewSwitch) :is(button, a) {
     border-radius: 999px !important;
   }
 
-  :is(.lyrionChoices, .lyrionTabs, .secondaryNavItems, .lyrionCenterViews, .dbViewSwitch, .tidalLibraryFilters) button:is(.active, [aria-pressed="true"], [aria-current="page"], [aria-selected="true"]) {
+  :is(.lyrionChoices, .lyrionTabs, .secondaryNavItems, .lyrionCenterViews, .dbViewSwitch) button:is(.active, [aria-pressed="true"], [aria-current="page"], [aria-selected="true"]) {
     border: 1px solid transparent !important;
     background:
       linear-gradient(112deg, rgba(143, 240, 255, 0.16), rgba(24, 25, 38, 0.7) 46%, rgba(255, 115, 216, 0.14)) padding-box,

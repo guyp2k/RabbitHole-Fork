@@ -12,7 +12,7 @@ test("regular navigation groups Playback, Discover, and Memory views and keeps s
   const topbar = html.match(/<section class="topbar">[\s\S]*?<\/section>/)?.[0] || "";
   const primaryGroups = [...primaryNav.matchAll(/data-nav-group="([^"]+)"/g)].map((match) => match[1]);
 
-  assert.deepEqual(primaryGroups, ["playback", "discover", "tidalLibrary", "memory", "system"]);
+  assert.deepEqual(primaryGroups, ["playback", "discover", "memory", "system"]);
   assert.doesNotMatch(topbar, /aiModeSelect|synapseModelInput|zoneSelect/);
   assert.doesNotMatch(html, /class="topChrome"/);
   assert.doesNotMatch(html, /class="brandBanner"/);
@@ -39,9 +39,7 @@ test("regular navigation groups Playback, Discover, and Memory views and keeps s
   assert.ok(queueViewStart >= 0 && queueElement > queueViewStart && queueElement < playerViewStart);
   assert.match(html, /data-nav-item="rabbit-hole" data-view="discover"/);
   assert.match(html, /data-nav-item="standby" data-view="standby"/);
-  assert.match(html, /data-nav-group="tidalLibrary" aria-controls="secondaryTidalLibrary"/);
-  assert.match(html, /data-nav-item="collections" data-view="tidalLibrary"/);
-  assert.match(html, /id="tidalLibraryView" class="view tidalLibraryView"/);
+  assert.doesNotMatch(html, /tidalLibrary|TidalLibrary/);
   assert.match(html, /data-nav-item="library" data-view="musicMemory"/);
   assert.match(html, /data-nav-item="taste" data-view="history"/);
   assert.match(html, /data-nav-item="synapse-memory" data-view="memory"/);
@@ -71,7 +69,6 @@ test("regular navigation groups Playback, Discover, and Memory views and keeps s
   assert.match(app, /setActiveView\(button\.dataset\.view, \{/);
   assert.match(app, /queue: \{ group: "playback", item: "queue" \}/);
   assert.match(app, /discover: \{ group: "discover", item: "rabbit-hole" \}/);
-  assert.match(app, /tidalLibrary: \{ group: "tidalLibrary", item: "collections" \}/);
   assert.match(app, /sonicReview: \{ group: "system", item: "sonic-review" \}/);
   assert.match(app, /standby: \{ group: "discover", item: "standby" \}/);
   assert.match(app, /connections: \{ group: "system", item: "connections" \}/);
@@ -80,7 +77,7 @@ test("regular navigation groups Playback, Discover, and Memory views and keeps s
   assert.match(app, /discover: "discover"/);
   assert.match(app, /system: "connections"/);
   const routedViews = JSON.parse(app.match(/\((\["history"[^\]]+\])\.includes\(view\)/)[1]);
-  for (const view of ["history", "musicMemory", "database", "beatportCharts", "radio", "playlists", "tidal", "tidalLibrary", "sonicReview", "settings", "connections", "ai", "diagnostics", "queue", "discover", "standby"]) {
+  for (const view of ["history", "musicMemory", "database", "beatportCharts", "radio", "playlists", "tidal", "sonicReview", "settings", "connections", "ai", "diagnostics", "queue", "discover", "standby"]) {
     assert.ok(routedViews.includes(view), `${view} must be reachable`);
   }
   assert.match(app, /#queueView/);

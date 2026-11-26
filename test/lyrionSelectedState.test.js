@@ -5,7 +5,7 @@ const fs = require("node:fs");
 
 const read = file => fs.readFileSync(require.resolve(`../public/${file}`), "utf8");
 const styles = read("styles.css"), lyrion = read("lyrion.css"), database = read("database.css");
-const GROUPS = ":is(.lyrionChoices, .lyrionTabs, .secondaryNavItems, .lyrionCenterViews, .dbViewSwitch, .tidalLibraryFilters)";
+const GROUPS = ":is(.lyrionChoices, .lyrionTabs, .secondaryNavItems, .lyrionCenterViews, .dbViewSwitch)";
 const SELECTED = ':is(.active, [aria-pressed="true"], [aria-current="page"], [aria-selected="true"])';
 const pillLayer = () => styles.slice(styles.lastIndexOf("@layer pills {"));
 const block = (css, selector) => css.match(new RegExp(selector.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + " \\{([^}]*)\\}"))?.[1];
@@ -36,7 +36,7 @@ test("Lyrion's section tabs are the Roon secondary nav: a LYRION caption beside 
 test("no group keeps its own selected colours to fight the shared pill", () => {
   assert.doesNotMatch(lyrion, /\.lyrionChoices button\[aria-pressed="true"\]|\.lyrionTabs button\[aria-selected="true"\]/);
   assert.doesNotMatch(database, /\.dbViewSwitch button\[aria-pressed="true"\]/);
-  assert.doesNotMatch(styles, /^\s*(body:not\(\.playerFullWindow\):not\(\.playerMaximized\) )?(\.tidalLibraryFilters|\.secondaryNavItems) button\.active \{/m);
+  assert.doesNotMatch(styles, /^\s*(body:not\(\.playerFullWindow\):not\(\.playerMaximized\) )?(\.secondaryNavItems) button\.active \{/m);
 });
 
 test("on a phone each choice group takes its own row under its label, and its pills keep their names on one line", () => {

@@ -28,7 +28,7 @@ test('regular, maximized, and fullscreen geometry have explicit scoped owners', 
 });
 
 test('desktop polish uses shared page headers and stays scoped to regular mode', () => {
-  assert.equal((html.match(/class="panel [^"]*pageHero/g) || []).length, 7);
+  assert.equal((html.match(/class="panel [^"]*pageHero/g) || []).length, 6);
   assert.match(css, /Pass 6: regular desktop readability and proportion polish/);
   assert.match(css, /\.player\.player--regular:not\(\.isMaximized\):not\(\.isFullWindow\) \{/);
   assert.match(css, /grid-template-rows: 42px clamp\(470px, 58vh, 540px\) 58px 44px;/);

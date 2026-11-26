@@ -15,7 +15,7 @@
 }
 
 @layer pills {
-  :is(.lyrionChoices, .lyrionTabs, .viewTabs, .secondaryNavItems, .lyrionCenterViews, .dbViewSwitch, .tidalLibraryFilters) button:is(.active, [aria-pressed="true"], [aria-current="page"], [aria-selected="true"]) {
+  :is(.lyrionChoices, .lyrionTabs, .viewTabs, .secondaryNavItems, .lyrionCenterViews, .dbViewSwitch) button:is(.active, [aria-pressed="true"], [aria-current="page"], [aria-selected="true"]) {
     background: #3d75c4 !important;
     border-color: #3d75c4 !important;
     box-shadow: none !important;
@@ -23,7 +23,7 @@
     font-weight: 700 !important;
   }
 
-  :is(.lyrionChoices, .lyrionTabs, .viewTabs, .secondaryNavItems, .lyrionCenterViews, .dbViewSwitch, .tidalLibraryFilters) button:is(.active, [aria-pressed="true"], [aria-current="page"], [aria-selected="true"]):hover {
+  :is(.lyrionChoices, .lyrionTabs, .viewTabs, .secondaryNavItems, .lyrionCenterViews, .dbViewSwitch) button:is(.active, [aria-pressed="true"], [aria-current="page"], [aria-selected="true"]):hover {
     background: #2f63ad !important;
     border-color: #2f63ad !important;
   }

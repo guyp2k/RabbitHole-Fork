@@ -17,7 +17,7 @@ h1, h2, .appIdentityName, #nowTitle, #lyrionTitle {
 }
 
 @layer pills {
-  :is(.lyrionChoices, .lyrionTabs, .viewTabs, .secondaryNavItems, .lyrionCenterViews, .dbViewSwitch, .tidalLibraryFilters) button:is(.active, [aria-pressed="true"], [aria-current="page"], [aria-selected="true"]) {
+  :is(.lyrionChoices, .lyrionTabs, .viewTabs, .secondaryNavItems, .lyrionCenterViews, .dbViewSwitch) button:is(.active, [aria-pressed="true"], [aria-current="page"], [aria-selected="true"]) {
     background: #c9a45c !important;
     border-color: #c9a45c !important;
     box-shadow: none !important;
@@ -25,7 +25,7 @@ h1, h2, .appIdentityName, #nowTitle, #lyrionTitle {
     font-weight: 700 !important;
   }
 
-  :is(.lyrionChoices, .lyrionTabs, .viewTabs, .secondaryNavItems, .lyrionCenterViews, .dbViewSwitch, .tidalLibraryFilters) button:is(.active, [aria-pressed="true"], [aria-current="page"], [aria-selected="true"]):hover {
+  :is(.lyrionChoices, .lyrionTabs, .viewTabs, .secondaryNavItems, .lyrionCenterViews, .dbViewSwitch) button:is(.active, [aria-pressed="true"], [aria-current="page"], [aria-selected="true"]):hover {
     background: #d6b46e !important;
     border-color: #d6b46e !important;
   }
