@@ -26,8 +26,6 @@
   .rlFilters label { flex: 1 1 45%; }
   .rlGrid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
-.rlLayoutSwitch { display: inline-flex; gap: var(--db-space-2); margin-left: auto; }
-#roonLibraryView .rlLayoutSwitch button[aria-pressed="true"] { border-color: var(--accent) !important; color: var(--text) !important; background: color-mix(in srgb, var(--accent) 30%, transparent) !important; }
 #roonLibraryView.rlListView .rlGrid { grid-template-columns: minmax(0, 1fr); gap: 6px; }
 #roonLibraryView.rlListView .rlCard { display: grid; grid-template-columns: 48px minmax(0, 1fr) auto; grid-template-areas: "art name actions" "art meta actions"; align-items: center; column-gap: 12px; row-gap: 2px; padding: 6px 10px; }
 #roonLibraryView.rlListView .rlCard .dbMosaic { grid-area: art; width: 48px; height: 48px; }

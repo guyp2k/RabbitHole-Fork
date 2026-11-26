@@ -998,7 +998,7 @@ function liveQueueHtml(zone = {}) {
   const queueRows = items.slice(0, 50).map((item, index) => {
     const queueItemId = String(item.id ?? "").trim();
     const artwork = item.imageKey
-      ? `<span class="queueArt" style="background-image:url('/api/roon/image/${encodeURIComponent(item.imageKey)}?width=80&height=80')" aria-hidden="true"></span>`
+      ? `<span class="queueArt" style="background-image:url('/api/roon/image/${encodeURIComponent(item.imageKey)}?width=240&height=240')" aria-hidden="true"></span>`
       : "<span class=\"queueArt queueArtEmpty\" aria-hidden=\"true\"></span>";
     const details = `
       ${artwork}
@@ -5265,7 +5265,6 @@ function readPlaylistBrowserPrefs(saved) {
   const sorts = ["original", "name", "name-desc", "most", "fewest"];
   const sortFor = (source) => sorts.includes(value.sort?.[source]) ? value.sort[source] : "original";
   return {
-    view: value.view === "list" ? "list" : "cards",
     folded: { tidal: value.folded?.tidal === true, roon: value.folded?.roon === true },
     sort: { tidal: sortFor("tidal"), roon: sortFor("roon") }
   };
@@ -5283,6 +5282,7 @@ function sortedPlaylistEntries(playlists = [], sort = "original") {
   return entries;
 }
 
+let playlistLayout = "cards";
 let playlistBrowserPrefs = readPlaylistBrowserPrefs((() => { try { return localStorage.getItem(PLAYLIST_BROWSER_KEY); } catch { return null; } })());
 
 function savePlaylistBrowserPrefs() {
@@ -5337,7 +5337,7 @@ function playlistBrowserSectionHtml({ title = "", subtitle = "", source = "roon"
   else if (error) body = playlistBrowserEmptyHtml(error);
   else if (!loaded) body = playlistBrowserEmptyHtml(`Open this tab or refresh to load ${title}.`);
   else if (!playlists.length) body = playlistBrowserEmptyHtml(`No ${title} found.`);
-  else body = `<div class="playlistBrowserCards${playlistBrowserPrefs.view === "list" ? " isList" : ""}">${sortedPlaylistEntries(playlists, playlistBrowserPrefs.sort[source]).map((entry, position) => playlistBrowserCardHtml(entry.playlist, source, entry.index, position)).join("")}</div>`;
+  else body = `<div class="playlistBrowserCards${playlistLayout === "list" ? " isList" : ""}">${sortedPlaylistEntries(playlists, playlistBrowserPrefs.sort[source]).map((entry, position) => playlistBrowserCardHtml(entry.playlist, source, entry.index, position)).join("")}</div>`;
 
   const folded = playlistBrowserPrefs.folded[source] === true;
   const sortOptions = PLAYLIST_SORTS.map(([value, label]) => `<option value="${value}"${playlistBrowserPrefs.sort[source] === value ? " selected" : ""}>${label}</option>`).join("");
@@ -5346,7 +5346,7 @@ function playlistBrowserSectionHtml({ title = "", subtitle = "", source = "roon"
       <div class="playlistBrowserHeader">
         <h3><button type="button" class="playlistBrowserFold" data-playlist-fold="${escapeHtml(source)}" aria-expanded="${String(!folded)}" aria-controls="playlistBrowserItems-${escapeHtml(source)}"><span class="playlistBrowserCaret" aria-hidden="true">${folded ? "▸" : "▾"}</span>${escapeHtml(title)}</button></h3>
         ${subtitle ? `<span>${escapeHtml(subtitle)}</span>` : ""}
-        <label class="playlistBrowserSort">Sort<select data-playlist-sort="${escapeHtml(source)}" aria-label="Sort ${escapeHtml(title)}">${sortOptions}</select></label>
+        <label class="viewSort">Sort<select data-playlist-sort="${escapeHtml(source)}" aria-label="Sort ${escapeHtml(title)}">${sortOptions}</select></label>
       </div>
       <div class="playlistBrowserItems" id="playlistBrowserItems-${escapeHtml(source)}"${folded ? " hidden" : ""}>${body}</div>
     </section>
@@ -8360,15 +8360,8 @@ $("#refreshPlaylistBrowser")?.addEventListener("click", () => {
   });
 });
 
-for (const button of document.querySelectorAll("[data-playlist-view]")) {
-  button.setAttribute("aria-pressed", String(button.dataset.playlistView === playlistBrowserPrefs.view));
-  button.addEventListener("click", () => {
-    playlistBrowserPrefs = { ...playlistBrowserPrefs, view: button.dataset.playlistView === "list" ? "list" : "cards" };
-    for (const other of document.querySelectorAll("[data-playlist-view]")) other.setAttribute("aria-pressed", String(other.dataset.playlistView === playlistBrowserPrefs.view));
-    savePlaylistBrowserPrefs();
-    renderPlaylistBrowser();
-  });
-}
+$("#playlistView .playlistHero .resultActions")?.append(window.RabbitHoleViewControls.layoutSwitch({ key: "rabbitHole.layout.playlists", name: "Playlist", onChange: (layout) => { playlistLayout = layout; renderPlaylistBrowser(); } }));
+$("#queueView .queueViewHeader")?.append(window.RabbitHoleViewControls.layoutSwitch({ key: "rabbitHole.layout.queue", name: "Queue", onChange: (layout) => $("#queueView")?.classList.toggle("queueCardsView", layout === "cards") }));
 
 $("#playlistBrowserGrid")?.addEventListener("change", (event) => {
   const select = event.target.closest("[data-playlist-sort]");

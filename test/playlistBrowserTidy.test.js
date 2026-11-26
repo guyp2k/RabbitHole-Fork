@@ -33,11 +33,11 @@ test("sorting keeps each playlist's original position, so Play, Queue and Delete
   assert.deepEqual(order("fewest"), [["10 Years Gone - Zepp", 1], ["Afrika Shox", 3], ["70s Road Trip", 0], ["ambient Relaxation", 2]]);
 });
 
-test("saved playlist page choices are read back, and anything unknown falls back to thumbnails, open and original order", () => {
-  assert.deepEqual(plain(context.read(null)), { view: "cards", folded: { tidal: false, roon: false }, sort: { tidal: "original", roon: "original" } });
-  assert.deepEqual(plain(context.read(JSON.stringify({ view: "list", folded: { tidal: true }, sort: { roon: "most", tidal: "bogus" } }))),
-    { view: "list", folded: { tidal: true, roon: false }, sort: { tidal: "original", roon: "most" } });
-  assert.deepEqual(plain(context.read("{not json")), { view: "cards", folded: { tidal: false, roon: false }, sort: { tidal: "original", roon: "original" } });
+test("saved playlist folds and sorts are read back, and anything unknown falls back to open and original order", () => {
+  assert.deepEqual(plain(context.read(null)), { folded: { tidal: false, roon: false }, sort: { tidal: "original", roon: "original" } });
+  assert.deepEqual(plain(context.read(JSON.stringify({ folded: { tidal: true }, sort: { roon: "most", tidal: "bogus" } }))),
+    { folded: { tidal: true, roon: false }, sort: { tidal: "original", roon: "most" } });
+  assert.deepEqual(plain(context.read("{not json")), { folded: { tidal: false, roon: false }, sort: { tidal: "original", roon: "original" } });
 });
 
 test("the playlist sections are titled TIDAL Playlists and Roon Local Playlists, and each folds and sorts from its heading", () => {
@@ -50,11 +50,9 @@ test("the playlist sections are titled TIDAL Playlists and Roon Local Playlists,
   assert.match(app, /localStorage\.setItem\(PLAYLIST_BROWSER_KEY, JSON\.stringify\(playlistBrowserPrefs\)\)/);
 });
 
-test("the page switches between thumbnails and a one-row-per-playlist list", () => {
-  assert.match(html, /<div class="playlistBrowserView" role="group" aria-label="Playlist View"><button type="button" data-playlist-view="cards" aria-pressed="true">Thumbnails<\/button><button type="button" data-playlist-view="list" aria-pressed="false">List<\/button><\/div>/);
-  assert.match(app, /class="playlistBrowserCards\$\{playlistBrowserPrefs\.view === "list" \? " isList" : ""\}"/);
+test("the shared switch's List choice turns the playlists into one row per playlist", () => {
+  assert.match(app, /class="playlistBrowserCards\$\{playlistLayout === "list" \? " isList" : ""\}"/);
   assert.match(css, /\.playlistBrowserCards\.isList \.playlistBrowserCard \{[^}]*grid-template-areas: "art body actions";/);
   assert.match(css, /\.playlistBrowserItems\[hidden\] \{\s*display: none;/);
   assert.match(css, /#playlistView \.playlistBrowserFold \{[^}]*border: 0 !important;[^}]*background: none !important;/);
-  assert.match(css, /#playlistView \.playlistBrowserView button\[aria-pressed="true"\] \{[^}]*border-color: var\(--accent\) !important;/);
 });
