@@ -37,7 +37,6 @@
         <nav class="viewTabs primaryNav" aria-label="Primary navigation">
           <button type="button" class="active" data-nav-group="playback" aria-controls="secondaryPlayback" aria-pressed="true">Playback</button>
           <button type="button" data-nav-group="discover" aria-controls="secondaryDiscover" aria-pressed="false">Discover</button>
-          <button type="button" data-nav-group="tidalLibrary" aria-controls="secondaryTidalLibrary" aria-pressed="false">TIDAL Library</button>
           <button type="button" data-nav-group="memory" aria-controls="secondaryMemory" aria-pressed="false">Memory</button>
           <button type="button" data-nav-group="system" aria-controls="secondarySystem" aria-pressed="false">System</button>
         </nav>
@@ -62,13 +61,6 @@
             <button type="button" data-nav-group="discover" data-nav-item="standby" data-view="standby">Standby</button>
             <button type="button" data-nav-group="discover" data-nav-item="beatport" data-view="beatportCharts">Beatport</button>
             <button type="button" data-nav-group="discover" data-nav-item="tidal" data-view="tidal">TIDAL</button>
-          </div>
-        </div>
-
-        <div id="secondaryTidalLibrary" class="secondaryNavShell" data-nav-group="tidalLibrary" hidden>
-          <span class="secondaryNavLabel">TIDAL</span>
-          <div class="secondaryNavItems">
-            <button type="button" class="active" data-nav-group="tidalLibrary" data-nav-item="collections" data-view="tidalLibrary" aria-current="page">Playlists &amp; mixes</button>
           </div>
         </div>
 
@@ -816,30 +808,6 @@
         <section id="tidalMixesGrid" class="tidalMixGrid"></section>
       </section>
 
-      <section id="tidalLibraryView" class="view tidalLibraryView" aria-labelledby="tidalLibraryHeading">
-        <section class="panel tidalLibraryHero pageHero">
-          <div>
-            <p class="eyebrow">TIDAL Library</p>
-            <h2 id="tidalLibraryHeading">Playlists &amp; mixes</h2>
-            <p id="tidalLibraryStatus" class="tasteNarrative">Open this view to load your TIDAL collections.</p>
-          </div>
-          <div class="resultActions">
-            <a class="buttonLink" id="tidalLibraryAuthorize" href="/api/tidal/oauth/start">Connect TIDAL</a>
-            <button type="button" id="refreshTidalLibrary">Refresh library</button>
-          </div>
-        </section>
-
-        <section class="panel tidalLibraryToolbar" aria-label="TIDAL library filters">
-          <div class="tidalLibraryFilters" role="group" aria-label="Show TIDAL collections">
-            <button type="button" class="active" data-tidal-library-filter="all" aria-pressed="true">All</button>
-            <button type="button" data-tidal-library-filter="playlists" aria-pressed="false">Playlists</button>
-            <button type="button" data-tidal-library-filter="mixes" aria-pressed="false">Mixes &amp; radio</button>
-          </div>
-          <p id="tidalLibraryExportHint" class="muted">Create .m3u files for players or .csv files for ChatGPT recommendations.</p>
-        </section>
-
-        <section id="tidalLibraryGrid" class="tidalLibraryGrid" aria-live="polite"></section>
-      </section>
     </main>
     <button type="button" id="jumpTop" class="jumpTop" hidden>Now Playing</button>
     <script src="/viewControls.js?v=1"></script>

@@ -88,9 +88,6 @@ const state = {
   tidalMixes: null,
   tidalVisibleMixes: [],
   tidalMixesNeedsRefresh: true,
-  tidalLibraryNeedsRefresh: true,
-  tidalLibraryLoading: false,
-  tidalLibraryFilter: "all",
   radioStations: [],
   radioStationsLoaded: false,
   radioStationsLoading: false,
@@ -2815,7 +2812,6 @@ async function loadTidalPlaylists({ force = false } = {}) {
     renderNowTidalPlaylistControl();
     renderTidalPlaylistSeedControl();
     renderPlaylistBrowser();
-    renderTidalLibrary();
     return;
   }
   state.tidalPlaylistsLoading = true;
@@ -2860,7 +2856,6 @@ async function loadTidalPlaylists({ force = false } = {}) {
     renderNowTidalPlaylistControl();
     renderTidalPlaylistSeedControl();
     renderPlaylistBrowser();
-    renderTidalLibrary();
   }
 }
 
@@ -5321,6 +5316,7 @@ function playlistBrowserCardHtml(playlist = {}, source = "roon", index = 0, posi
         <button type="button" ${data} data-playlist-mode="next">Add Next</button>
         <button type="button" ${data} data-playlist-mode="append">Queue</button>
         ${externalUrl ? `<a class="buttonLink" href="${escapeHtml(externalUrl)}" target="_blank" rel="noreferrer">Open TIDAL</a>` : ""}
+        ${isTidal ? `<a class="buttonLink" href="${escapeHtml(tidalExportHref(playlist, "m3u"))}" download>Download .m3u</a><a class="buttonLink" href="${escapeHtml(tidalExportHref(playlist, "csv"))}" download title="Track list for ChatGPT recommendations">Download .csv</a>` : ""}
         <button class="playlistBrowserDelete" type="button" ${data} data-playlist-delete="1">Delete</button>
       </div>
     </article>
@@ -6379,6 +6375,8 @@ function tidalMixCardHtml(mix = {}, index = 0) {
         <button type="button" data-tidal-mix-next="${index}">Add Next</button>
         <button type="button" data-tidal-mix-queue="${index}">Queue</button>
         <button type="button" data-tidal-mix-prompt="${escapeHtml(prompt)}">Use as prompt</button>
+        <a class="buttonLink" href="${escapeHtml(tidalExportHref(mix, "m3u"))}" download>Download .m3u</a>
+        <a class="buttonLink" href="${escapeHtml(tidalExportHref(mix, "csv"))}" download title="Track list for ChatGPT recommendations">Download .csv</a>
         ${externalUrl ? `<a class="buttonLink" href="${escapeHtml(externalUrl)}" target="_blank" rel="noreferrer">Open TIDAL</a>` : ""}
         ${mix.pinned && pinnedKey ? `<button type="button" data-tidal-pinned-remove="${escapeHtml(pinnedKey)}">Remove pin</button>` : ""}
       </div>
@@ -6396,7 +6394,6 @@ function renderTidalMixes(result = state.tidalMixes) {
   const pinnedErrors = Array.isArray(result?.pinnedErrors) ? result.pinnedErrors : [];
   const pinnedItems = Array.isArray(result?.pinnedItems) ? result.pinnedItems : [];
   state.tidalVisibleMixes = [...pinnedMixes, ...mixes];
-  renderTidalLibrary();
 
   if (!result) {
     status.textContent = "TIDAL profile mixes have not been loaded yet.";
@@ -6470,174 +6467,13 @@ function renderTidalMixes(result = state.tidalMixes) {
     `;
 }
 
-function tidalLibraryM3uHref(item = {}, format = "m3u") {
+function tidalExportHref(item = {}, format = "m3u") {
   const id = String(item.id || "").trim();
   const title = String(item.title || "TIDAL collection").trim() || "TIDAL collection";
   const safeFormat = format === "csv" ? "csv" : "m3u";
   return `/api/tidal/export?id=${encodeURIComponent(id)}&title=${encodeURIComponent(title)}&format=${safeFormat}`;
 }
 
-function tidalLibraryCardHtml(item = {}, kind = "playlist", index = 0) {
-  const isMix = kind === "mix";
-  const title = item.title || (isMix ? "Untitled mix" : "Untitled playlist");
-  const imageUrl = safeHttpUrl(item.imageUrl);
-  const type = isMix ? (item.category || "TIDAL mix") : "TIDAL playlist";
-  const meta = isMix
-    ? [item.rawType || "", Number(item.itemCount || 0) ? `${Number(item.itemCount)} tracks` : ""].filter(Boolean).join(" - ")
-    : [item.rawType || "playlist", Number(item.itemCount || 0) ? `${Number(item.itemCount)} tracks` : ""].filter(Boolean).join(" - ");
-  const description = item.subtitle || item.description || "";
-  const identity = `data-tidal-library-kind="${escapeHtml(kind)}" data-tidal-library-id="${escapeHtml(item.id || "")}" data-tidal-library-index="${escapeHtml(index)}"`;
-  const prompt = `find discoveries inspired by my TIDAL ${item.category || "playlist"} ${title}`.trim();
-  const externalUrl = safeHttpUrl(item.url);
-  const art = imageUrl
-    ? `<img src="${escapeHtml(imageUrl)}" alt="">`
-    : `<span>${escapeHtml(String(index + 1).padStart(2, "0"))}</span>`;
-  return `
-    <article class="tidalLibraryCard">
-      <div class="tidalLibraryArt">${art}</div>
-      <div class="tidalLibraryBody">
-        <span class="tidalLibraryType">${escapeHtml(type)}</span>
-        <h3>${escapeHtml(title)}</h3>
-        ${description ? `<p>${escapeHtml(description)}</p>` : ""}
-        ${meta ? `<small>${escapeHtml(meta)}</small>` : ""}
-      </div>
-      <div class="tidalLibraryActions">
-        <button type="button" ${identity} data-tidal-library-action="play">Play Roon</button>
-        <button type="button" ${identity} data-tidal-library-action="next">Add Next</button>
-        <button type="button" ${identity} data-tidal-library-action="queue">Queue</button>
-        ${isMix ? `<button type="button" ${identity} data-tidal-library-action="prompt">Use as prompt</button>` : `<button type="button" ${identity} data-tidal-library-action="shuffle">Shuffle</button>`}
-        <a class="buttonLink tidalLibraryExport" href="${escapeHtml(tidalLibraryM3uHref(item, "m3u"))}" download>${isMix ? "Create &amp; download mix .m3u" : "Create &amp; download .m3u"}</a>
-        <a class="buttonLink tidalLibraryChatgptExport" href="${escapeHtml(tidalLibraryM3uHref(item, "csv"))}" download>Create &amp; download for ChatGPT (.csv)</a>
-        ${externalUrl ? `<a class="buttonLink" href="${escapeHtml(externalUrl)}" target="_blank" rel="noreferrer">Open TIDAL</a>` : ""}
-      </div>
-    </article>
-  `;
-}
-
-function tidalLibraryItems() {
-  const items = [];
-  if (state.tidalLibraryFilter !== "mixes") {
-    state.tidalPlaylists.forEach((playlist, index) => items.push({ item: playlist, kind: "playlist", index }));
-  }
-  if (state.tidalLibraryFilter !== "playlists") {
-    state.tidalVisibleMixes.forEach((mix, index) => items.push({ item: mix, kind: "mix", index }));
-  }
-  return items;
-}
-
-function renderTidalLibrary() {
-  const status = $("#tidalLibraryStatus");
-  const grid = $("#tidalLibraryGrid");
-  const hint = $("#tidalLibraryExportHint");
-  if (!status || !grid) return;
-
-  const playlistCount = state.tidalPlaylistsLoaded ? state.tidalPlaylists.length : 0;
-  const mixCount = state.tidalMixes ? state.tidalVisibleMixes.length : 0;
-  const loaded = state.tidalPlaylistsLoaded || Boolean(state.tidalMixes);
-  const errors = [state.tidalPlaylistsError, state.tidalMixes?.error].filter(Boolean);
-  if (state.tidalLibraryLoading) {
-    status.textContent = "Loading your TIDAL playlists and mixes...";
-    grid.innerHTML = `<div class="tidalLibraryEmpty">Loading TIDAL collections...</div>`;
-    return;
-  }
-  if (!loaded) {
-    status.textContent = "Open this view or refresh to load your TIDAL collections.";
-    grid.innerHTML = `<div class="tidalLibraryEmpty">Connect TIDAL, then refresh to load playlists and mixes.</div>`;
-    return;
-  }
-
-  status.textContent = `${playlistCount} playlist${playlistCount === 1 ? "" : "s"} · ${mixCount} mix/radio item${mixCount === 1 ? "" : "s"}${errors.length ? ` · ${errors.join(" ")}` : ""}`;
-  if (hint) hint.textContent = "Download .m3u for players or .csv for ChatGPT recommendations.";
-  const items = tidalLibraryItems();
-  grid.innerHTML = items.length
-    ? `<div class="tidalLibraryCards">${items.map(({ item, kind, index }) => tidalLibraryCardHtml(item, kind, index)).join("")}</div>`
-    : `<div class="tidalLibraryEmpty">No collections match this filter.</div>`;
-}
-
-async function refreshTidalLibrary({ force = true } = {}) {
-  const button = $("#refreshTidalLibrary");
-  const originalText = button?.textContent || "Refresh library";
-  state.tidalLibraryLoading = true;
-  if (button) {
-    button.disabled = true;
-    button.textContent = "Refreshing...";
-  }
-  renderTidalLibrary();
-  try {
-    await Promise.all([
-      loadTidalPlaylists({ force }),
-      refreshTidalMixes({ force })
-    ]);
-    state.tidalLibraryNeedsRefresh = false;
-  } finally {
-    state.tidalLibraryLoading = false;
-    if (button) {
-      button.disabled = false;
-      button.textContent = originalText;
-    }
-    renderTidalLibrary();
-  }
-}
-
-function setTidalLibraryFilter(filter = "all") {
-  state.tidalLibraryFilter = ["all", "playlists", "mixes"].includes(filter) ? filter : "all";
-  document.querySelectorAll("[data-tidal-library-filter]").forEach((button) => {
-    const active = button.dataset.tidalLibraryFilter === state.tidalLibraryFilter;
-    button.classList.toggle("active", active);
-    button.setAttribute("aria-pressed", String(active));
-  });
-  renderTidalLibrary();
-}
-
-function tidalLibraryItem(kind = "", id = "", index = 0) {
-  if (kind === "mix") return state.tidalVisibleMixes[Number(index)] || null;
-  return state.tidalPlaylists.find(playlist => String(playlist.id) === String(id)) || null;
-}
-
-function setTidalLibraryStatus(message = "") {
-  const status = $("#tidalLibraryStatus");
-  if (status && message) status.textContent = message;
-}
-
-async function runTidalLibraryAction(button) {
-  const kind = button?.dataset.tidalLibraryKind || "";
-  const id = button?.dataset.tidalLibraryId || "";
-  const index = Number(button?.dataset.tidalLibraryIndex || 0);
-  const action = button?.dataset.tidalLibraryAction || "";
-  const item = tidalLibraryItem(kind, id, index);
-  if (!item) return;
-
-  if (action === "prompt") {
-    const request = $("#request");
-    if (request) request.value = `find discoveries inspired by my TIDAL ${item.category || "mix"} ${item.title || ""}`.trim();
-    setScoringMode("");
-    setActiveView("discover", { group: "discover", item: "rabbit-hole" });
-    request?.focus();
-    return;
-  }
-
-  const mode = action === "play" ? "replace" : action === "next" ? "next" : action === "shuffle" ? "shuffle" : "append";
-  const originalText = button.textContent;
-  button.disabled = true;
-  button.textContent = action === "play" ? "Loading..." : "Working...";
-  setTidalLibraryStatus(`${action === "play" ? "Loading" : "Sending"} ${item.title || "TIDAL collection"}...`);
-  try {
-    if (kind === "mix") {
-      await queueTidalMix(item, button, { mode });
-    } else {
-      const playlistIndex = state.tidalPlaylists.findIndex(playlist => String(playlist.id) === String(item.id));
-      if (playlistIndex < 0) throw new Error("That TIDAL playlist is no longer loaded. Refresh the library and try again.");
-      await playBrowserPlaylist("tidal", playlistIndex, mode, button);
-    }
-    setTidalLibraryStatus(`${item.title || "TIDAL collection"}: request sent to Roon.`);
-  } catch (error) {
-    setTidalLibraryStatus(error.message);
-    alert(error.message);
-  } finally {
-    button.disabled = false;
-    button.textContent = originalText;
-  }
-}
 
 async function importPinnedTidalMix(input, button) {
   const status = $("#tidalPinnedStatus");
@@ -7758,7 +7594,6 @@ const LEGACY_NAV_TARGETS = {
   database: { group: "system", item: "database" },
   roonLibrary: { group: "playback", item: "roon-library" },
   tidal: { group: "discover", item: "tidal" },
-  tidalLibrary: { group: "tidalLibrary", item: "collections" },
   connections: { group: "system", item: "connections" },
   ai: { group: "system", item: "ai" },
   diagnostics: { group: "system", item: "diagnostics" },
@@ -7769,7 +7604,6 @@ const LEGACY_NAV_TARGETS = {
 const DEFAULT_NAV_ITEMS = {
   playback: "now-playing",
   discover: "rabbit-hole",
-  tidalLibrary: "collections",
   memory: "library",
   system: "connections"
 };
@@ -7777,7 +7611,6 @@ const DEFAULT_NAV_ITEMS = {
 const DEFAULT_NAV_VIEWS = {
   playback: "player",
   discover: "discover",
-  tidalLibrary: "tidalLibrary",
   memory: "musicMemory",
   system: "connections"
 };
@@ -7815,7 +7648,7 @@ function setNavigationState(group = activeNavGroup, item = null) {
 function setActiveView(view, navigation = null) {
   const target = view === "memory"
     ? "memory"
-    : (["history", "musicMemory", "database", "roonLibrary", "sonicReview", "beatportCharts", "radio", "playlists", "tidal", "tidalLibrary", "settings", "connections", "ai", "diagnostics", "queue", "discover", "standby"].includes(view) ? view : "player");
+    : (["history", "musicMemory", "database", "roonLibrary", "sonicReview", "beatportCharts", "radio", "playlists", "tidal", "settings", "connections", "ai", "diagnostics", "queue", "discover", "standby"].includes(view) ? view : "player");
   const navigationTarget = navigation?.group
     ? navigation
     : (LEGACY_NAV_TARGETS[target] || LEGACY_NAV_TARGETS.player);
@@ -7843,7 +7676,6 @@ function setActiveView(view, navigation = null) {
   $("#radioView")?.classList.toggle("isActive", target === "radio");
   $("#playlistView")?.classList.toggle("isActive", target === "playlists");
   $("#tidalView")?.classList.toggle("isActive", target === "tidal");
-  $("#tidalLibraryView")?.classList.toggle("isActive", target === "tidalLibrary");
   $("#settingsView")?.classList.toggle("isActive", target === "settings");
   if (target === "settings" && !state.sonicProduction.loaded && !state.sonicProduction.loading) {
     refreshSonicProductionSettings();
@@ -7888,15 +7720,6 @@ function setActiveView(view, navigation = null) {
     refreshTidalMixes().catch((error) => {
       $("#tidalMixStatus").textContent = error.message;
     });
-  }
-  if (target === "tidalLibrary" && state.tidalLibraryNeedsRefresh && !state.tidalLibraryLoading) {
-    refreshTidalLibrary({ force: false }).catch((error) => {
-      $("#tidalLibraryStatus").textContent = error.message;
-      state.tidalLibraryLoading = false;
-      renderTidalLibrary();
-    });
-  } else if (target === "tidalLibrary") {
-    renderTidalLibrary();
   }
   updateJumpTopVisibility();
 }
@@ -8421,24 +8244,6 @@ $("#playlistBrowserGrid")?.addEventListener("click", (event) => {
     button.dataset.playlistMode || "replace",
     button
   ).catch((error) => alert(error.message));
-});
-
-$("#refreshTidalLibrary")?.addEventListener("click", () => {
-  refreshTidalLibrary({ force: true }).catch((error) => {
-    setTidalLibraryStatus(error.message);
-  });
-});
-
-document.querySelectorAll("[data-tidal-library-filter]").forEach((button) => {
-  button.addEventListener("click", () => setTidalLibraryFilter(button.dataset.tidalLibraryFilter || "all"));
-});
-
-$("#tidalLibraryGrid")?.addEventListener("click", (event) => {
-  const button = event.target.closest("[data-tidal-library-action]");
-  if (!button) return;
-  runTidalLibraryAction(button).catch((error) => {
-    setTidalLibraryStatus(error.message);
-  });
 });
 
 $("#refreshTidalMixes")?.addEventListener("click", () => {

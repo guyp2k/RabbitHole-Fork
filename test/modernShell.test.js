@@ -66,7 +66,7 @@ test("the rail groups every existing navigation destination exactly once into Li
   const sections = shell.railSections(navItems, primaryLabels, viewHeading);
   assert.deepEqual(sections.map((s) => [s.id, s.label, s.items.map((i) => [i.label, i.view])]), [
     ["listen", "Listen", [["Now Playing", "player"], ["Queue", "queue"], ["Playlists", "playlists"], ["Library", "roonLibrary"], ["Radio", "radio"]]],
-    ["discover", "Discover", [["Rabbit Hole", "discover"], ["Standby", "standby"], ["Beatport", "beatportCharts"], ["TIDAL", "tidal"], ["TIDAL Library", "tidalLibrary"]]],
+    ["discover", "Discover", [["Rabbit Hole", "discover"], ["Standby", "standby"], ["Beatport", "beatportCharts"], ["TIDAL", "tidal"]]],
     ["you", "You", [["Music Memory", "musicMemory"], ["Taste", "history"], ["Synapse Memory", "memory"]]],
     ["system", "System", [["Connections", "connections"], ["AI", "ai"], ["Diagnostics", "diagnostics"], ["Database", "database"], ["Sonic Review", "sonicReview"], ["Settings", "settings"]]]
   ]);

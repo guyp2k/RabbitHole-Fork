@@ -2,7 +2,7 @@
 (function () {
   const SECTIONS = [
     { id: "listen", label: "Listen", groups: ["playback"] },
-    { id: "discover", label: "Discover", groups: ["discover", "tidalLibrary"] },
+    { id: "discover", label: "Discover", groups: ["discover"] },
     { id: "you", label: "You", groups: ["memory"] },
     { id: "system", label: "System", groups: ["system"] }
   ];
