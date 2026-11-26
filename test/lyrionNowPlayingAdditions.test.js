@@ -47,13 +47,13 @@ test("found details are kept for ten minutes, and an enrichment failure is not f
 test("Now playing adds Label, the release date and BPM / Key from the enrichment, in Roon's order", () => {
   const track = client.track(localTrack);
   assert.deepEqual(rows(track, 655, null, { label: "Columbia", releaseDate: "2017-09-29", genre: "Rock", bpm: 120.4, keyName: "A Minor", camelot: "8A" }), [
-    ["Track length", "10:55"], ["Released", "2017-09-29"], ["Label", "Columbia"], ["Genre", "Rock"],
+    ["Track Length", "10:55"], ["Released", "2017-09-29"], ["Label", "Columbia"], ["Genre", "Rock"],
     ["Format", "FLAC · 96 kHz / 24-bit", "Library file"], ["BPM / Key", "120 BPM • A Minor • 8A"]]);
 });
 
 test("the LMS genre and year win when the enrichment has none, and an empty enrichment adds nothing", () => {
   const track = client.track({ ...localTrack, genre: "Prog" });
-  assert.deepEqual(rows(track, 655, null, {}).map(r => r[0]), ["Track length", "Released", "Genre", "Format"]);
+  assert.deepEqual(rows(track, 655, null, {}).map(r => r[0]), ["Track Length", "Released", "Genre", "Format"]);
   assert.equal(rows(track, 655, null, { genre: "Rock" }).find(r => r[0] === "Genre")[1], "Prog");
 });
 
@@ -100,8 +100,8 @@ test("a description that only repeats the title or the station name is not shown
 test("a radio stream shows its station, the time listened so far, and what the station is about", () => {
   const stream = client.track({ id: "-9", title: "Dani", artist: "Rising Galaxy", type: "mp3", bitrate: "256kbps CBR", url: "http://ice6.somafm.com/x", "playlist index": 0 });
   assert.deepEqual(rows(stream, 0, { position: 217.5, station: { name: "SomaFM Drone Zone 256", description: "Atmospheric ambient." } }), [
-    ["Station", "SomaFM Drone Zone 256"], ["Track length", "Live stream · 3:37"], ["About", "Atmospheric ambient."], ["Format", "MP3 · 256 kbps CBR"]]);
-  assert.deepEqual(rows(stream, 0, { position: 0, station: null })[0], ["Track length", "Live stream"]);
+    ["Station", "SomaFM Drone Zone 256"], ["Track Length", "Live stream · 3:37"], ["About", "Atmospheric ambient."], ["Format", "MP3 · 256 kbps CBR"]]);
+  assert.deepEqual(rows(stream, 0, { position: 0, station: null })[0], ["Track Length", "Live stream"]);
 });
 
 test("SiriusXM keeps its own program block, so no separate station rows are added", () => {
@@ -144,10 +144,10 @@ test("Now playing shows Track 7 of 15 and the library rows only when LMS knows t
     filesize: "27843654", addedTime: "1791062848", compilation: "1", replay_gain: "-7.24", tracknum: "7", album_id: "13902" });
   t.details.albumTrackCount = 15;
   const shown = rows(t, 219, null, null).slice(3);
-  assert.deepEqual(shown, [["Album artist", "Various Artists"], ["Composer", "Ian McCulloch"], ["Track", "7 of 15"], ["Compilation", "Yes"],
-    ["ReplayGain", "-7.2 dB"], ["File size", "27.8 MB"], ["Added", new Date(1791062848000).toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" })]]);
+  assert.deepEqual(shown, [["Album Artist", "Various Artists"], ["Composer", "Ian McCulloch"], ["Track", "7 of 15"], ["Compilation", "Yes"],
+    ["ReplayGain", "-7.2 dB"], ["File Size", "27.8 MB"], ["Added", new Date(1791062848000).toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" })]]);
   const plain = client.track({ ...localTrack, artist: "A", albumartist: "a", tracknum: "7" });
-  assert.deepEqual(rows(plain, 219, null, null).map(r => r[0]), ["Track length", "Released", "Format", "Track"]);
+  assert.deepEqual(rows(plain, 219, null, null).map(r => r[0]), ["Track Length", "Released", "Format", "Track"]);
 });
 
 test("the Lyrion track lookup reports the rating already stored for that track, fresh on every request", async () => {

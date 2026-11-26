@@ -1611,7 +1611,7 @@ function nowSourceQualityHtml(info = null, track = null, format = null) {
     normalizeMatchText(beatportGenre.subGenre)
   ].filter(Boolean));
   const genre = beatportGenre.genre || metadataGenreForTrack(track || {}, explicitGenreKeys);
-  if (duration) detailRows.push({ label: "Track length", value: duration, kind: "primary" });
+  if (duration) detailRows.push({ label: "Track Length", value: duration, kind: "primary" });
   if (releaseDate || releaseYear) detailRows.push({ label: "Released", value: releaseDate || releaseYear });
   if (label) detailRows.push({ label: "Label", value: label });
   if (genre) detailRows.push({ label: "Genre", value: genre });
@@ -3322,7 +3322,9 @@ function setPanelFolded(toggleSelector, bodySelector, folded, what) {
   if (body) body.hidden = folded;
   if (!toggle) return;
   toggle.setAttribute("aria-expanded", String(!folded));
-  toggle.textContent = folded ? "\u25B8" : "\u25BE";
+  const caret = folded ? "\u25B8" : "\u25BE";
+  if (toggle.dataset?.foldLabel) toggle.innerHTML = `<span class="panelFoldCaret" aria-hidden="true">${caret}</span>${escapeHtml(toggle.dataset.foldLabel)}`;
+  else toggle.textContent = caret;
   toggle.title = `${folded ? "Show" : "Hide"} ${what}`;
 }
 

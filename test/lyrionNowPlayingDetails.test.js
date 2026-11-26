@@ -39,13 +39,13 @@ const rows = (track, duration) => {
 test("Now playing shows track length, release year, genre, format and track number for a local track", () => {
   const client = new LyrionClient({ baseUrl: "http://lms.example:9000" });
   assert.deepEqual(rows(client.track(localTrack), 219.44), [
-    ["Track length", "3:39"], ["Released", "2018"], ["Genre", "Post-Punk"],
+    ["Track Length", "3:39"], ["Released", "2018"], ["Genre", "Post-Punk"],
     ["Format", "FLAC · 44.1 kHz / 16-bit · 1011 kbps VBR", "Library file"], ["Track", "7 · Disc 1 of 2"]]);
 });
 
 test("a stream shows Live stream and its stream type, and no empty rows", () => {
   const client = new LyrionClient({ baseUrl: "http://lms.example:9000" });
-  assert.deepEqual(rows(client.track(stream), 0), [["Track length", "Live stream"], ["Format", "HLS Radio"]]);
+  assert.deepEqual(rows(client.track(stream), 0), [["Track Length", "Live stream"], ["Format", "HLS Radio"]]);
   assert.deepEqual(rows(null, 0), []);
 });
 

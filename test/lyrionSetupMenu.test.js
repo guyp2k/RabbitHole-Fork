@@ -12,7 +12,7 @@ test("the Sources panel is titled Sources & Discovery and the setup pages sit in
   assert.match(source, /<div class="lyrionSourcesHead"><div class="queueViewHeader"><div><p class="eyebrow">Lyrion<\/p><h2>Sources & Discovery<\/h2><p class="muted">Browse and search everything this Lyrion server can play\.<\/p><\/div><\/div><details class="lyrionSetup" id="lyrionSetup"><summary>Setup<\/summary><ul>/);
   const menu = source.slice(source.indexOf('<details class="lyrionSetup"'), source.indexOf("</details>"));
   assert.deepEqual([...menu.matchAll(/<a href="([^"]+)">([^<]+)<\/a>/g)].map(m => [m[1], m[2]]),
-    [["/soundcloud-setup.html", "Connect SoundCloud playlists"], ["/siriusxm-setup.html", "SiriusXM metadata"]]);
+    [["/soundcloud-setup.html", "Connect SoundCloud Playlists"], ["/siriusxm-setup.html", "SiriusXM Metadata"]]);
   assert.doesNotMatch(source, /<h2>Sources & discovery<\/h2><p>/);
   assert.doesNotMatch(source, /Sources & discovery/);
 });

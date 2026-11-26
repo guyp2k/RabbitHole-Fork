@@ -120,7 +120,7 @@
       if (text) rows.push({ label, value: text, className });
     };
 
-    add("Track length", now.length ? formatSeconds(now.length) : "", "primary");
+    add("Track Length", now.length ? formatSeconds(now.length) : "", "primary");
     add("Released", formatDate(beatport.releaseDate || now.releaseDate || enrichment.releaseDate || enrichment.releaseYear || enrichment.year));
     add("Label", beatport.label || enrichment.label);
     add("Genre", beatport.genre || enrichment.genre);

@@ -8,7 +8,7 @@ const read = file => fs.readFileSync(path.join(__dirname, "..", "public", file),
 const lyrion = read("lyrion.js"), css = read("lyrion.css"), app = read("app.js");
 
 test("the Source row starts with the shared fold button in the label column", () => {
-  assert.match(lyrion, /<div class="lyrionToolbar lyrionSourceRow"><button type="button" id="lyrionSourceToggle" class="resultsToggle" aria-expanded="true" aria-controls="lyrionSourceChoices" title="Hide the sources">&#9662;<\/button><select id="lyrionSource">/);
+  assert.match(lyrion, /<div class="lyrionToolbar lyrionSourceRow"><button type="button" id="lyrionSourceToggle" class="resultsToggle panelFold" data-fold-label="Sources" aria-expanded="true" aria-controls="lyrionSourceChoices" title="Hide the sources"><span class="panelFoldCaret" aria-hidden="true">&#9662;<\/span>Sources<\/button><select id="lyrionSource">/);
   assert.match(lyrion, /const sourceChoices=\$\("lyrionSource"\)\.nextElementSibling;sourceChoices\.id="lyrionSourceChoices";/);
 });
 
@@ -24,7 +24,7 @@ test("the fold is remembered per browser and survives storage that throws", () =
 
 test("the source pills, the search box and Back start on the same column after the toggles", () => {
   assert.match(css, /#lyrionView \{--lyrion-label-col:48px;\}/);
-  assert.match(css, /:is\(#lyrionSourceToggle,#lyrionResultsToggle\) \{margin-right:calc\(var\(--lyrion-label-col\) - 34px\);\}/);
+  assert.match(css, /:is\(#lyrionSourceToggle,#lyrionResultsToggle\) \{margin-right:14px;\}/);
   assert.match(css, /#lyrionSearch \{padding-left:calc\(var\(--lyrion-label-col\) \+ 12px\);\}/);
 });
 
