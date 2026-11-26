@@ -6642,11 +6642,11 @@ function renderHistoryReport(report = {}) {
   if (list) list.replaceChildren(...details.map((line) => Object.assign(document.createElement("li"), { textContent: line })));
   if ($("#tasteDetails")) $("#tasteDetails").hidden = !details.length;
   $("#historyMetrics").innerHTML = [
-    metricCardHtml("Observed plays", metrics.observedPlays || 0, ignoredRadio ? `${ignoredRadio} radio placeholders ignored` : "Recorded while this app is running"),
-    metricCardHtml("Listening time", formatHours(metrics.knownDurationSeconds), "Known track durations"),
-    metricCardHtml("Active days", metrics.activeDays || 0),
+    metricCardHtml("Observed Plays", metrics.observedPlays || 0, ignoredRadio ? `${ignoredRadio} radio placeholders ignored` : "Recorded while this app is running"),
+    metricCardHtml("Listening Time", formatHours(metrics.knownDurationSeconds), "Known track durations"),
+    metricCardHtml("Active Days", metrics.activeDays || 0),
     metricCardHtml("Feedback", metrics.feedbackCount || 0, "Love, Like, Okay, Dislike, Never Again signals"),
-    metricCardHtml("Discovery pool", metrics.discoveryCount || 0, "Previously suggested tracks")
+    metricCardHtml("Discovery Pool", metrics.discoveryCount || 0, "Previously suggested tracks")
   ].join("");
 
   $("#topArtists").innerHTML = report.topArtists?.length
@@ -6662,18 +6662,18 @@ function renderHistoryReport(report = {}) {
   $("#tasteSignals").innerHTML = [
     signalGroupHtml("Taste DNA", [
       { name: "Depth", score: `${confidence.depthScore || 0}/100`, rawScore: confidence.depthScore || 0, note: confidence.depthLabel || "Early" },
-      { name: "Scored memories", score: confidence.detailedMemoryCount || 0, rawScore: confidence.detailedMemoryCount || 0, note: `${confidence.feedbackCount || 0} total ratings` },
-      { name: "Radio feedback", score: confidence.radioFeedbackCount || 0, rawScore: confidence.radioFeedbackCount || 0, note: "Live/radio tracks counted into taste" }
+      { name: "Scored Memories", score: confidence.detailedMemoryCount || 0, rawScore: confidence.detailedMemoryCount || 0, note: `${confidence.feedbackCount || 0} total ratings` },
+      { name: "Radio Feedback", score: confidence.radioFeedbackCount || 0, rawScore: confidence.radioFeedbackCount || 0, note: "Live/radio tracks counted into taste" }
     ], "No explicit taste depth yet"),
-    signalGroupHtml("Favored traits", dna.traits || [], "No trait-level signal yet"),
-    signalGroupHtml("Genre lane", dna.genres || [], "No genre-level signal yet"),
-    signalGroupHtml("Listening shape", dna.formats || [], "No duration/version signal yet"),
-    signalGroupHtml("Discovery sources", dna.sources || [], "No source pattern yet"),
-    signalGroupHtml("Avoid / calibrate", dna.avoid || [], "No avoid signal yet"),
-    signalGroupHtml("Liked artists", report.likedArtists || []),
-    signalGroupHtml("Liked labels", report.likedLabels || []),
-    signalGroupHtml("Rejected artists", report.rejectedArtists || [], "No rejected artist signal yet"),
-    signalGroupHtml("Rejected labels", report.rejectedLabels || [], "No rejected label signal yet")
+    signalGroupHtml("Favored Traits", dna.traits || [], "No trait-level signal yet"),
+    signalGroupHtml("Genre Lane", dna.genres || [], "No genre-level signal yet"),
+    signalGroupHtml("Listening Shape", dna.formats || [], "No duration/version signal yet"),
+    signalGroupHtml("Discovery Sources", dna.sources || [], "No source pattern yet"),
+    signalGroupHtml("Avoid / Calibrate", dna.avoid || [], "No avoid signal yet"),
+    signalGroupHtml("Liked Artists", report.likedArtists || []),
+    signalGroupHtml("Liked Labels", report.likedLabels || []),
+    signalGroupHtml("Rejected Artists", report.rejectedArtists || [], "No rejected artist signal yet"),
+    signalGroupHtml("Rejected Labels", report.rejectedLabels || [], "No rejected label signal yet")
   ].join("");
 
   $("#recentPlays").innerHTML = report.recentPlays?.length
@@ -8253,6 +8253,7 @@ if (radioSortSelect) {
     renderRadioStations();
   });
 }
+$("#historyView .reportHero .resultActions")?.append(window.RabbitHoleViewControls.layoutSwitch({ key: "rabbitHole.layout.taste", name: "Artist and Track", defaultLayout: "list", onChange: (layout) => $("#historyView")?.classList.toggle("tasteCardsView", layout === "cards") }));
 $("#queueView .queueViewHeader")?.append(window.RabbitHoleViewControls.layoutSwitch({ key: "rabbitHole.layout.queue", name: "Queue", onChange: (layout) => $("#queueView")?.classList.toggle("queueCardsView", layout === "cards") }));
 
 $("#playlistBrowserGrid")?.addEventListener("change", (event) => {

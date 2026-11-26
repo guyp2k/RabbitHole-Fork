@@ -49,5 +49,29 @@
     return group;
   }
 
-  window.RabbitHoleViewControls = { readLayout, layoutSwitch, bindSort };
+  function bindFolds() {
+    if (typeof document.querySelectorAll !== "function") return;
+    for (const button of document.querySelectorAll("[data-fold-key]")) {
+      const target = document.getElementById(button.getAttribute("aria-controls"));
+      if (!target) continue;
+      const key = `rabbitHole.fold.${button.dataset.foldKey}`;
+      let folded = false;
+      try { folded = localStorage.getItem(key) === "1"; } catch {}
+      const apply = () => {
+        target.hidden = folded;
+        button.setAttribute("aria-expanded", String(!folded));
+        const caret = button.querySelector(".panelFoldCaret");
+        if (caret) caret.textContent = folded ? "▸" : "▾";
+      };
+      button.addEventListener("click", () => {
+        folded = !folded;
+        try { localStorage.setItem(key, folded ? "1" : "0"); } catch {}
+        apply();
+      });
+      apply();
+    }
+  }
+
+  window.RabbitHoleViewControls = { readLayout, layoutSwitch, bindSort, bindFolds };
+  bindFolds();
 })();
