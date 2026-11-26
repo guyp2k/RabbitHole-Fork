@@ -194,8 +194,14 @@
     }
   }
 
+  function mirrorHidden(target, source, Observer) {
+    const sync = () => { target.hidden = Boolean(source.hidden); };
+    sync();
+    new Observer(sync).observe(source, { attributes: true, attributeFilter: ["hidden"] });
+  }
+
   window.RabbitHoleModernShell = {
-    railSections, lyrionRailItems, systemChoices, chooseSystem: chooseValue, deviceMenu,
+    mirrorHidden, railSections, lyrionRailItems, systemChoices, chooseSystem: chooseValue, deviceMenu,
     chooseDevice: chooseValue, openDeviceControls, menuLinks, pageVolumeHomes, sectionOpen, toggleSection,
     roonPanelGroups, readFolded, nowDetailsGroups, ambientPalette, artworkFromCss, trackChanged, signalChain, formatLine, fitStageHeight, lyrionChainDetail, readExtras, upNextCards, lyrionUpNextCards, lyrionUpNextInfo
   };
@@ -257,7 +263,9 @@
       const button = make("button", { type: "button", className: "modernRailItem", text: item.label });
       button.addEventListener("click", () => item.source.click());
       railLinks.push({ button, source: item.source, section: section.id, attribute });
-      list.append(make("li", {}, button));
+      const entry = make("li", {}, button);
+      mirrorHidden(entry, item.source, MutationObserver);
+      list.append(entry);
     }
     const heading = make("button", { type: "button", className: "modernRailHeading", "aria-expanded": "false", "aria-controls": listId },
       make("span", { text: section.label }), make("span", { className: "modernCaret", "aria-hidden": "true", text: "▸" }));
