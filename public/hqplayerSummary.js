@@ -19,7 +19,7 @@ function hqpHostParts(h){
   const parts=[],n=v=>typeof v==="number"&&Number.isFinite(v);
   if(h.state===2&&n(h.speed)&&h.speed>0)parts.push({text:`${h.speed.toFixed(2)}x realtime`,level:h.speed<1?"bad":h.speed<1.1?"warn":"ok"});
   const g=h.host.available?h.host.gpu:null;
-  if(!h.host.available)parts.push({text:"HQP host: no data",level:"muted"});
+  if(!h.host.available)parts.push({text:"HQP Host: no data",level:"muted"});
   if(g&&n(g.temperatureC))parts.push({text:`GPU ${Math.round(g.temperatureC)}°C`,level:g.temperatureC>=90?"bad":g.temperatureC>=80?"warn":"ok"});
   if(g&&n(g.usagePercent))parts.push({text:`${Math.round(g.usagePercent)}%`});
   if(g&&n(g.powerW))parts.push({text:`${Math.round(g.powerW)} W`});
@@ -32,7 +32,7 @@ function renderHqpHost(signal,h){
   if(!line||line.className!=="hqpHostLine"){line=document.createElement("p");line.className="hqpHostLine";signal.after(line);}
   const parts=hqpHostParts(h);
   if(!parts||!parts.length){line.replaceChildren();line.hidden=true;return;}
-  const tag=document.createElement("span");tag.className="hqpHostTag";tag.textContent="HQP host";
+  const tag=document.createElement("span");tag.className="hqpHostTag";tag.textContent="HQP Host";
   const nodes=[tag];
   parts.forEach((part,index)=>{
     if(index)nodes.push(" · ");

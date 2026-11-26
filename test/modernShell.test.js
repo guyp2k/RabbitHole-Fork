@@ -115,7 +115,7 @@ test("the Roon zone menu lists the zones from the app's zone select and names th
 });
 
 test("the Lyrion player menu lists the players from Lyrion's player select, without its placeholder", () => {
-  const players = select([["", "Choose a player"], ["p1", "Living Room"], ["p2", "Bedroom (offline)"]], "p1");
+  const players = select([["", "Choose a Player"], ["p1", "Living Room"], ["p2", "Bedroom (offline)"]], "p1");
   assert.deepEqual(shell.deviceMenu("lyrion", players), {
     label: "Player: Living Room",
     items: [{ id: "p1", name: "Living Room", selected: true }, { id: "p2", name: "Bedroom (offline)", selected: false }]
@@ -137,7 +137,7 @@ test("the menu's controls button opens the existing player card without switchin
   shell.openDeviceControls("roon", "z2", zones, { openRoonPlayerCard: (id) => opened.push(id), lyrionOpeners: [] });
   assert.deepEqual(opened, ["z2"]);
   assert.deepEqual(zones.events, []);
-  const players = select([["", "Choose a player"], ["p1", "Living Room"], ["p2", "Bedroom"]], "p1");
+  const players = select([["", "Choose a Player"], ["p1", "Living Room"], ["p2", "Bedroom"]], "p1");
   const clicks = [];
   const openers = ["p1", "p2"].map((id) => ({ click: () => clicks.push(id) }));
   shell.openDeviceControls("lyrion", "p2", players, { openRoonPlayerCard: () => assert.fail("Roon card for a Lyrion player"), lyrionOpeners: openers });
@@ -685,7 +685,7 @@ test("the app shares the next five queue items and the queue summary as a roon-q
   assert.match(app, /liveQueue\.innerHTML = "";\n  \}\n  shareQueue\(zone\);/);
 });
 
-test("Modern adds Up next and Spectrum toggles before Maximize Player, and covers reuse the queue's Play from here menu", () => {
+test("Modern adds Up next and Spectrum toggles before Maximize Player, and covers reuse the queue's Play from Here menu", () => {
   assert.match(source, /for \(const \[key, label, tip\] of \[\["upNext", "Up Next", "Show the next covers in the queue"\], \["spectrum", "Spectrum", "Decorative: moves with playback, not live audio levels"\]\]\)/);
   assert.match(source, /for \(const home of \[\$\("togglePlayerMax"\), \$\("lyrionFullscreen"\)\]\)[\s\S]*?home\.before\(toggle\);/);
   assert.match(source, /localStorage\.setItem\(EXTRAS_KEY, JSON\.stringify\(extras\)\)/);

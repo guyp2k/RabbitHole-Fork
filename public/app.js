@@ -2774,7 +2774,7 @@ function renderPrimaryNowTidalPlaylistControl(track = state.nowTrack) {
   }
 
   if (state.tidalPlaylistsError) {
-    setSelectOptionsIfChanged(select, "<option value=\"\">TIDAL playlists unavailable</option>", `error:${state.tidalPlaylistsError}`);
+    setSelectOptionsIfChanged(select, "<option value=\"\">TIDAL Playlists Unavailable</option>", `error:${state.tidalPlaylistsError}`);
     select.disabled = false;
     button.disabled = true;
     status.textContent = state.tidalPlaylistsError;
@@ -2790,7 +2790,7 @@ function renderPrimaryNowTidalPlaylistControl(track = state.nowTrack) {
   }
 
   if (!state.tidalPlaylists.length) {
-    setSelectOptionsIfChanged(select, "<option value=\"\">No TIDAL playlists found</option>", "empty");
+    setSelectOptionsIfChanged(select, "<option value=\"\">No TIDAL Playlists Found</option>", "empty");
     select.disabled = false;
     button.disabled = true;
     status.textContent = "Create a playlist below, or refresh after creating one in TIDAL.";
@@ -2814,7 +2814,7 @@ async function createNowTidalPlaylist(button = $("#createNowTidalPlaylist")) {
   const title = input?.value?.trim() || "";
   if (!title) return alert("Enter a TIDAL playlist name first.");
 
-  const originalText = button?.textContent || "Create playlist";
+  const originalText = button?.textContent || "Create Playlist";
   if (button) {
     button.disabled = true;
     button.textContent = "Creating...";
@@ -2881,7 +2881,7 @@ function renderTidalPlaylistSeedControl() {
   }
 
   if (state.tidalPlaylistsError) {
-    setSelectOptionsIfChanged(select, "<option value=\"\">TIDAL playlists unavailable</option>", `error:${state.tidalPlaylistsError}`);
+    setSelectOptionsIfChanged(select, "<option value=\"\">TIDAL Playlists Unavailable</option>", `error:${state.tidalPlaylistsError}`);
     select.disabled = false;
     button.disabled = true;
     status.textContent = state.tidalPlaylistsError;
@@ -2897,10 +2897,10 @@ function renderTidalPlaylistSeedControl() {
   }
 
   if (!state.tidalPlaylists.length) {
-    setSelectOptionsIfChanged(select, "<option value=\"\">No TIDAL playlists found</option>", "empty");
+    setSelectOptionsIfChanged(select, "<option value=\"\">No TIDAL Playlists Found</option>", "empty");
     select.disabled = false;
     button.disabled = true;
-    status.textContent = "No TIDAL playlists found";
+    status.textContent = "No TIDAL Playlists Found";
     return;
   }
 
@@ -3893,7 +3893,7 @@ function modelReviewAuditHtml(audit = null) {
 
 function calibrationIssueLabel(issue = "") {
   const normalized = String(issue || "").toLowerCase();
-  if (normalized === "wrong_genre") return "Wrong genre";
+  if (normalized === "wrong_genre") return "Wrong Genre";
   if (normalized === "bad_boost") return "Bad boost";
   if (normalized === "liked_downranked") return "Liked but downranked";
   if (normalized === "negative_model_approved") return "Negative on approved track";
@@ -3954,7 +3954,7 @@ function feedbackCalibrationHtml(calibration = null) {
               ["Model-reviewed", calibration.reviewed || 0],
               ["Calibration issues", issueCount],
               ["Model misses", calibration.modelMisses || 0],
-              ["Wrong genre", calibration.promptMismatches || 0],
+              ["Wrong Genre", calibration.promptMismatches || 0],
               ["Bad boosts", calibration.badBoosts || 0],
               ["Liked downranks", calibration.missedLikes || 0]
             ])}
@@ -4920,11 +4920,11 @@ function markRabbitConnectionLost(error = {}) {
   if (pill) {
     pill.classList.add("statusOffline");
     pill.classList.remove("statusUnknown");
-    pill.textContent = "Rabbit Hole offline - reconnecting";
+    pill.textContent = "Rabbit Hole Offline - Reconnecting";
     pill.title = error.message || "The browser cannot reach the Rabbit Hole server right now.";
   }
   const playState = $("#playState");
-  if (playState) playState.textContent = "Connection lost";
+  if (playState) playState.textContent = "Connection Lost";
   const title = $("#nowTitle");
   if (title) title.textContent = "Connection Lost";
   const subtitle = $("#nowSubtitle");
@@ -5904,7 +5904,7 @@ async function refreshPlaylists({ force = false } = {}) {
     if (select) {
       select.innerHTML = state.playlists.length
         ? state.playlists.map((playlist) => `<option value="${escapeHtml(playlist.id)}">${escapeHtml(playlist.title)}${playlist.subtitle ? ` - ${escapeHtml(playlist.subtitle)}` : ""}</option>`).join("")
-        : "<option value=\"\">No playlists found</option>";
+        : "<option value=\"\">No Playlists Found</option>";
     }
     if (seedStatus) seedStatus.textContent = state.playlists.length ? `${state.playlists.length} Roon local playlists available${hiddenNote}` : `No Roon local playlists found${hiddenNote}`;
     return result;
@@ -5921,7 +5921,7 @@ async function refreshPlaylists({ force = false } = {}) {
 
 async function refreshPlaylistBrowser({ force = false } = {}) {
   const button = $("#refreshPlaylistBrowser");
-  const originalText = button?.textContent || "Refresh playlists";
+  const originalText = button?.textContent || "Refresh Playlists";
   if (button) {
     button.disabled = true;
     button.textContent = "Refreshing...";
@@ -7263,17 +7263,17 @@ function sonicProfileEditorHtml({ prefix = "sonicReview", anchor = {}, profileSt
           <p class="eyebrow">Sonic profile</p>
           <h3 id="${prefix}SonicProfileHeading">Describe This Anchor</h3>
         </div>
-        ${prefix === "now" ? `<button type="button" class="sonicProfileReviewButton" data-sonic-profile-open-review>Review neighbors</button>` : ""}
+        ${prefix === "now" ? `<button type="button" class="sonicProfileReviewButton" data-sonic-profile-open-review>Review Neighbors</button>` : ""}
       </div>
       <p class="sonicProfileEditorIntro">Anchor-scoped notes only. They can guide this shadow sonic lane; they never change global taste or production ordering.${metadataPrefill ? " Available Genre/Subgenre metadata is prefilled below." : ""}</p>
       <form class="sonicProfileForm" data-sonic-profile-form="${prefix}">
         <div class="sonicProfileGrid">
-          <label>Genre / lane<input id="${prefix}SonicProfileGenre" name="genre" type="text" value="${escapeHtml(genre)}" placeholder="e.g. Progressive House" autocomplete="off"></label>
+          <label>Genre / Lane<input id="${prefix}SonicProfileGenre" name="genre" type="text" value="${escapeHtml(genre)}" placeholder="e.g. Progressive House" autocomplete="off"></label>
           <label>Subgenre<input id="${prefix}SonicProfileSubgenre" name="subgenre" type="text" value="${escapeHtml(subgenre)}" placeholder="e.g. Melodic, deep, peak-time" autocomplete="off"></label>
           <label>Energy <span class="sonicProfileHint">1–10</span><input id="${prefix}SonicProfileEnergy" name="energy" type="number" min="1" max="10" step="1" value="${escapeHtml(sonicProfileField(profile, "energy"))}" placeholder="7"></label>
           <label>Mood<input id="${prefix}SonicProfileMood" name="mood" type="text" value="${escapeHtml(sonicProfileField(profile, "mood"))}" placeholder="e.g. hypnotic, driving" autocomplete="off"></label>
           <label class="sonicProfileWide">Tags <span class="sonicProfileHint">comma separated</span><input id="${prefix}SonicProfileTags" name="tags" type="text" value="${escapeHtml(tags)}" placeholder="rolling, late-night, warm" autocomplete="off"></label>
-          <label class="sonicProfileWide">Listening note<textarea id="${prefix}SonicProfileNote" name="note" rows="2" placeholder="What should a good neighbor preserve?" spellcheck="true">${escapeHtml(sonicProfileField(profile, "note"))}</textarea></label>
+          <label class="sonicProfileWide">Listening Note<textarea id="${prefix}SonicProfileNote" name="note" rows="2" placeholder="What should a good neighbor preserve?" spellcheck="true">${escapeHtml(sonicProfileField(profile, "note"))}</textarea></label>
         </div>
         <div class="sonicProfileFormFooter">
           <button type="submit" class="sonicProfileSave" data-sonic-profile-save="${prefix}" ${busy ? "disabled" : ""}>${buttonText}</button>
@@ -7507,11 +7507,11 @@ function renderSonicReview() {
           ${review.loading ? `
             <div class="sonicReviewState"><span class="sonicReviewPulse" aria-hidden="true"></span><strong>Finding Sonic Neighbors…</strong><p>Using the stored ${escapeHtml(review.anchorIdentityKey || "anchor")} profile. Nothing will be queued.</p></div>
           ` : review.error ? `
-            <div class="sonicReviewState isError"><strong>Couldn’t Load This Anchor.</strong><p>${escapeHtml(review.error)}</p><button type="button" data-sonic-review-retry>Try again</button></div>
+            <div class="sonicReviewState isError"><strong>Couldn’t Load This Anchor.</strong><p>${escapeHtml(review.error)}</p><button type="button" data-sonic-review-retry>Try Again</button></div>
           ` : !review.loaded ? `
             <div class="sonicReviewState"><strong>Ready for a Sonic Anchor</strong><p>Start a track in Roon, choose Use Current Track, or load a stored identity.</p></div>
           ` : !candidate ? `
-            <div class="sonicReviewState isComplete"><strong>${review.candidates.length ? "Pack reviewed." : "No eligible neighbors yet."}</strong><p>${escapeHtml(status)}</p>${review.candidates.length ? `<button type="button" data-sonic-review-reload>Load another pack</button>` : ""}</div>
+            <div class="sonicReviewState isComplete"><strong>${review.candidates.length ? "Pack reviewed." : "No eligible neighbors yet."}</strong><p>${escapeHtml(status)}</p>${review.candidates.length ? `<button type="button" data-sonic-review-reload>Load Another Pack</button>` : ""}</div>
           ` : `
             <div class="sonicReviewCandidateHead">
               <div>
@@ -7528,16 +7528,16 @@ function renderSonicReview() {
               ${sonicReviewTidalUrl(candidate) ? `<a class="buttonLink sonicReviewTidalButton" href="${escapeHtml(sonicReviewTidalUrl(candidate))}" target="_blank" rel="noreferrer">Open in TIDAL</a>` : `<span class="sonicReviewNoLink">No verified TIDAL link</span>`}
             </article>
             <div class="sonicReviewNotes">
-              <label for="sonicReviewAreaInput">Corrected lane <span>(optional)</span></label>
+              <label for="sonicReviewAreaInput">Corrected Lane <span>(optional)</span></label>
               <input id="sonicReviewAreaInput" type="text" placeholder="e.g. Progressive House" autocomplete="off">
-              <label for="sonicReviewNoteInput">Listening note <span>(optional)</span></label>
+              <label for="sonicReviewNoteInput">Listening Note <span>(optional)</span></label>
               <textarea id="sonicReviewNoteInput" rows="2" placeholder="What did you hear?" spellcheck="true"></textarea>
             </div>
             <div class="sonicReviewActions" role="group" aria-label="Review this sonic neighbor">
-              <button type="button" class="sonicReviewAction sonicReviewActionKeep" data-sonic-review-rating="keep">Keep similar</button>
+              <button type="button" class="sonicReviewAction sonicReviewActionKeep" data-sonic-review-rating="keep">Keep Similar</button>
               <button type="button" class="sonicReviewAction sonicReviewActionSkip" data-sonic-review-rating="skip">Skip</button>
-              <button type="button" class="sonicReviewAction sonicReviewActionGenre" data-sonic-review-rating="wrong_genre">Wrong genre</button>
-              <button type="button" class="sonicReviewAction sonicReviewActionDifferent" data-sonic-review-rating="keep">Keep, different lane</button>
+              <button type="button" class="sonicReviewAction sonicReviewActionGenre" data-sonic-review-rating="wrong_genre">Wrong Genre</button>
+              <button type="button" class="sonicReviewAction sonicReviewActionDifferent" data-sonic-review-rating="keep">Keep, Different Lane</button>
             </div>
             <p class="sonicReviewKeyboardHint">Keyboard: K keep · S skip · G wrong genre · D keep, different lane</p>
           `}

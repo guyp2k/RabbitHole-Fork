@@ -286,13 +286,13 @@ test("joining an exact running generation never enumerates, starts or switches n
 
 test("video authorization enforces the exact lease and optional generation without starting visuals", async t => {
   const f = fixture(); t.after(() => f.service.close());
-  assert.throws(() => f.service.authorizeVideo(A), /Start visuals/);
+  assert.throws(() => f.service.authorizeVideo(A), /Start Visuals/);
   await f.service.session({ action: "start", viewerId: A, visualizer: "aeon", inputId: "mic" }); await f.service.serial;
   f.children[0].stdout.write(JPEG);
   assert.deepEqual(f.service.authorizeVideo(A, f.service.generation), { frame: JPEG, capturedAt: 1000, generation: f.service.generation });
   assert.throws(() => f.service.authorizeVideo(A, f.service.generation - 1), /selection changed/);
-  assert.throws(() => f.service.authorizeVideo(B), /Start visuals/);
-  f.advance(13000); assert.throws(() => f.service.authorizeVideo(A), /Start visuals/);
+  assert.throws(() => f.service.authorizeVideo(B), /Start Visuals/);
+  f.advance(13000); assert.throws(() => f.service.authorizeVideo(A), /Start Visuals/);
   assert.equal(f.starts.length, 1);
 });
 

@@ -85,7 +85,7 @@ Working hard, close to the limit:
 When the agent does not answer, the line says so in grey and keeps HQPlayer's
 own numbers. A missing value is left out, never shown as 0:
 
-![HQP host line with the agent unreachable: 1.42x realtime, a grey "HQP host: no data", and 0 clips](screenshots/hqp-host-line-nodata.png)
+![HQP host line with the agent unreachable: 1.42x realtime, a grey "HQP Host: no data", and 0 clips](screenshots/hqp-host-line-nodata.png)
 
 Zones and players that do not use a monitored HQPlayer show no host line at all.
 When HQPlayer is stopped or paused, the realtime part is left out rather than

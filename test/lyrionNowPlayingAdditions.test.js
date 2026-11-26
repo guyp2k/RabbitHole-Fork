@@ -72,7 +72,7 @@ test("the rail shows beside the artwork in the normal view, not only in Fullscre
 });
 
 test("the Beatport section stays hidden until the server says Beatport is on, and a lookup that cannot succeed is not retried", () => {
-  assert.match(rail, /<section id="lyrionBeatportSection" hidden><h3>Beatport metadata<\/h3>/);
+  assert.match(rail, /<section id="lyrionBeatportSection" hidden><h3>Beatport Metadata<\/h3>/);
   assert.match(rail, /\$\('lyrionBeatportSection'\)\.hidden=result\.beatportEnabled!==true;/);
   assert.match(rail, /if\(!m\)\{if\(result\.beatportEnabled===false\)\{\$\('lyrionBeatportStatus'\)\.textContent='';return;\}retryMetadata/);
 });
@@ -165,7 +165,7 @@ test("the server reads the stored rating from the same track memory Roon uses", 
 });
 
 test("the rail rates the track with Roon's buttons and the shared feedback endpoint, and marks the chosen rating", () => {
-  assert.match(rail, /<section class="lyrionFeedbackSection" hidden><h3>Rating<\/h3><div id="lyrionFeedback" class="feedbackButtons lyrionFeedback" role="group" aria-label="Rate this track"><\/div><\/section>/);
+  assert.match(rail, /<section class="lyrionFeedbackSection" hidden><h3>Rating<\/h3><div id="lyrionFeedback" class="feedbackButtons lyrionFeedback" role="group" aria-label="Rate This Track"><\/div><\/section>/);
   assert.match(rail, /\$\('lyrionFeedback'\)\.innerHTML=`<div class="feedbackRail">\$\{feedbackButtonsHtml\(\{feedback:rating\},0,'lyrion'\)\}<\/div>`;/);
   assert.match(rail, /await request\('\/api\/feedback',\{track:feedbackTrack\(captured\),rating\}\);if\(capturedKey===key\)renderFeedback\(rating\);/);
   assert.match(rail, /b\.setAttribute\('aria-pressed',String\(b\.classList\.contains\('active'\)\)\)/);

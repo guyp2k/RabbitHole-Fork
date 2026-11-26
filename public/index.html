@@ -298,8 +298,8 @@
               </div>
               <button type="button" class="queueActionClose" data-queue-action-close aria-label="Close queue actions">×</button>
             </div>
-            <button type="button" role="menuitem" data-queue-action="play-from-here">Play from here</button>
-            <button type="button" role="menuitem" data-queue-action="remove" disabled aria-describedby="queueRemoveHelp">Remove from queue</button>
+            <button type="button" role="menuitem" data-queue-action="play-from-here">Play from Here</button>
+            <button type="button" role="menuitem" data-queue-action="remove" disabled aria-describedby="queueRemoveHelp">Remove from Queue</button>
             <p id="queueRemoveHelp" class="queueActionHelp">Roon’s extension API does not expose item removal yet.</p>
             <button type="button" class="queueActionCancel" data-queue-action-close>Cancel</button>
           </div>
@@ -319,14 +319,14 @@
                 <p id="bridgeSyncMessage"></p>
               </div>
               <div class="bridgeSyncActions">
-                <button type="button" id="bridgeSyncConfirm">I refreshed Roon</button>
+                <button type="button" id="bridgeSyncConfirm">I Refreshed Roon</button>
                 <button type="button" id="bridgeSyncDismiss" aria-label="Dismiss Roon playlist refresh message">Dismiss</button>
               </div>
             </div>
             <div class="now">
               <div class="nowInfo">
                 <p class="eyebrow">Now Playing</p>
-                <h2 id="nowTitle">No active zone</h2>
+                <h2 id="nowTitle">No Active Zone</h2>
                 <p id="nowSubtitle"></p>
                 <p id="nowSourceFormat" class="nowSourceFormat" hidden></p>
                 <div id="nowVolume" class="nowVolume" hidden></div>
@@ -376,7 +376,7 @@
                 </div>
                 <div class="nowTidalPlaylistCreate">
                   <input id="nowTidalPlaylistName" type="text" placeholder="New TIDAL playlist name" autocomplete="off">
-                  <button type="button" id="createNowTidalPlaylist">Create playlist</button>
+                  <button type="button" id="createNowTidalPlaylist">Create Playlist</button>
                 </div>
                 <span id="nowTidalPlaylistStatus" class="nowTidalPlaylistStatus" aria-live="polite"></span>
               </div>
@@ -538,7 +538,7 @@
               <button type="button" id="resultsToggle" class="resultsToggle panelFold" aria-expanded="true" aria-controls="resultsBody" title="Hide the track list">&#9662;</button>
               <div>
                 <p class="eyebrow">Current Rabbit Hole</p>
-                <h2 id="resultTitle" class="resultsTitleToggle">No rabbit hole yet</h2>
+                <h2 id="resultTitle" class="resultsTitleToggle">No Rabbit Hole Yet</h2>
               </div>
             </div>
             <div class="resultActions">
@@ -660,7 +660,7 @@
       <section id="databaseView" class="view databaseView" aria-labelledby="databaseHeading">
         <header class="dbHeader">
           <div><p class="eyebrow">Your music, explored</p><h2 id="databaseHeading">Database</h2><p class="dbIntro">Everything Rabbit Hole remembers about tracks it has played, queued, discovered or looked up, and how you rated them. Recommendations are built from this. It is not your Roon library; use Library for that.</p><p id="dbCatalogStatus" class="dbMuted">Browse Rabbit Hole's stored catalog.</p></div>
-          <button id="dbRefresh" type="button">Refresh database</button>
+          <button id="dbRefresh" type="button">Refresh Database</button>
         </header>
         <div class="dbToolbar">
           <div class="dbViewSwitch" role="group" aria-label="Database view">
@@ -668,35 +668,35 @@
             <button type="button" data-db-view="tags" aria-pressed="true">Tags</button>
             <button type="button" data-db-view="albums" aria-pressed="false">Albums</button>
             <button type="button" data-db-view="recordings" aria-pressed="false">Recordings</button>
-            <button type="button" data-db-view="tracks" aria-pressed="false">Source records</button>
+            <button type="button" data-db-view="tracks" aria-pressed="false">Source Records</button>
           </div>
-          <label class="dbSearch">Search your database<input id="dbSearch" type="search" placeholder="Artist, track, album, tag, label or ID" autocomplete="off"></label>
-          <div class="dbSaved"><label for="dbSavedViews">Saved views</label><div><select id="dbSavedViews"><option value="">Choose a saved view</option></select><button id="dbSaveView" type="button">Save view</button></div></div>
+          <label class="dbSearch">Search Your Database<input id="dbSearch" type="search" placeholder="Artist, track, album, tag, label or ID" autocomplete="off"></label>
+          <div class="dbSaved"><label for="dbSavedViews">Saved Views</label><div><select id="dbSavedViews"><option value="">Choose a Saved View</option></select><button id="dbSaveView" type="button">Save View</button></div></div>
         </div>
         <div class="dbLayout">
           <aside class="dbSidebar" aria-label="Database filters">
             <details class="dbFilterPanel" open>
               <summary>Filters <span id="dbFilterCount"></span></summary>
               <form id="dbFilters" class="dbFilters">
-                <label>Collection<select name="media"><option value="">Rabbit Hole catalogue</option><option value="local">Local files only</option></select></label>
-                <label id="dbAvailabilityLabel" hidden>File availability<select name="availability"><option value="">All scanned files</option><option value="available">Available at last scan</option><option value="missing">Missing at last scan</option><option value="unreadable">Needs attention</option></select></label>
-                <div class="dbQuickFilters" role="group" aria-label="Quick filters"><button type="button" data-db-quick="loved">Loved &amp; liked</button><button type="button" data-db-quick="missing" data-db-sonic>Missing Sonic</button></div>
-                <label>Genre<select name="genre" data-db-facet="genre"><option value="">All genres</option></select></label>
+                <label>Collection<select name="media"><option value="">Rabbit Hole Catalogue</option><option value="local">Local Files Only</option></select></label>
+                <label id="dbAvailabilityLabel" hidden>File Availability<select name="availability"><option value="">All Scanned Files</option><option value="available">Available at Last Scan</option><option value="missing">Missing at Last Scan</option><option value="unreadable">Needs Attention</option></select></label>
+                <div class="dbQuickFilters" role="group" aria-label="Quick filters"><button type="button" data-db-quick="loved">Loved &amp; Liked</button><button type="button" data-db-quick="missing" data-db-sonic>Missing Sonic</button></div>
+                <label>Genre<select name="genre" data-db-facet="genre"><option value="">All Genres</option></select></label>
                 <label>Artist<input name="artist" type="search" list="dbArtistOptions" placeholder="Choose or type an artist" autocomplete="off"><datalist id="dbArtistOptions"></datalist></label>
                 <label>Label<input name="label" type="search" list="dbLabelOptions" placeholder="Choose or type a label" autocomplete="off"><datalist id="dbLabelOptions"></datalist></label>
-                <label>Latest rating<select name="rating" data-db-facet="rating"><option value="">All ratings</option></select></label>
-                <label data-db-sonic>Sonic<select name="sonic"><option value="">All Sonic states</option><option value="embedded">Embedding stored</option><option value="missing">Missing embedding</option><option value="anchor">Has anchor profile</option><option value="reviewed">Has neighbor review</option></select></label>
+                <label>Latest Rating<select name="rating" data-db-facet="rating"><option value="">All Ratings</option></select></label>
+                <label data-db-sonic>Sonic<select name="sonic"><option value="">All Sonic States</option><option value="embedded">Embedding Stored</option><option value="missing">Missing Embedding</option><option value="anchor">Has Anchor Profile</option><option value="reviewed">Has Neighbor Review</option></select></label>
                 <details class="dbMoreFilters"><summary>More Filters</summary><div>
-                  <label>Metadata tag<select name="tag" data-db-facet="tag"><option value="">All metadata tags</option></select></label>
-                  <label data-db-sonic>Sonic tag<select name="sonicTag" data-db-facet="sonicTag"><option value="">All Sonic tags</option></select></label>
-                  <label>Metadata provider<select name="provider" data-db-facet="provider"><option value="">All providers</option></select></label>
-                  <label>Seen in<select name="source" data-db-facet="source"><option value="">All sources</option></select></label>
-                  <fieldset><legend>Release year</legend><div class="dbRange"><input name="yearMin" type="number" min="1900" max="2100" placeholder="From" aria-label="Earliest release year"><span>to</span><input name="yearMax" type="number" min="1900" max="2100" placeholder="To" aria-label="Latest release year"></div></fieldset>
+                  <label>Metadata Tag<select name="tag" data-db-facet="tag"><option value="">All Metadata Tags</option></select></label>
+                  <label data-db-sonic>Sonic Tag<select name="sonicTag" data-db-facet="sonicTag"><option value="">All Sonic Tags</option></select></label>
+                  <label>Metadata Provider<select name="provider" data-db-facet="provider"><option value="">All Providers</option></select></label>
+                  <label>Seen in<select name="source" data-db-facet="source"><option value="">All Sources</option></select></label>
+                  <fieldset><legend>Release Year</legend><div class="dbRange"><input name="yearMin" type="number" min="1900" max="2100" placeholder="From" aria-label="Earliest release year"><span>to</span><input name="yearMax" type="number" min="1900" max="2100" placeholder="To" aria-label="Latest release year"></div></fieldset>
                   <fieldset><legend>BPM</legend><div class="dbRange"><input name="bpmMin" type="number" min="1" max="999" placeholder="Min" aria-label="Minimum BPM"><span>to</span><input name="bpmMax" type="number" min="1" max="999" placeholder="Max" aria-label="Maximum BPM"></div></fieldset>
-                  <fieldset><legend>Duration (minutes)</legend><div class="dbRange"><input name="durationMin" type="number" min="0" max="999" step="0.1" placeholder="Min" aria-label="Minimum duration in minutes"><span>to</span><input name="durationMax" type="number" min="0" max="999" step="0.1" placeholder="Max" aria-label="Maximum duration in minutes"></div></fieldset>
-                  <label>Album artwork<select name="artwork"><option value="">Any artwork state</option><option value="has">Artwork available</option><option value="missing">Missing artwork</option></select></label>
+                  <fieldset><legend>Duration (Minutes)</legend><div class="dbRange"><input name="durationMin" type="number" min="0" max="999" step="0.1" placeholder="Min" aria-label="Minimum duration in minutes"><span>to</span><input name="durationMax" type="number" min="0" max="999" step="0.1" placeholder="Max" aria-label="Maximum duration in minutes"></div></fieldset>
+                  <label>Album Artwork<select name="artwork"><option value="">Any Artwork State</option><option value="has">Artwork Available</option><option value="missing">Missing Artwork</option></select></label>
                 </div></details>
-                <button id="dbClearFilters" type="button">Clear all filters</button>
+                <button id="dbClearFilters" type="button">Clear All Filters</button>
               </form>
             </details>
             <p class="dbScopeNote">Tags come from stored metadata and Sonic profiles. Roon's personal tags are not imported here.</p>
@@ -704,10 +704,10 @@
           <div class="dbMain">
             <div id="dbActiveFilters" class="dbActiveFilters" role="group" aria-label="Active filters"></div>
             <div class="dbResultsToolbar">
-              <div><button type="button" class="panelFold dbResultsFold" data-fold-key="database.results" aria-controls="dbFoldBody" aria-expanded="true" aria-label="Show or hide the results"><span class="panelFoldCaret" aria-hidden="true">▾</span></button><h3 id="dbResultsHeading" tabindex="-1">Genre tags</h3><p id="dbResultStatus" role="status" aria-live="polite">Open the database to load your music.</p></div>
+              <div><button type="button" class="panelFold dbResultsFold" data-fold-key="database.results" aria-controls="dbFoldBody" aria-expanded="true" aria-label="Show or hide the results"><span class="panelFoldCaret" aria-hidden="true">▾</span></button><h3 id="dbResultsHeading" tabindex="-1">Genre Tags</h3><p id="dbResultStatus" role="status" aria-live="polite">Open the database to load your music.</p></div>
               <div class="dbResultControls">
-                <label id="dbGroupLabel">Group by<select id="dbGroup"><option value="genre">Genres</option><option value="tag">Metadata tags</option><option value="sonicTag">Sonic tags</option><option value="artist">Artists</option><option value="label">Labels</option></select></label>
-                <label>Sort by<select id="dbSort"><option value="name">Name</option><option value="count">Track count</option><option value="recent">Recently seen</option></select></label>
+                <label id="dbGroupLabel">Group by<select id="dbGroup"><option value="genre">Genres</option><option value="tag">Metadata Tags</option><option value="sonicTag">Sonic Tags</option><option value="artist">Artists</option><option value="label">Labels</option></select></label>
+                <label>Sort by<select id="dbSort"><option value="name">Name</option><option value="count">Track Count</option><option value="recent">Recently Seen</option></select></label>
                 <button id="dbDirection" type="button" aria-label="Sort descending" title="Reverse sort order">Ascending</button>
               </div>
             </div>
@@ -716,8 +716,8 @@
             <nav id="dbPagination" class="dbPagination" aria-label="Database result pages" hidden><button id="dbPrevious" type="button">Previous</button><span id="dbPageLabel"></span><button id="dbNext" type="button">Next</button></nav>
           </div>
         </div>
-        <dialog id="dbTrackDialog" class="databaseDialog" aria-labelledby="dbTrackTitle"><button type="button" class="dbDialogClose" data-db-close="dbTrackDialog">Close details</button><div id="dbTrackDetail"></div></dialog>
-        <dialog id="dbSaveDialog" class="databaseDialog dbSaveDialog" aria-labelledby="dbSaveTitle"><form id="dbSaveForm"><h3 id="dbSaveTitle">Save this view</h3><p class="dbMuted">Keep these filters, sorting and display together. Saved on this browser.</p><label>View name<input id="dbViewName" maxlength="60" required autocomplete="off"></label><div class="dbDialogActions"><button type="button" data-db-close="dbSaveDialog">Cancel</button><button type="submit">Save view</button></div></form></dialog>
+        <dialog id="dbTrackDialog" class="databaseDialog" aria-labelledby="dbTrackTitle"><button type="button" class="dbDialogClose" data-db-close="dbTrackDialog">Close Details</button><div id="dbTrackDetail"></div></dialog>
+        <dialog id="dbSaveDialog" class="databaseDialog dbSaveDialog" aria-labelledby="dbSaveTitle"><form id="dbSaveForm"><h3 id="dbSaveTitle">Save This View</h3><p class="dbMuted">Keep these filters, sorting and display together. Saved on this browser.</p><label>View Name<input id="dbViewName" maxlength="60" required autocomplete="off"></label><div class="dbDialogActions"><button type="button" data-db-close="dbSaveDialog">Cancel</button><button type="submit">Save View</button></div></form></dialog>
       </section>
 
       <section id="musicMemoryView" class="view memorySurface" data-memory-item="library" aria-labelledby="musicMemoryHeading">
@@ -794,7 +794,7 @@
           <div class="formHead">
             <div>
               <p class="eyebrow">Current Chart</p>
-              <h2 id="beatportChartTitle">No chart loaded</h2>
+              <h2 id="beatportChartTitle">No Chart Loaded</h2>
               <p id="beatportChartMeta" class="muted"></p>
             </div>
             <div class="resultActions">
@@ -817,10 +817,10 @@
             <p id="radioStatus" class="tasteNarrative">Radio stations have not been loaded yet.</p>
           </div>
           <div class="resultActions">
-            <button type="button" id="radioRoot" hidden>Radio root</button>
-            <button type="button" id="resetRadioOrder" hidden>Reset order</button>
+            <button type="button" id="radioRoot" hidden>Radio Root</button>
+            <button type="button" id="resetRadioOrder" hidden>Reset Order</button>
             <label class="viewSort">Sort<select id="radioSort"><option value="mine">My Order</option><option value="name">Name A-Z</option><option value="name-desc">Name Z-A</option></select></label>
-            <button type="button" id="refreshRadioStations">Refresh stations</button>
+            <button type="button" id="refreshRadioStations">Refresh Stations</button>
           </div>
         </section>
 
@@ -837,7 +837,7 @@
           </div>
           <div class="resultActions">
             <a class="buttonLink" id="playlistAuthorizeTidal" href="/api/tidal/oauth/start">Connect TIDAL</a>
-            <button type="button" id="refreshPlaylistBrowser">Refresh playlists</button>
+            <button type="button" id="refreshPlaylistBrowser">Refresh Playlists</button>
           </div>
         </section>
 

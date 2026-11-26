@@ -110,7 +110,7 @@ test("a stopped or paused HQPlayer shows no realtime, never a red 0.00x", () => 
 test("an unreachable agent shows a muted 'no data' and HQPlayer's own numbers, and missing values are left out instead of shown as 0", () => {
   const s = summary();
   const down = s.hqpHostParts(H({ host: { available: false, gpu: null, process: null } }));
-  assert.equal(text(down), "1.42x realtime · HQP host: no data · 0 clips");
+  assert.equal(text(down), "1.42x realtime · HQP Host: no data · 0 clips");
   assert.equal(down[1].level, "muted");
   const partial = text(s.hqpHostParts(H({ clips: null, host: { available: true, gpu: { temperatureC: null, usagePercent: 32, powerW: null, memoryUsedMiB: 371, memoryTotalMiB: null }, process: null } })));
   assert.equal(partial, "1.42x realtime · 32%");
@@ -129,7 +129,7 @@ test("the host line is drawn once after the HQPlayer line, reused on refresh, an
   const signal = dom.make("p");
   context.renderHqpHost(signal, H());
   const line = signal.nextElementSibling;
-  assert.deepEqual([line.className, line.hidden, line.children[0].textContent], ["hqpHostLine", false, "HQP host"]);
+  assert.deepEqual([line.className, line.hidden, line.children[0].textContent], ["hqpHostLine", false, "HQP Host"]);
   assert.deepEqual(plain(line.children.slice(1).filter((c) => typeof c !== "string").map((c) => [c.textContent, c.dataset.level ?? null]).slice(0, 2)), [["1.42x realtime", "ok"], ["GPU 41°C", "ok"]]);
   context.renderHqpHost(signal, H({ speed: 0.95 }));
   assert.equal(signal.nextElementSibling, line);

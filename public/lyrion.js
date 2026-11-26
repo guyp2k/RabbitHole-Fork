@@ -448,7 +448,7 @@
   }
   function queueRow(t,playing){
     const row=document.createElement("li"),b=document.createElement("button"),pos=document.createElement("span"),text=document.createElement("span"),title=document.createElement("strong"),sub=document.createElement("small");
-    b.type="button";b.className="queueItemButton";b.title="Play from here";b.dataset.queueIndex=String(t.index);if(playing)b.setAttribute("aria-current","true");
+    b.type="button";b.className="queueItemButton";b.title="Play from Here";b.dataset.queueIndex=String(t.index);if(playing)b.setAttribute("aria-current","true");
     pos.className="queueItemPosition";pos.setAttribute("aria-hidden","true");pos.textContent=String(t.index+1).padStart(2,"0");
     const art=artCell(t.artwork);
     text.className="queueText";title.className="queueItemTitle";title.textContent=t.title;sub.textContent=[playing?"Playing":"",[t.artist,t.album].filter(Boolean).join(" - ")].filter(Boolean).join(" · ");text.append(title,sub);
@@ -686,7 +686,7 @@
   }
   async function refreshPlayers() {
     const result=await api("players"),preferred=player||result.selectedPlayer||""; player=result.players.some(p=>p.id===preferred)?preferred:"";
-    $("lyrionPlayer").replaceChildren(new Option("Choose a player",""),...result.players.map(p=>new Option(`${p.name}${p.connected?"":" (offline)"}`,p.id)));
+    $("lyrionPlayer").replaceChildren(new Option("Choose a Player",""),...result.players.map(p=>new Option(`${p.name}${p.connected?"":" (offline)"}`,p.id)));
     $("lyrionPlayer").value=player;renderPlayerChoices(); favorites=(await api("favorites")).favorites;renderFavorites(); await loadPlayer();
     if(!result.players.length)message("No Lyrion players found. Connect a player in Lyrion, then refresh.");
     else if(preferred&&!player)message("Your previous Lyrion player is unavailable. Choose a player above to start playback.");
