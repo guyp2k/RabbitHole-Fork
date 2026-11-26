@@ -3030,6 +3030,66 @@ input {
   gap: 6px;
 }
 
+.panelFoldHeading {
+  margin: 0;
+}
+
+.panelFold {
+  display: inline-flex !important;
+  align-items: center;
+  gap: 8px;
+  min-height: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  background: none !important;
+  box-shadow: none !important;
+  color: var(--accent) !important;
+  font-size: 12px !important;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.panelFoldCaret {
+  width: 1em;
+}
+
+:is(.reportList, .signalGrid)[hidden] {
+  display: none;
+}
+
+.tasteCardsView :is(#topArtists, #topTracks, #recentPlays) {
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+}
+
+.tasteCardsView :is(#topArtists, #topTracks, #recentPlays) .reportRow {
+  grid-template-columns: minmax(0, 1fr);
+  align-items: start;
+  padding: 8px;
+}
+
+#historyView .historyGrid {
+  align-items: start;
+}
+
+.tasteCardsView :is(#topArtists, #topTracks, #recentPlays) .reportRow > div {
+  min-width: 0;
+}
+
+.tasteCardsView :is(#topArtists, #topTracks, #recentPlays) .reportRow :is(strong, span) {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tasteCardsView :is(#topArtists, #topTracks, #recentPlays) :is(.reportRow img, .rowIndex) {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1;
+}
+
 .pageIntro {
   max-width: 72ch;
   margin: 4px 0 6px;
