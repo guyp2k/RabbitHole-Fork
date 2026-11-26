@@ -84,12 +84,12 @@ test("every Settings control shares one width and one label column", () => {
   assert.match(rule("#settingsGeneralBody > .topControls :is(.aiModeControls label, .zonePicker) span"), /padding-left: 9px;/, "the label text keeps its inset from the pill edge");
   assert.match(rule("#settingsGeneralBody > .topControls :is(.aiModeControls label, .zonePicker) span"), /flex: 0 0 var\(--settings-label-width\);/);
   const fieldSelector = `body:not(.playerFullWindow):not(.playerMaximized) #settingsGeneralBody > .topControls :is(.aiModeControls label, .zonePicker) :is(
-  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="hidden"]),
+  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="hidden"]):not([type="file"]),
   select
 )`;
   const field = rule(fieldSelector);
   const globalField = `body:not(.playerFullWindow):not(.playerMaximized) :is(
-    input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="hidden"]),
+    input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="hidden"]):not([type="file"]),
     select,
     textarea
   )`;

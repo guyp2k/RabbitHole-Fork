@@ -3035,6 +3035,8 @@ input {
 }
 
 .panelFold {
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
   display: inline-flex !important;
   align-items: center;
   gap: 8px;
@@ -10156,7 +10158,7 @@ body.playerFullWindow .player.player--fullscreen.isFullWindow ::placeholder,
 }
 
 body:not(.playerFullWindow):not(.playerMaximized) #settingsGeneralBody > .topControls :is(.aiModeControls label, .zonePicker) :is(
-  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="hidden"]),
+  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="hidden"]):not([type="file"]),
   select
 ) {
   flex: 1 1 auto;
@@ -10709,7 +10711,7 @@ body:not(.playerFullWindow):not(.playerMaximized) #settingsGeneralBody > .topCon
   }
 
   body:not(.playerFullWindow):not(.playerMaximized) :is(
-    input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="hidden"]),
+    input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="hidden"]):not([type="file"]),
     select,
     textarea
   ) {
@@ -10727,7 +10729,7 @@ body:not(.playerFullWindow):not(.playerMaximized) #settingsGeneralBody > .topCon
   }
 
   body:not(.playerFullWindow):not(.playerMaximized) :is(
-    input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="hidden"]),
+    input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="hidden"]):not([type="file"]),
     select
   ) {
     min-height: 42px;
@@ -10739,7 +10741,7 @@ body:not(.playerFullWindow):not(.playerMaximized) #settingsGeneralBody > .topCon
   }
 
   body:not(.playerFullWindow):not(.playerMaximized) :is(
-    input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="hidden"]),
+    input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="hidden"]):not([type="file"]),
     select,
     textarea
   ):focus {
@@ -10751,7 +10753,7 @@ body:not(.playerFullWindow):not(.playerMaximized) #settingsGeneralBody > .topCon
   }
 
   body:not(.playerFullWindow):not(.playerMaximized) :is(
-    input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="hidden"]),
+    input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="hidden"]):not([type="file"]),
     textarea
   )::placeholder {
     color: rgba(231, 231, 238, 0.52);
@@ -10933,7 +10935,7 @@ body:not(.playerFullWindow):not(.playerMaximized) #settingsGeneralBody > .topCon
   }
 
   body:not(.playerFullWindow):not(.playerMaximized) :is(
-    input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="hidden"]),
+    input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="hidden"]):not([type="file"]),
     select,
     textarea
   ) {
@@ -11985,7 +11987,7 @@ body.playerFullWindow .player.player--fullscreen.isFullWindow .nowInfo .nowSourc
     .buttonLink,
     select,
     textarea,
-    input:not([type="checkbox"]):not([type="range"])
+    input:not([type="checkbox"]):not([type="range"]):not([type="file"])
   ) {
     min-height: 44px;
     touch-action: manipulation;
@@ -13385,4 +13387,26 @@ dialog.playerCard .playerCardMute {
   .synapseMemoryForm {
     grid-template-columns: minmax(0, 1fr);
   }
+}
+
+input[type="file"] {
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+  min-height: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  box-shadow: none;
+  color: var(--muted);
+}
+
+input[type="file"]::file-selector-button {
+  margin-right: 10px;
+  padding: 7px 14px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel-2, rgba(255, 255, 255, 0.06));
+  color: var(--text);
+  font: inherit;
+  cursor: pointer;
 }
