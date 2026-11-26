@@ -42,7 +42,7 @@ test("the tagline matches the name's colour, and phones get a smaller lockup", (
 });
 
 test("the provider line beside the lockup is drawn at 12px by the rule scoped to the lockup", () => {
-  assert.match(css, /\n\.appIdentity \.systemTag \{\n  max-width: min\(48vw, 560px\);\n  padding: 0;\n  border: 0;\n  background: transparent;\n  box-shadow: none;\n  color: rgba\(238, 228, 252, 0\.58\);\n  font-size: 12px;\n\}/);
+  assert.match(css, /\n\.appIdentity \.systemTag \{\n  max-width: min\(48vw, 560px\);\n  padding: 0;\n  border: 0;\n  background: transparent;\n  box-shadow: none;\n  color: var\(--text\);\n  font-size: 12px;\n\}/);
   assert.equal([...css.matchAll(/\.appIdentity \.systemTag \{[^}]*font-size/g)].length, 1, "no other lockup rule resizes it");
   assert.match(css, /\.appIdentity \.systemTag \{\n    max-width: min\(54vw, 640px\);/, "the wider cap fits the full provider line at 12px");
 });

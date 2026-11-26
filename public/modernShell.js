@@ -613,7 +613,7 @@
   const extraToggles = [];
   for (const home of [$("togglePlayerMax"), $("lyrionFullscreen")]) {
     if (!home) continue;
-    for (const [key, label, tip] of [["upNext", "Up next", "Show the next covers in the queue"], ["spectrum", "Spectrum", "Decorative: moves with playback, not live audio levels"]]) {
+    for (const [key, label, tip] of [["upNext", "Up Next", "Show the next covers in the queue"], ["spectrum", "Spectrum", "Decorative: moves with playback, not live audio levels"]]) {
       const toggle = make("button", { type: "button", className: "modernExtraToggle", "data-extra": key, "aria-pressed": String(extras[key]), title: tip },
         make("span", { className: "modernExtraDot", "aria-hidden": "true" }), make("span", { text: label }));
       toggle.addEventListener("click", () => {
@@ -667,7 +667,7 @@
       button.addEventListener("click", () => $("lyrionQueue")?.querySelector(`[data-queue-index="${card.index}"]`)?.click());
       list.append(make("li", {}, button));
     }
-    lyrionUpNextStrip.replaceChildren(make("h4", { text: info ? `Up next · ${info}` : "Up next" }), list);
+    lyrionUpNextStrip.replaceChildren(make("h4", { text: info ? `Up Next · ${info}` : "Up Next" }), list);
   });
 
   const upNextStrip = make("div", { className: "modernUpNextStrip", hidden: true });
@@ -688,7 +688,7 @@
       list.append(make("li", {}, make("button", { type: "button", className: "queueItemButton modernUpNextCard", "data-queue-item-id": card.id, "aria-haspopup": "menu", "aria-controls": "queueActionMenu", "aria-expanded": "false", title: `${card.title}: tap or hold for Play from here` },
         upNextArt(card), upNextText(card))));
     }
-    upNextStrip.replaceChildren(make("h4", { text: detail.info ? `Up next · ${detail.info}` : "Up next" }), list);
+    upNextStrip.replaceChildren(make("h4", { text: detail.info ? `Up Next · ${detail.info}` : "Up Next" }), list);
     upNextStrip.hidden = false;
   });
   const queueMenu = $("queueActionMenu");

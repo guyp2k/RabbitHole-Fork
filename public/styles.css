@@ -1,4 +1,6 @@
 :root {
+  --status-on: #22c55e;
+  --status-on-glow: rgba(34, 197, 94, 0.55);
   color-scheme: dark;
   --bg: #05020b;
   --panel: rgba(13, 6, 25, 0.88);
@@ -862,8 +864,8 @@ summary:focus-visible {
   height: 7px;
   margin-right: 8px;
   border-radius: 50%;
-  background: #41ffc5;
-  box-shadow: 0 0 14px rgba(65, 255, 197, 0.72);
+  background: var(--status-on);
+  box-shadow: 0 0 14px var(--status-on-glow);
 }
 
 .statusPill.statusOffline::before {
@@ -2012,8 +2014,8 @@ input {
   height: 9px;
   margin-bottom: 8px;
   border-radius: 999px;
-  background: var(--good);
-  box-shadow: 0 0 14px rgba(28, 244, 195, 0.42);
+  background: var(--status-on);
+  box-shadow: 0 0 14px var(--status-on-glow);
 }
 
 .healthWarn::before {
@@ -4841,9 +4843,9 @@ input {
 }
 
 .resultFilterToggle:has(input:checked)::before {
-  background: var(--accent);
+  background: var(--status-on);
   opacity: 1;
-  box-shadow: 0 0 6px var(--accent);
+  box-shadow: 0 0 6px var(--status-on-glow);
 }
 
 .resultFilterToggle:has(input:focus-visible) {
@@ -9908,7 +9910,7 @@ body.playerFullWindow .player.player--fullscreen.isFullWindow ::placeholder,
   border: 0;
   background: transparent;
   box-shadow: none;
-  color: rgba(238, 228, 252, 0.58);
+  color: var(--text);
   font-size: 12px;
 }
 

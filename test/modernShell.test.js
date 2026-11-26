@@ -686,7 +686,7 @@ test("the app shares the next five queue items and the queue summary as a roon-q
 });
 
 test("Modern adds Up next and Spectrum toggles before Maximize Player, and covers reuse the queue's Play from here menu", () => {
-  assert.match(source, /for \(const \[key, label, tip\] of \[\["upNext", "Up next", "Show the next covers in the queue"\], \["spectrum", "Spectrum", "Decorative: moves with playback, not live audio levels"\]\]\)/);
+  assert.match(source, /for \(const \[key, label, tip\] of \[\["upNext", "Up Next", "Show the next covers in the queue"\], \["spectrum", "Spectrum", "Decorative: moves with playback, not live audio levels"\]\]\)/);
   assert.match(source, /for \(const home of \[\$\("togglePlayerMax"\), \$\("lyrionFullscreen"\)\]\)[\s\S]*?home\.before\(toggle\);/);
   assert.match(source, /localStorage\.setItem\(EXTRAS_KEY, JSON\.stringify\(extras\)\)/);
   assert.match(source, /className: "queueItemButton modernUpNextCard", "data-queue-item-id": card\.id, "aria-haspopup": "menu", "aria-controls": "queueActionMenu"/);

@@ -594,7 +594,7 @@
   let statusRequest=0,lastAppliedStatus=0;
   function upNext(s){
     const next=(s.queue||[]).find(q=>q.index===s.queueIndex+1),remaining=Math.max(0,(Number(s.queueCount)||0)-(Number(s.queueIndex)||0)-1);
-    if(next)return `Up next: ${[next.title,next.artist].filter(Boolean).join(" - ")} · ${remaining} remaining`;
+    if(next)return `Up Next: ${[next.title,next.artist].filter(Boolean).join(" - ")} · ${remaining} remaining`;
     return remaining?`${remaining} remaining`:"Nothing queued after this";
   }
   function playerLines(s){

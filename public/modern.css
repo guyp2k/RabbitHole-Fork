@@ -898,9 +898,9 @@ body.layoutModern .modernExtraDot {
 }
 
 body.layoutModern .modernExtraToggle[aria-pressed="true"] .modernExtraDot {
-  background: var(--accent);
+  background: var(--status-on);
   opacity: 1;
-  box-shadow: 0 0 6px var(--accent);
+  box-shadow: 0 0 6px var(--status-on-glow);
 }
 
 body.layoutModern .modernSpectrum {
