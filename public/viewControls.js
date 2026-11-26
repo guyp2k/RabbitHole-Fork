@@ -49,29 +49,36 @@
     return group;
   }
 
-  function bindFolds() {
-    if (typeof document.querySelectorAll !== "function") return;
-    for (const button of document.querySelectorAll("[data-fold-key]")) {
-      const target = document.getElementById(button.getAttribute("aria-controls"));
-      if (!target) continue;
-      const key = `rabbitHole.fold.${button.dataset.foldKey}`;
-      let folded = false;
-      try { folded = localStorage.getItem(key) === "1"; } catch {}
-      const apply = () => {
-        target.hidden = folded;
-        button.setAttribute("aria-expanded", String(!folded));
-        const caret = button.querySelector(".panelFoldCaret");
-        if (caret) caret.textContent = folded ? "▸" : "▾";
-      };
-      button.addEventListener("click", () => {
-        folded = !folded;
-        try { localStorage.setItem(key, folded ? "1" : "0"); } catch {}
-        apply();
-      });
-      apply();
-    }
+  function isFolded(key) {
+    try { return localStorage.getItem(`rabbitHole.fold.${key}`) === "1"; } catch { return false; }
   }
 
-  window.RabbitHoleViewControls = { readLayout, layoutSwitch, bindSort, bindFolds };
+  function applyFold(button) {
+    const target = document.getElementById(button.getAttribute("aria-controls"));
+    if (!target) return;
+    const folded = isFolded(button.dataset.foldKey);
+    target.hidden = folded;
+    button.setAttribute("aria-expanded", String(!folded));
+    const caret = button.querySelector(".panelFoldCaret");
+    if (caret) caret.textContent = folded ? "▸" : "▾";
+  }
+
+  function applyFolds(root = document) {
+    if (!root || typeof root.querySelectorAll !== "function") return;
+    for (const button of root.querySelectorAll("[data-fold-key]")) applyFold(button);
+  }
+
+  function bindFolds() {
+    if (typeof document.addEventListener !== "function") return;
+    document.addEventListener("click", (event) => {
+      const button = event.target?.closest?.("[data-fold-key]");
+      if (!button) return;
+      try { localStorage.setItem(`rabbitHole.fold.${button.dataset.foldKey}`, isFolded(button.dataset.foldKey) ? "0" : "1"); } catch {}
+      applyFold(button);
+    });
+    applyFolds();
+  }
+
+  window.RabbitHoleViewControls = { readLayout, layoutSwitch, bindSort, bindFolds, applyFolds };
   bindFolds();
 })();

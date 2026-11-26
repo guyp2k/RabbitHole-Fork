@@ -3055,8 +3055,31 @@ input {
   width: 1em;
 }
 
-:is(.reportList, .signalGrid)[hidden] {
+.tidalMixCards {
+  display: contents;
+}
+
+:is(.reportList, .signalGrid, .tidalMixCards, .synapseMemoryFoldBody)[hidden] {
   display: none;
+}
+
+.panelFoldHeading + [id$="FoldBody"] {
+  margin-top: 8px;
+}
+
+.dbResultsFold {
+  margin-right: 8px;
+  vertical-align: middle;
+}
+
+.dbResultsToolbar > div:first-child {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.dbResultsToolbar > div:first-child > p {
+  flex-basis: 100%;
 }
 
 .tasteCardsView :is(#topArtists, #topTracks, #recentPlays) {
@@ -10048,7 +10071,7 @@ body.playerFullWindow .player.player--fullscreen.isFullWindow ::placeholder,
   margin-bottom: 18px;
 }
 
-.queuePanel > .liveQueue {
+#queueFoldBody > .liveQueue {
   max-height: min(68vh, 720px);
   overflow: auto;
 }

@@ -153,9 +153,11 @@
           <div class="resultActions"><button type="button" id="synapseMemorySave">Save</button><button type="button" id="synapseMemoryNew">New Entry</button></div>
         </section>
         <section class="panel synapseMemoryPanel">
-          <h3>View Memories</h3>
+          <h3 class="panelFoldHeading"><button type="button" class="panelFold" data-fold-key="synapseMemory.entries" aria-controls="synapseMemoryFoldBody" aria-expanded="true"><span class="panelFoldCaret" aria-hidden="true">▾</span>View Memories</button></h3>
+          <div id="synapseMemoryFoldBody" class="synapseMemoryFoldBody">
           <input id="synapseMemoryFilter" placeholder="Filter memories" aria-label="Filter memories">
           <div id="synapseMemoryEntries" class="synapseMemoryEntries"></div>
+          </div>
         </section>
       </section>
 
@@ -281,7 +283,8 @@
           </div>
           <p class="queueGestureHint">Tap or hold a track for queue actions.</p>
           <div id="queueActionStatus" class="queueActionStatus" aria-live="polite"></div>
-          <div id="liveQueue" class="liveQueue" hidden></div>
+          <h3 class="panelFoldHeading"><button type="button" class="panelFold" data-fold-key="queue.roon" aria-controls="queueFoldBody" aria-expanded="true"><span class="panelFoldCaret" aria-hidden="true">▾</span>Roon Queue</button></h3>
+          <div id="queueFoldBody"><div id="liveQueue" class="liveQueue" hidden></div></div>
           <div id="queueActionMenu" class="queueActionMenu" hidden role="menu" aria-labelledby="queueActionTitle">
             <div class="queueActionMenuHead">
               <div>
@@ -574,7 +577,8 @@
               <label class="viewSort">Sort<select id="standbySort"><option value="original">Rank</option><option value="title">Title</option><option value="artist">Artist</option><option value="longest">Longest First</option></select></label>
             </div>
           </div>
-          <div id="standbyTracks" class="standbyTracks"></div>
+          <h3 class="panelFoldHeading"><button type="button" class="panelFold" data-fold-key="standby.tracks" aria-controls="standbyFoldBody" aria-expanded="true"><span class="panelFoldCaret" aria-hidden="true">▾</span>Tracks</button></h3>
+          <div id="standbyFoldBody"><div id="standbyTracks" class="standbyTracks"></div></div>
         </section>
       </section>
 
@@ -640,9 +644,12 @@
             <button type="button" data-rl-toggle="identified" data-rl-value="false" aria-pressed="false">Unidentified</button>
           </div>
         </form>
+        <h3 class="panelFoldHeading"><button type="button" class="panelFold" data-fold-key="library.albums" aria-controls="rlFoldBody" aria-expanded="true"><span class="panelFoldCaret" aria-hidden="true">▾</span>Albums</button></h3>
+        <div id="rlFoldBody">
         <ul id="rlResults" class="dbGrid rlGrid" aria-label="Roon library albums"></ul>
         <div id="rlSections" class="rlSections" hidden></div>
         <div class="rlMore"><button id="rlMore" type="button" hidden>Load More</button></div>
+        </div>
       </section>
 
       <section id="databaseView" class="view databaseView" aria-labelledby="databaseHeading">
@@ -692,7 +699,7 @@
           <div class="dbMain">
             <div id="dbActiveFilters" class="dbActiveFilters" role="group" aria-label="Active filters"></div>
             <div class="dbResultsToolbar">
-              <div><h3 id="dbResultsHeading" tabindex="-1">Genre tags</h3><p id="dbResultStatus" role="status" aria-live="polite">Open the database to load your music.</p></div>
+              <div><button type="button" class="panelFold dbResultsFold" data-fold-key="database.results" aria-controls="dbFoldBody" aria-expanded="true" aria-label="Show or hide the results"><span class="panelFoldCaret" aria-hidden="true">▾</span></button><h3 id="dbResultsHeading" tabindex="-1">Genre tags</h3><p id="dbResultStatus" role="status" aria-live="polite">Open the database to load your music.</p></div>
               <div class="dbResultControls">
                 <label id="dbGroupLabel">Group by<select id="dbGroup"><option value="genre">Genres</option><option value="tag">Metadata tags</option><option value="sonicTag">Sonic tags</option><option value="artist">Artists</option><option value="label">Labels</option></select></label>
                 <label>Sort by<select id="dbSort"><option value="name">Name</option><option value="count">Track count</option><option value="recent">Recently seen</option></select></label>
@@ -700,7 +707,7 @@
               </div>
             </div>
             <p id="dbViewNote" class="dbMuted dbViewNote">Select a collection to explore its tracks.</p>
-            <div id="dbResults" class="dbResults" aria-labelledby="dbResultsHeading" aria-busy="false"></div>
+            <div id="dbFoldBody"><div id="dbResults" class="dbResults" aria-labelledby="dbResultsHeading" aria-busy="false"></div></div>
             <nav id="dbPagination" class="dbPagination" aria-label="Database result pages" hidden><button id="dbPrevious" type="button">Previous</button><span id="dbPageLabel"></span><button id="dbNext" type="button">Next</button></nav>
           </div>
         </div>
@@ -738,7 +745,8 @@
           </form>
         </section>
 
-        <section id="musicMemoryResults" class="musicMemoryResults"></section>
+        <h3 class="panelFoldHeading"><button type="button" class="panelFold" data-fold-key="musicMemory.tracks" aria-controls="musicMemoryFoldBody" aria-expanded="true"><span class="panelFoldCaret" aria-hidden="true">▾</span>Tracks</button></h3>
+        <div id="musicMemoryFoldBody"><section id="musicMemoryResults" class="musicMemoryResults"></section></div>
       </section>
 
       <section id="beatportChartsView" class="view">
@@ -790,7 +798,8 @@
               <label class="viewSort">Sort<select id="beatportChartSort"><option value="original">Chart Position</option><option value="title">Title</option><option value="artist">Artist</option><option value="bpm">BPM</option></select></label>
             </div>
           </div>
-          <div id="beatportChartTracks" class="beatportChartTracks"></div>
+          <h3 class="panelFoldHeading"><button type="button" class="panelFold" data-fold-key="beatport.tracks" aria-controls="beatportFoldBody" aria-expanded="true"><span class="panelFoldCaret" aria-hidden="true">▾</span>Tracks</button></h3>
+          <div id="beatportFoldBody"><div id="beatportChartTracks" class="beatportChartTracks"></div></div>
         </section>
       </section>
 
@@ -810,7 +819,8 @@
           </div>
         </section>
 
-        <section id="radioStations" class="radioGrid"></section>
+        <h3 class="panelFoldHeading"><button type="button" class="panelFold" data-fold-key="radio.stations" aria-controls="radioFoldBody" aria-expanded="true"><span class="panelFoldCaret" aria-hidden="true">▾</span>Stations</button></h3>
+        <div id="radioFoldBody"><section id="radioStations" class="radioGrid"></section></div>
       </section>
 
       <section id="playlistView" class="view">
