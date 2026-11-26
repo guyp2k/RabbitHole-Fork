@@ -6627,7 +6627,11 @@ function renderHistoryReport(report = {}) {
   state.historyNeedsRefresh = false;
   const metrics = report.metrics || {};
   const ignoredRadio = Number(metrics.ignoredRadioPlays || 0);
-  $("#tasteNarrative").textContent = report.tasteNarrative || "No taste report yet.";
+  $("#tasteNarrative").textContent = report.tasteSummary || report.tasteNarrative || "No taste report yet.";
+  const details = Array.isArray(report.tasteDetails) ? report.tasteDetails : [];
+  const list = $("#tasteDetailList");
+  if (list) list.replaceChildren(...details.map((line) => Object.assign(document.createElement("li"), { textContent: line })));
+  if ($("#tasteDetails")) $("#tasteDetails").hidden = !details.length;
   $("#historyMetrics").innerHTML = [
     metricCardHtml("Observed plays", metrics.observedPlays || 0, ignoredRadio ? `${ignoredRadio} radio placeholders ignored` : "Recorded while this app is running"),
     metricCardHtml("Listening time", formatHours(metrics.knownDurationSeconds), "Known track durations"),

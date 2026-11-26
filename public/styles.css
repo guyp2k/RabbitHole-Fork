@@ -2861,19 +2861,21 @@ input {
   background: color-mix(in srgb, var(--accent) 30%, transparent) !important;
 }
 
-.standbyDetails {
+.pageDetails {
   margin-top: 4px;
   color: var(--muted);
   font-size: 12px;
 }
 
-.standbyDetails summary {
+.pageDetails summary {
   cursor: pointer;
   width: max-content;
 }
 
-.standbyDetails p {
+.pageDetails :is(p, ul) {
   margin: 4px 0 0;
+  padding-left: 0;
+  list-style: none;
   max-width: 90ch;
 }
 

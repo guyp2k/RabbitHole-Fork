@@ -435,7 +435,7 @@ function normalizeStoredPlay(play = {}) {
   };
 }
 
-function tasteNarrative({ topArtists, topLabels, likedArtists, likedLabels, plays, discoveryCount, nowPlaying, tasteDna }) {
+function tasteNarrativeParts({ topArtists, topLabels, likedArtists, likedLabels, plays, discoveryCount, nowPlaying, tasteDna }) {
   const artistNames = likedArtists.length
     ? likedArtists.slice(0, 4).map((entry) => entry.name)
     : topArtists.slice(0, 4).map((entry) => entry.name);
@@ -457,7 +457,7 @@ function tasteNarrative({ topArtists, topLabels, likedArtists, likedLabels, play
   if (nowPlaying?.title) signals.push(`currently on ${nowPlaying.artist} - ${nowPlaying.title}`);
 
   if (!signals.length && !plays) {
-    return "I do not have enough local history yet. Keep this app running while Roon plays, then use thumbs up/down on discoveries so the profile has real signal.";
+    return { summary: "I do not have enough local history yet. Keep this app running while Roon plays, then use thumbs up/down on discoveries so the profile has real signal.", details: [], signals: [], empty: true };
   }
 
   const base = confidence.feedbackCount
@@ -469,7 +469,20 @@ function tasteNarrative({ topArtists, topLabels, likedArtists, likedLabels, play
   const caution = avoidNames.length
     ? ` Be careful with ${avoidNames.join(" and ")}.`
     : "";
-  return signals.length ? `${base}${lane} Strongest signals: ${signals.join("; ")}.${caution}` : `${base}${lane}${caution}`;
+  return {
+    summary: `${base}${lane}${caution}`,
+    details: signals.map((signal) => signal.charAt(0).toUpperCase() + signal.slice(1)),
+    signals,
+    base,
+    lane,
+    caution
+  };
+}
+
+function tasteNarrative(input) {
+  const parts = tasteNarrativeParts(input);
+  if (parts.empty) return parts.summary;
+  return parts.signals.length ? `${parts.base}${parts.lane} Strongest signals: ${parts.signals.join("; ")}.${parts.caution}` : parts.summary;
 }
 
 class ListeningHistory {
@@ -585,21 +598,18 @@ class ListeningHistory {
       rejectedLabels,
       tasteDna,
       recentPlays: recentPlays.map((play) => ({ ...play, imageUrl: play.imageUrl || imageUrl(play.imageKey) })),
-      tasteNarrative: tasteNarrative({
-        topArtists,
-        topLabels: likedLabels,
-        likedArtists,
-        likedLabels,
-        plays: contributoryPlays.length,
-        discoveryCount,
-        nowPlaying,
-        tasteDna
-      })
+      ...(() => {
+        const input = { topArtists, topLabels: likedLabels, likedArtists, likedLabels, plays: contributoryPlays.length, discoveryCount, nowPlaying, tasteDna };
+        const parts = tasteNarrativeParts(input);
+        return { tasteNarrative: tasteNarrative(input), tasteSummary: parts.summary, tasteDetails: parts.details };
+      })()
     };
   }
 }
 
 module.exports = {
+  tasteNarrative,
+  tasteNarrativeParts,
   ListeningHistory,
   isNonContributoryPlay,
   trackFromZone

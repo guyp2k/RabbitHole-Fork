@@ -28,7 +28,7 @@ test("Standby's status line is a short summary, with the search diagnostics fold
   assert.deepEqual(parts.details, ["25/25 ready after 1376 checked", "25 / 25 fresh tracks found; new: 25; carried over: 0", "Synapse skipped (m) [disabled]: off; kept local/Qwen pool"]);
   const failed = JSON.parse(JSON.stringify(context.parts({ lastError: "TIDAL timed out", refreshing: true }, 0)));
   assert.deepEqual(failed.summary, ["Refreshing", "Last refresh failed: TIDAL timed out", "0 ready"]);
-  assert.match(html, /<details id="standbyDetails" class="standbyDetails" hidden><summary>Details<\/summary><p id="standbyDetailText"><\/p><\/details>/);
+  assert.match(html, /<details id="standbyDetails" class="pageDetails" hidden><summary>Details<\/summary><p id="standbyDetailText"><\/p><\/details>/);
   assert.match(html, /<button type="button" id="standbyQueueNext" disabled>Queue Next<\/button>/);
   assert.match(html, /<button type="button" id="beatportChartQueue" disabled>Add to Queue<\/button>\s*<button type="button" id="beatportChartQueueNext" disabled>Queue Next<\/button>/);
   assert.match(app, /buttonText: "Add to Queue",[\s\S]*?buttonText: "Queue Next",/);
