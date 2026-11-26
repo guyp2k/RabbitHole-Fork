@@ -26,7 +26,7 @@ function fn(name) {
 }
 
 test("Diagnostics and Settings explain themselves in a page intro", () => {
-  assert.match(section("diagnosticsView"), /<p class="pageIntro">Look under the hood\./);
+  assert.match(section("diagnosticsView"), /<p class="pageIntro">Look under the hood of the last Rabbit Hole run\./);
   assert.match(section("settingsView"), /<p class="pageIntro">How Rabbit Hole thinks, plays and looks/);
 });
 
@@ -79,7 +79,6 @@ test("an unlimited diversity cap reads No Cap instead of the largest safe intege
 
 test("every Diagnostics section folds from its heading and re-applies the saved fold after each render", () => {
   for (const [render, show, key, body, label] of [
-    ["renderSystemHealth", "renderSystemHealth", "health", "systemHealthBody", "System Health"],
     ["poolDiagnosticsHtml", "showPoolDiagnostics", "pool", "poolDiagnosticsBody", "Pool Diagnostics"],
     ["sourceReportHtml", "showSourceReport", "sources", "sourceReportBody", "Candidate Source Report"],
     ["rejectedDebugHtml", "updateRejectedDebug", "rejected", "rejectedDebugBody", "Rejected / Discarded"],

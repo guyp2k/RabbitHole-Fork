@@ -13293,3 +13293,18 @@ dialog.playerCard .playerCardMute {
 [data-requires][hidden] {
   display: none;
 }
+
+.healthCard .healthPurpose {
+  margin: 6px 0 0;
+  color: var(--muted, rgba(231, 216, 249, 0.82));
+  font-size: 12px;
+  line-height: 1.3;
+}
+
+:is(#connectionsView, #aiView) .healthGrid {
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+}
+
+#aiView .systemHealth + .resultActions {
+  margin-top: 14px;
+}
