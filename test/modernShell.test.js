@@ -805,3 +805,26 @@ test("live radio shares no Up next covers, because the tracks queued behind a st
   assert.match(body, /const queued = Boolean\(zone\) && !isLiveRadioZone\(zone\);/);
   assert.doesNotMatch(body, /items: zone \?/);
 });
+
+test("a Modern menu item hides and shows with the original menu button it copies", () => {
+  const observed = [];
+  class FakeObserver {
+    constructor(callback) { this.callback = callback; }
+    observe(node, options) { observed.push({ node, options, callback: this.callback }); }
+  }
+  const source = { hidden: true };
+  const entry = { hidden: false };
+  shell.mirrorHidden(entry, source, FakeObserver);
+  assert.equal(entry.hidden, true, "a source hidden at start-up stays hidden in the Modern menu");
+  assert.equal(observed.length, 1);
+  assert.equal(observed[0].node, source);
+  assert.deepEqual([...observed[0].options.attributeFilter], ["hidden"]);
+  source.hidden = false; observed[0].callback();
+  assert.equal(entry.hidden, false);
+  source.hidden = true; observed[0].callback();
+  assert.equal(entry.hidden, true);
+});
+
+test("every Modern menu item mirrors its source button's hidden state", () => {
+  assert.match(source, /const entry = make\("li", \{\}, button\);\n      mirrorHidden\(entry, item\.source, MutationObserver\);\n      list\.append\(entry\);/);
+});
