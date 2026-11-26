@@ -315,7 +315,7 @@
                   <label class="nowTidalPlaylistTarget">
                     <input id="nowTidalPlaylistArm1" type="checkbox" aria-label="Arm first TIDAL playlist destination">
                     <select id="nowTidalPlaylistSelect" aria-label="TIDAL playlist">
-                      <option value="">Load TIDAL playlists...</option>
+                      <option value="">Load TIDAL Playlists...</option>
                     </select>
                   </label>
                   <label class="nowTidalPlaylistTarget extraTidalPlaylist">
@@ -385,33 +385,33 @@
             <div id="composerBody" class="composerBody">
             <textarea id="request" name="request" placeholder="Find 90s trance, dark ambient, tracks like The Crystal Method, chill driving music, or long progressive house released this week"></textarea>
             <div class="quickActions">
-              <button type="button" data-preset="now">Use current Roon track</button>
-              <button type="button" data-preset="artist">Discover from artist</button>
-              <button type="button" data-preset="long">Long tracks this week</button>
+              <button type="button" data-preset="now">Use Current Roon Track</button>
+              <button type="button" data-preset="artist">Discover From Artist</button>
+              <button type="button" data-preset="long">Long Tracks This Week</button>
             </div>
             <div class="playlistSeed">
               <div class="playlistSeedSources">
                 <div class="playlistSeedSource">
-                  <label>Roon playlist
+                  <label>Roon Playlist
                     <select id="playlistSelect" aria-label="Roon playlist">
-                      <option value="">Load Roon playlists...</option>
+                      <option value="">Load Roon Playlists...</option>
                     </select>
                   </label>
                   <div class="playlistButtons">
                     <button type="button" id="refreshPlaylists">Refresh Roon</button>
-                    <button type="button" id="usePlaylistSeed">Use Roon seed</button>
+                    <button type="button" id="usePlaylistSeed">Use Roon Seed</button>
                   </div>
                   <p id="playlistStatus" class="muted"></p>
                 </div>
                 <div class="playlistSeedSource">
-                  <label>TIDAL playlist
+                  <label>TIDAL Playlist
                     <select id="tidalPlaylistSeedSelect" aria-label="TIDAL playlist seed">
-                      <option value="">Load TIDAL playlists...</option>
+                      <option value="">Load TIDAL Playlists...</option>
                     </select>
                   </label>
                   <div class="playlistButtons">
                     <button type="button" id="refreshTidalSeedPlaylists">Refresh TIDAL</button>
-                    <button type="button" id="useTidalPlaylistSeed" disabled>Use TIDAL seed</button>
+                    <button type="button" id="useTidalPlaylistSeed" disabled>Use TIDAL Seed</button>
                   </div>
                   <p id="tidalPlaylistSeedStatus" class="muted"></p>
                 </div>
@@ -422,8 +422,8 @@
               <textarea id="reference" name="reference" class="reference" placeholder="Optional seed tracks, playlist notes, or a TIDAL playlist export. A URL alone is not enough for the local model to read the playlist yet."></textarea>
               <div class="grid">
                 <label>Genres <input name="genres" placeholder="optional: trance, dark ambient, melodic techno"></label>
-                <label>Years / month <input name="years" placeholder="2026, May 2026, 2018-2026"></label>
-                <label>Vibe / mood <input name="mood" list="moodOptions" placeholder="optional"></label>
+                <label>Years / Month <input name="years" placeholder="2026, May 2026, 2018-2026"></label>
+                <label>Vibe / Mood <input name="mood" list="moodOptions" placeholder="optional"></label>
                 <datalist id="moodOptions">
                   <option value=""></option>
                   <option value="hypnotic"></option>
@@ -460,9 +460,9 @@
                     </button>
                   </div>
                 </div>
-                <label>Release quick filter
+                <label>Release Quick Filter
                   <select name="releasePreset" id="releasePreset">
-                    <option value="">Manual / prompt</option>
+                    <option value="">Manual / Prompt</option>
                     <option value="today">Today</option>
                     <option value="yesterday">Yesterday</option>
                     <option value="last7">Last 7 Days</option>
@@ -471,17 +471,17 @@
                     <option value="thisYear">This Year</option>
                   </select>
                 </label>
-                <label>Exact date <input name="releaseExactDate" type="date"></label>
-                <label>Date start <input name="releaseStartDate" type="date"></label>
-                <label>Date end <input name="releaseEndDate" type="date"></label>
-                <label class="wideField">Minimum match
+                <label>Exact Date <input name="releaseExactDate" type="date"></label>
+                <label>Date Start <input name="releaseStartDate" type="date"></label>
+                <label>Date End <input name="releaseEndDate" type="date"></label>
+                <label class="wideField">Minimum Match
                   <select name="minScore" id="minScore">
                     <option value="" selected></option>
-                    <option value="0">Long shot+ / all verified</option>
+                    <option value="0">Long Shot+ / All Verified</option>
                     <option value="60">Experimental+ (60+)</option>
-                    <option value="70">Worth checking+ (70+)</option>
+                    <option value="70">Worth Checking+ (70+)</option>
                     <option value="80">Strong+ (80+)</option>
-                    <option value="90">Excellent only (90+)</option>
+                    <option value="90">Excellent Only (90+)</option>
                   </select>
                 </label>
               </div>
@@ -500,10 +500,10 @@
             </div>
             <div class="resultActions">
               <span id="busy"></span>
-              <button type="button" id="queueAll" disabled>Add all to queue</button>
-              <button type="button" id="queueAllNext" disabled>Add all next</button>
+              <button type="button" id="queueAll" disabled>Add All to Queue</button>
+              <button type="button" id="queueAllNext" disabled>Add All Next</button>
               <button type="button" id="sendTidalQueue" disabled>Send to TIDAL</button>
-              <button type="button" id="copyList" disabled>Copy list</button>
+              <button type="button" id="copyList" disabled>Copy List</button>
               <button type="button" id="exportCsv" disabled>Export CSV</button>
               <button type="button" id="toggleRejected" disabled>Rejected</button>
               <label class="resultFilterToggle" title="Audit view only: show the current results with exact Roon artist-credit confirmation">
@@ -536,6 +536,7 @@
               <button type="button" id="standbyQueueNext" disabled>Queue Next</button>
               <button type="button" id="standbySendTidal" disabled>Send to TIDAL</button>
               <button type="button" id="standbyClear" disabled>Clear</button>
+              <label class="viewSort">Sort<select id="standbySort"><option value="original">Rank</option><option value="title">Title</option><option value="artist">Artist</option><option value="longest">Longest First</option></select></label>
             </div>
           </div>
           <div id="standbyTracks" class="standbyTracks"></div>
@@ -711,7 +712,7 @@
           </div>
           <form id="beatportChartForm" class="beatportChartForm">
             <select id="beatportChartSource" aria-label="Beatport chart source">
-              <option value="staff_picks">Staff Picks page</option>
+              <option value="staff_picks">Staff Picks Page</option>
               <option value="best_curation">Best of Curation</option>
               <option value="shortlists">The Shortlists</option>
               <option value="after_hours">After Hours Essentials</option>
@@ -723,17 +724,17 @@
               <option value="on_our_radar">On Our Radar</option>
               <option value="secret_weapons">Secret Weapons</option>
               <option value="warm_up_essentials">Warm-Up Essentials</option>
-              <option value="top_tracks">Top tracks</option>
-              <option value="hype_tracks">Hype tracks</option>
-              <option value="releases">New releases</option>
-              <option value="hype_releases">Hype releases</option>
-              <option value="genre">DJ / latest charts</option>
+              <option value="top_tracks">Top Tracks</option>
+              <option value="hype_tracks">Hype Tracks</option>
+              <option value="releases">New Releases</option>
+              <option value="hype_releases">Hype Releases</option>
+              <option value="genre">DJ / Latest Charts</option>
             </select>
             <select id="beatportChartSelect" aria-label="Progressive House Beatport chart">
-              <option value="">Loading Progressive House charts...</option>
+              <option value="">Loading Progressive House Charts...</option>
             </select>
             <input id="beatportChartId" type="text" inputmode="numeric" value="901032" aria-label="Beatport chart ID">
-            <button type="submit">Load chart</button>
+            <button type="submit">Load Chart</button>
           </form>
         </section>
 
@@ -747,6 +748,7 @@
             <div class="resultActions">
               <button type="button" id="beatportChartQueue" disabled>Add to Queue</button>
               <button type="button" id="beatportChartQueueNext" disabled>Queue Next</button>
+              <label class="viewSort">Sort<select id="beatportChartSort"><option value="original">Chart Position</option><option value="title">Title</option><option value="artist">Artist</option><option value="bpm">BPM</option></select></label>
             </div>
           </div>
           <div id="beatportChartTracks" class="beatportChartTracks"></div>
@@ -798,10 +800,11 @@
           </div>
           <div class="resultActions">
             <a class="buttonLink" id="authorizeTidalProfile" href="/api/tidal/oauth/start">Connect TIDAL</a>
-            <button type="button" id="refreshTidalMixes">Refresh mixes</button>
+            <button type="button" id="refreshTidalMixes">Refresh Mixes</button>
+            <label class="viewSort">Sort<select id="tidalMixSort"><option value="original">Original Order</option><option value="title">Name A-Z</option></select></label>
           </div>
           <form id="tidalPinnedForm" class="tidalImportForm">
-            <label for="tidalPinnedInput">Pinned TIDAL item</label>
+            <label for="tidalPinnedInput">Pinned TIDAL Item</label>
             <div class="tidalImportRow">
               <input id="tidalPinnedInput" type="text" placeholder="TIDAL mix, radio, or playlist URL" autocomplete="off">
               <button type="submit">Import</button>
